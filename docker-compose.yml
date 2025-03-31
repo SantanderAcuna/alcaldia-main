@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin  # Contraseña del usuario root
+      MYSQL_DATABASE: webapi       # Base de datos que se creará automáticamente
+      MYSQL_USER: webadmin         # Usuario normal de MySQL
+      MYSQL_PASSWORD: 9999         # Contraseña del usuario normal
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./api
+    container_name: laravel_backend
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./api:/var/www/html
+    depends_on:
+      - mysql
+
+
+  frontend:
+    build:
+      context: ./app  # Asegúrate que apunta a tu directorio frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+volumes:
+  mysql_data:
