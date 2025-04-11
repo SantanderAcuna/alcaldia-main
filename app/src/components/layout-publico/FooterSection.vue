@@ -40,8 +40,10 @@
             </p>
 
             <div class="p-2 text-white" role="note">
-              <small>Horario de radicación:<br />
-                8:00 a.m. - 5:00 p.m.</small>
+              <small
+                >Horario de radicación:<br />
+                8:00 a.m. - 5:00 p.m.</small
+              >
             </div>
           </div>
 
@@ -49,13 +51,19 @@
           <ul class="list-unstyled">
             <li>
               <strong>Atención al Ciudadano:</strong><br />
-              <a href="mailto:atencionalciudadano@santamarta.gov.co" class="text-white">
+              <a
+                href="mailto:atencionalciudadano@santamarta.gov.co"
+                class="text-white"
+              >
                 atencionalciudadano@santamarta.gov.co
               </a>
             </li>
             <li class="mt-2">
               <strong>Notificaciones Judiciales:</strong><br />
-              <a href="mailto:notificacionesalcaldiadistrital@santamarta.gov.co" class="text-white">
+              <a
+                href="mailto:notificacionesalcaldiadistrital@santamarta.gov.co"
+                class="text-white"
+              >
                 notificacionesalcaldiadistrital@santamarta.gov.co
               </a>
               <div class="text-warning">
@@ -101,7 +109,8 @@
                 </li>
                 <li class="mb-2">
                   <a href="#" class="text-white text-decoration-none">
-                    <i class="fas fa-balance-scale me-2"></i>Términos y condiciones
+                    <i class="fas fa-balance-scale me-2"></i>Términos y
+                    condiciones
                   </a>
                 </li>
                 <li class="mb-2">
@@ -132,14 +141,34 @@
       <!-- Sección Inferior: Logos y Copyright -->
       <div class="pt-3 mt-4 text-center border-top">
         <div class="mb-3">
-          <img :src="logo500Or" alt="500 Años" class="img-fluid" style="max-height: 80px" loading="lazy" />
-          <img :src="logoGovCo" alt="Gobierno de Colombia" class="img-fluid" style="height: 50px" loading="lazy" />
-          <img :src="logoColombia" alt="Marca Colombia" class="img-fluid me-4" style="height: 50px" loading="lazy" />
+          <img
+            :src="logo500Or"
+            alt="500 Años"
+            class="img-fluid"
+            style="max-height: 80px"
+            loading="lazy"
+          />
+          <img
+            :src="logoGovCo"
+            alt="Gobierno de Colombia"
+            class="img-fluid"
+            style="height: 50px"
+            loading="lazy"
+          />
+          <img
+            :src="logoColombia"
+            alt="Marca Colombia"
+            class="img-fluid me-4"
+            style="height: 50px"
+            loading="lazy"
+          />
         </div>
 
         <p class="mb-0">
-          <i class="fas fa-copyright me-2"></i>2025 Alcaldía Distrital de Santa Marta<br />
-          <small class="text-white-50">Todos los derechos reservados</small><br />
+          <i class="fas fa-copyright me-2"></i>2025 Alcaldía Distrital de Santa
+          Marta<br />
+          <small class="text-white-50">Todos los derechos reservados</small
+          ><br />
           <small class="text-warning">Ciudad Patrimonio de Colombia</small>
         </p>
       </div>
@@ -157,20 +186,20 @@
 
 <script>
 export default {
-  name: 'FooterSection',
+  name: "FooterSection",
   data() {
     return {
-      logo500Or: new URL('@/assets/img/logo500Or.png', import.meta.url).href, // Ruta a la imagen
-      logoGovCo: new URL('@/assets/img/logo.svg', import.meta.url).href, // Ruta a la imagen
-      logoColombia: new URL('@/assets/img/logo_co.svg', import.meta.url).href, // Ruta a la imagen
-      horaActual: '', // Hora actual
+      logo500Or: new URL("@/assets/img/logo500Or.png", import.meta.url).href, // Ruta a la imagen
+      logoGovCo: new URL("@/assets/img/logo.svg", import.meta.url).href, // Ruta a la imagen
+      logoColombia: new URL("@/assets/img/logo_co.svg", import.meta.url).href, // Ruta a la imagen
+      horaActual: "", // Hora actual
     };
   },
   methods: {
     actualizarReloj() {
       const ahora = new Date();
-      const opciones = { timeZone: 'America/Bogota' };
-      this.horaActual = ahora.toLocaleTimeString('es-CO', opciones);
+      const opciones = { timeZone: "America/Bogota" };
+      this.horaActual = ahora.toLocaleTimeString("es-CO", opciones);
     },
   },
   mounted() {
@@ -180,4 +209,3 @@ export default {
   },
 };
 </script>
-

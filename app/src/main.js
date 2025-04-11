@@ -9,10 +9,12 @@ import '@fortawesome/fontawesome-free/css/all.min.css'; // FontAwesome CSS
 
 // Importa scripts globales
 import './assets/js/app.js'; // Archivo JS personalizado
-import $ from 'jquery'; // jQuery (si es necesario)
+import $ from 'jquery'; 
 
 // Importa Bootstrap JS
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
 
 // Crea la aplicación Vue
 const app = createApp(App);
@@ -22,3 +24,5 @@ app.use(router);
 
 // Monta la aplicación en el elemento con id "app"
 app.mount('#app');
+
+
