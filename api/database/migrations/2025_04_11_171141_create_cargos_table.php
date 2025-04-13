@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dependencias', function (Blueprint $table) {
+        Schema::create('cargos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('slug')->nullable();
-            $table->text('description')->nullable();
+            $table->string('name'); // Ej: "Director", "Analista Senior"
+            $table->foreignId('area_id')->constrained()->onDelete('cascade');
+            $table->integer('grado'); // 1=Alto rango, 5=Bajo rango
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dependencias');
+        Schema::dropIfExists('cargos');
     }
 };

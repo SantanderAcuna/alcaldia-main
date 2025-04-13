@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dependencias', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre');
-            $table->string('slug')->nullable();
-            $table->text('description')->nullable();
+        Schema::create('role_users', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->primary(['user_id', 'role_id']); // Clave primaria compuesta
             $table->timestamps();
+           
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dependencias');
+        Schema::dropIfExists('role_users');
     }
 };

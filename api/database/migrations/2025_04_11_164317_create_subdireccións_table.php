@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dependencias', function (Blueprint $table) {
+        Schema::create('subdireccións', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('slug')->nullable();
-            $table->text('description')->nullable();
+            $table->string('name');
+            $table->foreignId('dependencia_id')->constrained()->onDelete('cascade');
+            $table->foreignId('director_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dependencias');
+        Schema::dropIfExists('subdireccións');
     }
 };

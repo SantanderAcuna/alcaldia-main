@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dependencias', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('slug')->nullable();
-            $table->text('description')->nullable();
+            $table->string('name')->unique(); // Ej: 'admin', 'director', 'analista'
+            $table->string('description')->nullable(); // Detalle del rol
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dependencias');
+        Schema::dropIfExists('roles');
     }
 };
