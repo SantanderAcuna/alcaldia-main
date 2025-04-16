@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visita_santa_martas', function (Blueprint $table) {
+        Schema::create('tipo_procedimientos', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre', 100)->unique();
+            $table->string('descripcion', 255)->nullable();
+            $table->boolean('estado')->default(true);
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('visita_santa_martas');
+        Schema::dropIfExists('tipo_procedimientos');
     }
 };
