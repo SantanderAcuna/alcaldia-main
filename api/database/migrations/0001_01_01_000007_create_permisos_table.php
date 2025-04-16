@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('permisos', function (Blueprint $table) {
             $table->id();                                                      // BigInt unsigned PK
-            $table->string('name', 50)->unique()->comment('Clave interna del rol, p.ej. admin');
-            $table->string('slug', 60)->unique()->comment('URL-friendly');
-            $table->string('label', 100)->comment('Nombre legible, p.ej. Administrador');
-            $table->boolean('is_active')->default(true)->comment('Rol habilitado');
+            $table->string('name', 60)->unique()->comment('Clave interna, p.ej. post.create');
+            $table->string('slug', 100)->unique()->comment('URL-friendly o agrupación');
+            $table->string('label', 120)->comment('Nombre legible, p.ej. Crear publicaciones');
+            $table->boolean('is_active')->default(true)->comment('Permiso habilitado');
             $table->softDeletes();                                              // Soft deletes
             $table->timestamps();                                               // created_at y updated_at
-            $table->index('is_active');                                         // Índice para consultas rápidas
+            $table->index('is_active');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permisos');
     }
 };

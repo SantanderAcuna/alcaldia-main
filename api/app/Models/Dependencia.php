@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Dependencia extends Model
 {
-
+    use HasFactory;
 
     public function Subdireccion()
     {

@@ -20,27 +20,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'nombres',
-        'apellidos',
-        'fecha_nacimiento',
-        'lugar_nacimiento',
-        'direccion',
-        'ciudad',
-        'direccion',
-        'estado_civil',
-        'sexo',
-        'nacionalidad',
-        'tipo_sangre',
-        'foto',
-        'cargo',
-        'tipo_usuario',
-        'tipo_documento',
-        'numero_documento',
+        'name',
         'email',
         'password',
-        'phone',
-        'position_id',
-       
+        'is_active',
+        'role_id',
+        'email_verified_at',
+
 
     ];
 
@@ -52,6 +38,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'is_active' => 'boolean',
+        'email_verified_at' => 'datetime',
     ];
 
     /**
@@ -67,32 +55,58 @@ class User extends Authenticatable
         ];
     }
 
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class)->withTimestamps();
-    }
+     /** Relación many-to-many con roles */
+     public function roles()
+     {
+         return $this->belongsToMany(Role::class)
+                     ->withTimestamps();
+     }
 
-    // Puesto asignado al usuario
-    public function position()
-    {
-        return $this->belongsTo(Cargo::class);
-    }
+     /** Verifica si el usuario tiene un rol activo */
+     public function hasRole(string $roleName): bool
+     {
+         return $this->is_active
+             && $this->roles()
+                     ->where('name', $roleName)
+                     ->where('is_active', true)
+                     ->exists();
+     }
 
-    // Si el usuario es director de una división
-    public function directedDivision()
-    {
-        return $this->hasOne(Subdireccion::class, 'director_id');
-    }
+     /** Obtiene permisos activos a través de sus roles */
+     public function permissions()
+     {
+         return $this->roles()
+                     ->where('is_active', true)
+                     ->with('permissions')
+                     ->get()
+                     ->pluck('permissions')
+                     ->flatten()
+                     ->where('is_active', true)
+                     ->unique('id');
+     }
 
-    // Si el usuario es manager de un área
-    public function managedArea()
-    {
-        return $this->hasOne(Area::class, 'manager_id');
-    }
+     /** Verifica permiso específico */
+        public function hasPermission(string $permissionName): bool
+        {
+            return $this->is_active
+                && $this->permissions()
+                        ->where('name', $permissionName)
+                        ->exists();
+        }
 
-    // Verifica si el usuario tiene un rol específico
-    public function hasRole($roleName)
-    {
-        return $this->roles()->where('name', $roleName)->exists();
-    }
+        public function isAdministrador(): bool
+        {
+            return $this->role === 'administrador';
+        }
+
+        /**
+         * Comprueba si este usuario es funcionario.
+         *
+         * @return bool
+         */
+        public function isFuncionario(): bool
+        {
+            return $this->role === 'funcionario';
+        }
+
 }

@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('procedimientos_macro_procesos', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('macro_proceso_id')->constrained('macro_procesos')->onDelete('cascade');
             $table->foreignId('tipo_procedimiento_id')->constrained('tipo_procedimientos')->onDelete('restrict');
+            $table->foreignId('funcion_macro_proceso_id')->constrained('funcion_macro_procesos')->onDelete('cascade');
+            
             $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->integer('orden')->nullable();
+            $table->boolean('estado')->default(true);
             $table->timestamps();
         });
     }
