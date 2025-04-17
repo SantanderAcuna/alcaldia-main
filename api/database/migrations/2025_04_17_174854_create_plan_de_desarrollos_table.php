@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alcaldes', function (Blueprint $table) {
+        Schema::create('plan_de_desarrollos', function (Blueprint $table) {
             $table->id();
+            $table->text('titulo')->comment('Plan de desarrollo perioodo en curso');
+            $table->text('contenido')->nullable();
             $table->foreignId('galeria_id')->constrained('galerias')->onDelete('cascade');
-            $table->string('nombre_completo');
-            $table->string('cargo')->comment('alcalde distrital y periodo');
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin')->nullable();
-            $table->longText('objetivo')->nullable();
-            $table->boolean('actual')->default(true);
+            $table->foreignId('alcalde_id')->constrained('alcaldes')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('alcaldes');
+        Schema::dropIfExists('plan_de_desarrollos');
     }
 };
