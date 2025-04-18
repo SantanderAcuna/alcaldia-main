@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Menu\Categoria;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,6 +15,8 @@ class CategoriaFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Categoria::class;
+
     public function definition(): array
     {
         return [

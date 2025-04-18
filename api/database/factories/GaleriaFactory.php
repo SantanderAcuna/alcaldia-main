@@ -22,12 +22,18 @@ class GaleriaFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->optional()->word(),
-            'ruta' => $this->faker->filePath(),
-            'tipo' => $this->faker->randomElement(['imagen', 'documento', 'video', 'audio']),
-            'extension' => $this->faker->fileExtension(),
-            'tamano' => $this->faker->numberBetween(10000, 5000000),
-            'descripcion' => $this->faker->sentence(),
+            'disco' => 'public', // puedes ajustar según tus discos configurados
+            'ruta_archivo' => $this->faker->filePath(),
+            'mime_type' => $this->faker->mimeType(),
+            'tamano_bytes' => $this->faker->numberBetween(50000, 5000000),
+            'metadatos' => json_encode([
+                'resolucion' => '1920x1080',
+                'formato' => 'HD',
+                'descripcion' => $this->faker->sentence()
+            ]),
+            'galeriaable_type' => 'App\\Models\\Alcaldia\\Publicacion', // ejemplo, cambia según tu modelo real
+            'galeriaable_id' => 1, // puedes usar model factories para asociar dinámicamente si lo necesitas
+            
         ];
     }
 }

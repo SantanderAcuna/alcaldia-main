@@ -12,20 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('galerias', function (Blueprint $table) {
-            $table->id();
-            // Nombre amigable o título para el archivo (opcional)
-            $table->string('nombre')->nullable();
-            // La ruta donde se almacena el archivo (puede ser un path relativo o URL)
-            $table->string('ruta');
-            // Tipo de archivo: imagen, documento, video, audio, etc.
-            $table->string('tipo')->nullable();
-            // Extensión del archivo, ej. jpg, png, pdf, mp4...
-            $table->string('extension')->nullable();
-            // Tamaño del archivo en bytes
-            $table->unsignedBigInteger('tamano')->nullable();
-            // Descripción adicional o metadatos
-            $table->text('descripcion')->nullable();
-            $table->timestamps();
+            $table->id()->primary();
+            $table->string('disco', 20)->default('public')->index();
+            $table->string('ruta_archivo')->comment('Ruta relativa en el disco');
+            $table->string('mime_type', 100);
+            $table->unsignedBigInteger('tamano_bytes');
+            $table->json('metadatos')->nullable()->comment('EXIF, dimensiones, etc.');
+            $table->morphs('galeriaable');
+              $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['created_at', 'disco']);
+            $table->fullText('metadatos');
+
+
         });
     }
 

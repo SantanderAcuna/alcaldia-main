@@ -13,20 +13,17 @@ return new class extends Migration
     {
         Schema::create('gabinetes', function (Blueprint $table) {
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->onDelete('cascade');
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('dependencia_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('perfil_id')->constrained('perfiles')->cascadeOnDelete();
+            $table->date('fecha_inicio')->index();
+            $table->date('fecha_fin')->nullable()->index();
+            $table->boolean('actual')->default(false)->index();
+            $table->timestamps();
 
-            $table->foreignId('dependencia_id')
-                ->constrained('dependencias')
-                ->onDelete('cascade');
-
-            $table->foreignId('perfil_id')
-                ->constrained('perfiles') // IMPORTANTE: Asegúrate de que la tabla se llame "perfiles".
-                ->onDelete('cascade');
-
-            // Clave primaria compuesta para evitar duplicados
-            $table->primary(['user_id', 'dependencia_id', 'perfil_id']);
+            // Restricción única compuesta
+            $table->unique(['user_id', 'dependencia_id', 'perfil_id']);
         });
     }
 

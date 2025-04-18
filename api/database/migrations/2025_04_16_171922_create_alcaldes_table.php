@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('alcaldes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('galeria_id')->constrained('galerias')->onDelete('cascade');
+            $table->foreignId('galeria_id')->nullable()->constrained('galerias')->cascadeOnDelete();
+
             $table->string('nombre_completo');
             $table->string('cargo')->comment('alcalde distrital y periodo');
             $table->date('fecha_inicio');

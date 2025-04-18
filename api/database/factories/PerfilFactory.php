@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Perfil;
+use App\Models\Usuario\Perfil;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +17,7 @@ class PerfilFactory extends Factory
      */
 
      protected $model = Perfil::class;
-     
+
     public function definition(): array
     {
 

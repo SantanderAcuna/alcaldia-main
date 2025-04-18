@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Usuario;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,11 +20,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nombres',
+        'apellidos',
         'email',
         'password',
         'is_active',
-        'role_id',
+
         'email_verified_at',
 
 
@@ -107,6 +108,13 @@ class User extends Authenticatable
         public function isFuncionario(): bool
         {
             return $this->role === 'funcionario';
+        }
+
+        use HasFactory;
+
+        protected static function newFactory()
+        {
+            return \Database\Factories\UserFactory::new();
         }
 
 }

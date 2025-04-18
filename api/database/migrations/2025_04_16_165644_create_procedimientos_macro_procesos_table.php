@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('macro_proceso_id')->constrained('macro_procesos')->onDelete('cascade');
-            $table->foreignId('tipo_procedimiento_id')->constrained('tipo_procedimientos')->onDelete('restrict');
-            $table->foreignId('funcion_macro_proceso_id')->constrained('funcion_macro_procesos')->onDelete('cascade');
-            
+            $table->foreignId('tipo_procedimiento_id')
+                ->nullable()
+                ->constrained('tipo_procedimientos')
+                ->nullOnDelete();
+            $table->foreignId('funcion_macro_proceso_id')
+                ->nullable()
+                ->constrained('funcion_macro_procesos')
+                ->nullOnDelete();
+
             $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->integer('orden')->nullable();

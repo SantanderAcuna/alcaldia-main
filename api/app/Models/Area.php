@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Usuario\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Area extends Model
@@ -19,8 +20,8 @@ class Area extends Model
     }
 
     // Puestos en esta área
-    public function positions()
+    public function area()
     {
-        return $this->hasMany(Position::class);
+        return $this->hasMany(Area::class);
     }
 }

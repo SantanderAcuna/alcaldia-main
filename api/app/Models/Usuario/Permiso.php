@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Usuario;
+
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,8 +13,16 @@ class Permiso extends Model
 
     use HasFactory, SoftDeletes;
 
+    protected $table = 'permisos';
     protected $fillable = [
-        'name', 'slug', 'label', 'is_active',
+        'nombre',
+        'grupo',
+        'slug',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /** Roles que tienen este permiso */
@@ -21,5 +30,12 @@ class Permiso extends Model
     {
         return $this->belongsToMany(Role::class)
                     ->withTimestamps();
+    }
+
+    use HasFactory;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\PermisoFactory::new();
     }
 }

@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Permiso>
@@ -14,12 +16,18 @@ class PermisoFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = \App\Models\Usuario\Permiso::class;
+
     public function definition(): array
     {
+        $grupo = $this->faker->randomElement(['usuarios', 'publicaciones', 'configuraciones']);
+        $accion = $this->faker->randomElement(['crear', 'leer', 'actualizar', 'eliminar']);
+        $nombre = "{$grupo}.{$accion}";
+
         return [
-            'name' => $this->faker->unique()->word(),
-            'slug' => $this->faker->unique()->slug(),
-            'label' => $this->faker->sentence(3),
+            'nombre' => $nombre,
+            'grupo' => $grupo,
+            'slug' => Str::slug("{$accion} {$grupo}"),
             'is_active' => true,
         ];
     }

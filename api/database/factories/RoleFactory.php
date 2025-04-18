@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+
+use App\Models\Usuario\Role;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,6 +17,9 @@ class RoleFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
+     protected $model = Role::class;
+
     public function definition(): array
     {
         return [

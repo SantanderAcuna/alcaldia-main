@@ -13,19 +13,16 @@ return new class extends Migration
     {
         Schema::create('directorio_distritals', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('funcionario');
-            $table->string('correo');
-            $table->string('red_social')->nullable();
-            $table->enum('tipo_entidad', [
-                'SECRETARÍA',
-                'INSTITUTO',
-                'DESCENTRALIZADO',
-                'JEFATURA',
-                'ASESORÍA',
-                'SUBDIRECCIÓN'
-            ]);
+            $table->foreignId('categoria_id')->constrained()->comment('Relación con navbar');
+            $table->string('nombre', 150)->index();
+            $table->string('cargo', 100);
+            $table->string('email')->unique();
+            $table->json('contactos')->comment('{telefonos:[], redes_sociales: {}}');
+            $table->foreignId('tipo_entidad_id')->constrained()->comment('Relación con navbar');
+           $table->foreignId('foto_id')->nullable()->constrained('galerias')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

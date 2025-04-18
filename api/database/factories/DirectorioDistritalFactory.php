@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Alcaldia\DirectorioDistrital;
-
+use App\Models\Galeria;
+use App\Models\Menu\Categoria;
+use App\Models\TipoEntidad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,21 +17,34 @@ class DirectorioDistritalFactory extends Factory
 
     public function definition(): array
     {
-        $tipos = [
-            'SECRETARÍA',
-            'INSTITUTO',
-            'DESCENTRALIZADO',
-            'JEFATURA',
-            'ASESORÍA',
-            'SUBDIRECCIÓN'
-        ];
-
         return [
-            'nombre' => fake()->company(),
-            'funcionario' => fake()->name(),
-            'correo' => fake()->unique()->companyEmail(),
-            'red_social' => fake()->optional()->url(),
-            'tipo_entidad' => fake()->randomElement($tipos)
+            // ✅ Relación con la tabla categorías
+            'categoria_id' => Categoria::inRandomOrder()->first()?->id ?? 1,
+
+            // ✅ Nombre y cargo
+            'nombre' => $this->faker->name,
+            'cargo' => $this->faker->jobTitle,
+
+            // ✅ Correo electrónico único
+            'email' => $this->faker->unique()->safeEmail,
+
+            // ✅ Contactos en formato JSON
+            'contactos' => [
+                'telefonos' => [
+                    $this->faker->numerify('300#######'),
+                    $this->faker->numerify('310#######')
+                ],
+                'redes_sociales' => [
+                    'facebook' => 'https://facebook.com/' . $this->faker->userName,
+                    'twitter' => 'https://twitter.com/' . $this->faker->userName,
+                ]
+            ],
+
+            // ✅ Relación con tipo_entidad
+            'tipo_entidad_id' => TipoEntidad::inRandomOrder()->first()?->id ?? 1,
+
+            // ✅ Foto (puede ser null)
+            'foto_id' => Galeria::inRandomOrder()->first()?->id,
         ];
     }
 }

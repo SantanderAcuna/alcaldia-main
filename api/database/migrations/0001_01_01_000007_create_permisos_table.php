@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permisos', function (Blueprint $table) {
-            $table->id();                                                      // BigInt unsigned PK
-            $table->string('name', 60)->unique()->comment('Clave interna, p.ej. post.create');
-            $table->string('slug', 100)->unique()->comment('URL-friendly o agrupación');
-            $table->string('label', 120)->comment('Nombre legible, p.ej. Crear publicaciones');
-            $table->boolean('is_active')->default(true)->comment('Permiso habilitado');
-            $table->softDeletes();                                              // Soft deletes
-            $table->timestamps();                                               // created_at y updated_at
-            $table->index('is_active');
+            $table->id();
+            $table->string('nombre')->unique()->comment('Ej: post.create');
+            $table->string('grupo', 50)->index()->comment('Agrupación: users, posts');
+            $table->string('slug');
+            $table->boolean('is_active')->default(true)->index();
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

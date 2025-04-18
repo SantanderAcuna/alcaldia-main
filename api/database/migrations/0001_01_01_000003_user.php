@@ -14,18 +14,18 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             // Usamos el helper "id" que crea un BigIncrements, compatible con foreignId()
             $table->id();
-            $table->string('name');
+            $table->string('nombres', 50);
+            $table->string('apellidos', 50);
             $table->string('email')->unique();
-            $table->string('password');
-            $table->boolean('is_active')->default(true)->comment('Usuario habilitado');
-            $table->index('is_active');
-            $table->rememberToken();
-            $table->timestamps();
-            $table->foreignId('role_id')
-            ->constrained('roles')
-            ->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->boolean('is_active')->default(true)->index();
+            $table->rememberToken();
             $table->softDeletes();
+            $table->timestamps();
+
+            // Eliminar role_id si se usa solo role_user
+            $table->foreignId('main_role_id')->nullable()->constrained('roles')->nullOnDelete();
         });
     }
 
