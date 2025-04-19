@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('directorio_distritals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('categoria_id')->constrained()->comment('Relación con navbar');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('categoria_id')->index('directorio_distritals_categoria_id_foreign');
             $table->string('nombre', 150)->index();
             $table->string('cargo', 100);
             $table->string('email')->unique();
             $table->json('contactos')->comment('{telefonos:[], redes_sociales: {}}');
-            $table->foreignId('tipo_entidad_id')->constrained()->comment('Relación con navbar');
-           $table->foreignId('foto_id')->nullable()->constrained('galerias')->nullOnDelete();
+            $table->unsignedBigInteger('tipo_entidad_id')->index('directorio_distritals_tipo_entidad_id_foreign');
+            $table->unsignedBigInteger('foto_id')->nullable()->index('directorio_distritals_foto_id_foreign');
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 

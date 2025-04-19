@@ -12,13 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('funcion_macro_procesos', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('macro_proceso_id')->constrained('macro_procesos')->onDelete('cascade');
-            $table->foreignId('tipo_procedimiento_id')
-                ->nullable()
-                ->constrained('tipo_procedimientos')
-                ->nullOnDelete();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('macro_proceso_id')->index('funcion_macro_procesos_macro_proceso_id_foreign');
+            $table->unsignedBigInteger('tipo_procedimiento_id')->nullable()->index('funcion_macro_procesos_tipo_procedimiento_id_foreign');
             $table->text('descripcion');
             $table->integer('orden')->nullable();
             $table->timestamps();

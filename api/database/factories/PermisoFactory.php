@@ -20,14 +20,17 @@ class PermisoFactory extends Factory
 
     public function definition(): array
     {
-        $grupo = $this->faker->randomElement(['usuarios', 'publicaciones', 'configuraciones']);
-        $accion = $this->faker->randomElement(['crear', 'leer', 'actualizar', 'eliminar']);
-        $nombre = "{$grupo}.{$accion}";
+        // Conjunto cerrado de recursos y acciones
+        $resources = ['posts', 'users', 'settings'];
+        $actions   = ['create', 'edit', 'delete', 'view'];
+
+        $resource = $this->faker->randomElement($resources);
+        $action   = $this->faker->randomElement($actions);
 
         return [
-            'nombre' => $nombre,
-            'grupo' => $grupo,
-            'slug' => Str::slug("{$accion} {$grupo}"),
+            'nombre'    => "{$resource}.{$action}",   // Ej: users.view
+            'grupo'     => $resource,                 // Ej: users
+            'slug'      => "{$resource}-{$action}",   // Ej: users-view
             'is_active' => true,
         ];
     }

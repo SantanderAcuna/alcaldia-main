@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('gabinetes', function (Blueprint $table) {
-
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('dependencia_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('perfil_id')->constrained('perfiles')->cascadeOnDelete();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('dependencia_id')->index('gabinetes_dependencia_id_foreign');
+            $table->unsignedBigInteger('perfil_id')->index('gabinetes_perfil_id_foreign');
+            $table->string('cargo')->nullable()->comment('Cargo del gabinete');
             $table->date('fecha_inicio')->index();
             $table->date('fecha_fin')->nullable()->index();
             $table->boolean('actual')->default(false)->index();
             $table->timestamps();
 
-            // Restricción única compuesta
             $table->unique(['user_id', 'dependencia_id', 'perfil_id']);
         });
     }

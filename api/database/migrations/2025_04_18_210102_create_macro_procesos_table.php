@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('macro_procesos', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nombre', 150)->unique();
             $table->text('mision');
             $table->text('vision')->nullable();
-            $table->foreignId('dependencia_id')->constrained('dependencias')->onDelete('cascade');
+            $table->unsignedBigInteger('dependencia_id')->index('macro_procesos_dependencia_id_foreign');
             $table->string('codigo', 50)->nullable()->unique();
-            $table->string('organigrama_url', 500)->nullable(); // Nueva columna para imagen
+            $table->string('organigrama_url', 500)->nullable();
             $table->boolean('estado')->default(true);
             $table->timestamps();
         });

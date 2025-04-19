@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dependencias', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nombre', 150)->unique();
-            $table->string('descripcion', 255)->nullable();
+            $table->string('descripcion')->nullable();
             $table->string('correo', 150)->nullable();
             $table->string('telefono', 50)->nullable();
-            $table->string('direccion', 255)->nullable();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('direccion')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable()->index('dependencias_user_id_foreign');
             $table->timestamps();
         });
     }

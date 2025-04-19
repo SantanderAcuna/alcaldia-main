@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('plan_de_desarrollos', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->text('titulo')->comment('Plan de desarrollo perioodo en curso');
             $table->text('contenido')->nullable();
-            $table->foreignId('galeria_id')->constrained('galerias')->onDelete('cascade');
-            $table->foreignId('alcalde_id')->constrained('alcaldes')->onDelete('cascade');
-
+            $table->unsignedBigInteger('galeria_id')->index('plan_de_desarrollos_galeria_id_foreign');
+            $table->unsignedBigInteger('alcalde_id')->index('plan_de_desarrollos_alcalde_id_foreign');
             $table->timestamps();
         });
     }

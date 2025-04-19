@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Menu\Categoria;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Categoria>
@@ -19,11 +20,11 @@ class CategoriaFactory extends Factory
 
     public function definition(): array
     {
+        $name = $this->faker->unique()->word();
         return [
-            //
-            'nombre' => $this->faker->unique()->word(),
-            'slug' => $this->faker->unique()->slug(),
-            'descripcion' => $this->faker->optional()->text(100),
+            'nombre'      => ucfirst($name),
+            'slug'        => Str::slug($name),
+            'descripcion' => $this->faker->sentence(),
         ];
     }
 }

@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('alcaldes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('galeria_id')->nullable()->constrained('galerias')->cascadeOnDelete();
-
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('galeria_id')->nullable()->index('alcaldes_galeria_id_foreign');
             $table->string('nombre_completo');
             $table->string('cargo')->comment('alcalde distrital y periodo');
             $table->date('fecha_inicio');

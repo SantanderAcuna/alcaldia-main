@@ -14,7 +14,7 @@ class Galeria extends Model
 
    use SoftDeletes;
 
-  
+
 
 
    // Nombre explícito de tabla (aunque sigue convención)
@@ -32,7 +32,13 @@ class Galeria extends Model
 
    ];
 
-    public function imageable()
+   protected $casts = [
+    'metadatos' => 'array',
+];
+
+
+
+    public function galeriaable()
     {
         return $this->morphTo();
     }

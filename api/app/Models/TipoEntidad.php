@@ -13,7 +13,7 @@ class TipoEntidad extends Model
     use SoftDeletes;
     use HasFactory;
 
-    protected $table = 'tipo_entidads';
+    protected $table = 'tipo_entidades';
 
     protected $fillable = ['nombre', 'slug', 'descripcion', 'nivel_jerarquico', 'activo'];
 

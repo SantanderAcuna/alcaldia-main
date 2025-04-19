@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permiso_rols', function (Blueprint $table) {
-            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('permiso_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('permiso_id');
+
+            $table->index(['permiso_id', 'role_id']);
             $table->primary(['role_id', 'permiso_id']);
-            $table->index(['permiso_id', 'role_id']); // Índice inverso
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permiso__rols');
+        Schema::dropIfExists('permiso_rols');
     }
 };

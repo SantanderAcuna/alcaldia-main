@@ -28,14 +28,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombres' => $this->faker->name(),
-            'apellidos' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'nombres'           => $this->faker->firstName(),
+            'apellidos'         => $this->faker->lastName(),
+            'email'             => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => bcrypt('password'), // usa Hash::make() si deseas hacerlo más seguro
-            'is_active' => true,
-            'remember_token' => Str::random(10),
-            
+            'password'          => bcrypt('password'),
+            'is_active'         => $this->faker->boolean(90),
+            'remember_token'    => Str::random(10),
+            'main_role_id'      => null,     // FK asignar manualmente en seeders
         ];
     }
 

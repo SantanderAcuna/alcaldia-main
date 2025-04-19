@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\PqrsdController;
+
 use App\Http\Controllers\Api\Alcaldia\AlcaldeController;
 use App\Http\Controllers\Api\Alcaldia\DependenciaController;
 use App\Http\Controllers\Api\Alcaldia\DirectorioDistritalController;
@@ -28,8 +28,6 @@ Route::get('/user', function (Request $request) {
 
 
 
-
-Route::apiResource('pqrsds', PqrsdController::class);
 
 
 Route::apiResources([

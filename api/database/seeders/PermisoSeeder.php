@@ -14,8 +14,12 @@ class PermisoSeeder extends Seeder
      */
     public function run(): void
     {
-        $grupos = ['usuarios', 'publicaciones', 'configuraciones'];
-        $acciones = ['crear', 'leer', 'actualizar', 'eliminar'];
+
+
+          /* 1. catálogos base */
+          $grupos   = ['usuarios', 'roles', 'permisos', 'dependencias'];
+          $acciones = ['crear', 'ver', 'editar', 'eliminar'];
+
 
         foreach ($grupos as $grupo) {
             foreach ($acciones as $accion) {

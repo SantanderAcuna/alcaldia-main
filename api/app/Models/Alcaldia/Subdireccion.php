@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Alcaldia;
 
 use App\Models\Alcaldia\Dependencia;
+use App\Models\Area;
+use App\Models\Usuario\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Subdireccion extends Model

@@ -3,6 +3,8 @@
 namespace App\Models\Usuario;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Alcaldia\Gabinete;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,12 +27,15 @@ class User extends Authenticatable
         'email',
         'password',
         'is_active',
-
-        'email_verified_at',
-
-
+        'main_role_id',
     ];
 
+
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'email_verified_at' => 'datetime',
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -56,12 +61,7 @@ class User extends Authenticatable
         ];
     }
 
-     /** Relación many-to-many con roles */
-     public function roles()
-     {
-         return $this->belongsToMany(Role::class)
-                     ->withTimestamps();
-     }
+
 
      /** Verifica si el usuario tiene un rol activo */
      public function hasRole(string $roleName): bool
@@ -116,5 +116,46 @@ class User extends Authenticatable
         {
             return \Database\Factories\UserFactory::new();
         }
+
+
+        /**
+     * Rol principal del usuario.
+     *
+     * @return BelongsTo
+     */
+    public function mainRole()
+    {
+        return $this->belongsTo(Role::class, 'main_role_id');
+    }
+
+    /**
+     * Roles asignados al usuario (relación muchos a muchos).
+     *
+     * @return BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    /**
+     * Perfil único del usuario.
+     *
+     * @return HasOne
+     */
+    public function perfil()
+    {
+        return $this->hasOne(Perfil::class);
+    }
+
+    /**
+     * Gabinetes relacionados con el usuario.
+     *
+     * @return HasMany
+     */
+    public function gabinetes()
+    {
+        return $this->hasMany(Gabinete::class);
+    }
 
 }

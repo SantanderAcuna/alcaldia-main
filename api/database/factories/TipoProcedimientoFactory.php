@@ -22,11 +22,11 @@ class TipoProcedimientoFactory extends Factory
 
     public function definition(): array
     {
+        $options = ['Solicitud', 'Inspección', 'Trámite', 'Consulta'];
         return [
-            //
-            'nombre' => $this->faker->unique()->words(2, true),
+            'nombre'      => $this->faker->randomElement($options),
             'descripcion' => $this->faker->sentence(),
-            'estado' => true,
+            'estado'      => $this->faker->boolean(90),
         ];
     }
 

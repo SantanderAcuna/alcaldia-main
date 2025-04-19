@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id();                                                      // BigInt unsigned PK
+            $table->bigIncrements('id');
             $table->string('name', 50)->unique()->comment('Clave interna del rol, p.ej. admin');
             $table->string('slug', 60)->unique()->comment('URL-friendly');
             $table->string('label', 100)->comment('Nombre legible, p.ej. Administrador');
-            $table->boolean('is_active')->default(true)->comment('Rol habilitado');
-            $table->softDeletes();                                              // Soft deletes
-            $table->timestamps();                                               // created_at y updated_at
-            $table->index('is_active');                                         // Índice para consultas rápidas
+            $table->boolean('is_active')->default(true)->index()->comment('Rol habilitado');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

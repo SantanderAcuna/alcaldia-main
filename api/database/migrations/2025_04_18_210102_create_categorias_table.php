@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipo_procedimientos', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 100)->unique();
-            $table->string('descripcion', 255)->nullable();
-            $table->boolean('estado')->default(true);
+        Schema::create('categorias', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nombre')->unique();
+            $table->string('slug')->unique();
+            $table->string('descripcion')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipo_procedimientos');
+        Schema::dropIfExists('categorias');
     }
 };

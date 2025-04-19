@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permisos', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nombre')->unique()->comment('Ej: post.create');
             $table->string('grupo', 50)->index()->comment('Agrupación: users, posts');
             $table->string('slug');

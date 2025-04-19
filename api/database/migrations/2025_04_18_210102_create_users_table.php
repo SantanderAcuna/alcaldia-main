@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            // Usamos el helper "id" que crea un BigIncrements, compatible con foreignId()
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nombres', 50);
             $table->string('apellidos', 50);
             $table->string('email')->unique();
@@ -23,9 +22,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
-
-            // Eliminar role_id si se usa solo role_user
-            $table->foreignId('main_role_id')->nullable()->constrained('roles')->nullOnDelete();
+            $table->unsignedBigInteger('main_role_id')->nullable()->index('users_main_role_id_foreign');
         });
     }
 
@@ -34,7 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
         Schema::dropIfExists('users');
     }
 };

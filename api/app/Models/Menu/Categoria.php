@@ -2,6 +2,7 @@
 
 namespace App\Models\Menu;
 
+use App\Models\Alcaldia\DirectorioDistrital;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,6 +21,11 @@ class Categoria extends Model
         'slug',
         'descripcion'
     ];
+
+    public function directorios(): HasMany
+    {
+        return $this->hasMany(DirectorioDistrital::class);
+    }
 
     protected static function newFactory()
     {

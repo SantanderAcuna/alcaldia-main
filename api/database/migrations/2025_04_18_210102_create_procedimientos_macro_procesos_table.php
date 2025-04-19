@@ -12,18 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('procedimientos_macro_procesos', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('macro_proceso_id')->constrained('macro_procesos')->onDelete('cascade');
-            $table->foreignId('tipo_procedimiento_id')
-                ->nullable()
-                ->constrained('tipo_procedimientos')
-                ->nullOnDelete();
-            $table->foreignId('funcion_macro_proceso_id')
-                ->nullable()
-                ->constrained('funcion_macro_procesos')
-                ->nullOnDelete();
-
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('macro_proceso_id')->index('procedimientos_macro_procesos_macro_proceso_id_foreign');
+            $table->unsignedBigInteger('tipo_procedimiento_id')->nullable()->index('procedimientos_macro_procesos_tipo_procedimiento_id_foreign');
+            $table->unsignedBigInteger('funcion_macro_proceso_id')->nullable()->index('procedimientos_macro_procesos_funcion_macro_proceso_id_foreign');
             $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->integer('orden')->nullable();

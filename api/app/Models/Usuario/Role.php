@@ -21,6 +21,11 @@ class Role extends Model
         'name', 'slug', 'label', 'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+
     /** Usuarios asignados */
     public function users()
     {
@@ -35,10 +40,15 @@ class Role extends Model
         return $this->belongsToMany(Permiso::class, 'permiso_rols')->withTimestamps();
     }
 
+    
+
     use HasFactory;
 
     protected static function newFactory()
     {
         return \Database\Factories\RoleFactory::new();
     }
+
+
+
 }
