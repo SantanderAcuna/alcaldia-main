@@ -20,16 +20,34 @@ class PlanDeDesarrollo extends Model
         'alcalde_id',
     ];
 
+    public function alcalde()
+    {
+        return $this->belongsTo(Alcalde::class);
+    }
+
     // Relación con Galería
     public function galeria()
     {
         return $this->belongsTo(Galeria::class);
     }
 
-    // Relación con Alcalde
-    public function alcalde()
+    // Relación polimórfica opcional (si se usa morph)
+    public function multimedia()
     {
-        return $this->belongsTo(Alcalde::class);
+        return $this->morphOne(Galeria::class, 'galeriaable');
+    }
+
+    // Scopes
+    public function scopeConRelaciones($query)
+    {
+        return $query->with(['alcalde', 'galeria']);
+    }
+
+    public function scopeVigentes($query)
+    {
+        return $query->whereHas('alcalde', function($q) {
+            $q->where('actual', true);
+        });
     }
 
     protected static function newFactory()

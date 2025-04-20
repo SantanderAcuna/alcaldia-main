@@ -5,28 +5,38 @@ namespace App\Models\Alcaldia;
 use App\Models\Alcaldia\Dependencia;
 use App\Models\Area;
 use App\Models\Usuario\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subdireccion extends Model
 {
 
+    use HasFactory, SoftDeletes;
 
-     // Pertenece a un departamento
-     public function dependencia()
-     {
-         return $this->belongsTo(Dependencia::class);
-     }
+    protected $fillable = [
+        'nombre',
+        'codigo',
+        'descripcion',
+        'estado',
+        'dependencia_id'
+    ];
 
-     // Director asignado (puede ser null)
-     public function director()
-     {
-         return $this->belongsTo(User::class, 'director_id');
-     }
+    protected $casts = [
+        'estado' => 'boolean',
+        'deleted_at' => 'datetime'
+    ];
 
-     // Áreas bajo esta división
-     public function areas()
-     {
-         return $this->hasMany(Area::class);
-     }
+    // Relación con Dependencia (N:1)
+    public function dependencia()
+    {
+        return $this->belongsTo(Dependencia::class);
+    }
+
+    // Relación con Areas (1:N)
+    public function areas()
+    {
+        return $this->hasMany(Area::class);
+    }
 
 }

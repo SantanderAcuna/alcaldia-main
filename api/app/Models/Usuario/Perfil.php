@@ -30,25 +30,23 @@ protected $casts = [
 'experiencia_publica' => 'array',
 ];
 
-/**
-* Usuario al que pertenece el perfil.
-*
-* @return BelongsTo
-*/
-public function user()
-{
-return $this->belongsTo(User::class);
-}
+   // Relación con User
+   public function user()
+   {
+       return $this->belongsTo(User::class);
+   }
 
-/**
-* Dependencia asociada.
-*
-* @return BelongsTo
-*/
-public function dependencia()
-{
-return $this->belongsTo(Dependencia::class);
-}
+   // Relación con Dependencia (opcional)
+   public function dependencia()
+   {
+       return $this->belongsTo(Dependencia::class);
+   }
+
+   // Scopes
+   public function scopeConRelaciones($query)
+   {
+       return $query->with(['user', 'dependencia']);
+   }
 
 /**
 * Gabinete vinculado a este perfil.

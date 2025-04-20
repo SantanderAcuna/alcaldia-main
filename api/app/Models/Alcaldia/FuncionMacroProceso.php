@@ -14,13 +14,37 @@ class FuncionMacroProceso extends Model
 
     protected $table = 'funcion_macro_procesos';
 
+
     protected $fillable = [
         'macro_proceso_id',
-        'nombre',
+        'tipo_procedimiento_id',
         'descripcion',
-        'estado',
+        'orden'
     ];
 
+
+    // Relación con MacroProceso
+    public function macroProceso()
+    {
+        return $this->belongsTo(MacroProceso::class);
+    }
+
+    // Relación con TipoProcedimiento (opcional)
+    public function tipoProcedimiento()
+    {
+        return $this->belongsTo(TipoProcedimiento::class);
+    }
+
+    // Scopes
+    public function scopeOrdenadas($query)
+    {
+        return $query->orderBy('orden');
+    }
+
+    public function scopeDelMacroProceso($query, $macroProcesoId)
+    {
+        return $query->where('macro_proceso_id', $macroProcesoId);
+    }
 
     protected static function newFactory()
     {

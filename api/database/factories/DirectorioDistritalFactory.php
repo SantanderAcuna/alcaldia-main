@@ -30,13 +30,16 @@ class DirectorioDistritalFactory extends Factory
 
             // ✅ Contactos en formato JSON
             'contactos' => [
-                'telefonos' => [
-                    $this->faker->numerify('300#######'),
-                    $this->faker->numerify('310#######')
-                ],
+                'telefonos' => [$this->faker->phoneNumber],
                 'redes_sociales' => [
-                    'facebook' => 'https://facebook.com/' . $this->faker->userName,
-                    'twitter' => 'https://twitter.com/' . $this->faker->userName,
+                    [
+                        'nombre' => 'Facebook', // ✅ Campo requerido
+                        'url' => $this->faker->url()
+                    ],
+                    [
+                        'nombre' => 'Twitter',
+                        'url' => $this->faker->url()
+                    ]
                 ]
             ],
 

@@ -21,10 +21,31 @@ class TipoProcedimiento extends Model
         'macro_proceso_id',
     ];
 
+    // Relación con FuncionMacroProceso
+    public function funcionesMacro()
+    {
+        return $this->hasMany(FuncionMacroProceso::class);
+    }
 
+    // Relación con ProcedimientoMacroProceso
+    public function procedimientosMacro()
+    {
+        return $this->hasMany(ProcedimientoMacroProceso::class);
+    }
+
+    // Scopes
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', true);
+    }
+
+    public function scopeConRelaciones($query)
+    {
+        return $query->with(['funcionesMacro', 'procedimientosMacro']);
+    }
 
     public static function newFactory()
- {
-     return \Database\Factories\TipoProcedimientoFactory::new();
- }
+    {
+        return \Database\Factories\TipoProcedimientoFactory::new();
+    }
 }

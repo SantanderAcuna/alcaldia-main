@@ -1,0 +1,10 @@
+
+
+# Controladores API
+php artisan make:controller Api/Alcaldia/Publico/AlcaldeController --api --model=Alcaldia/Alcalde
+php artisan make:controller Api/Alcaldia/Admin/AlcaldeController --api --model=Alcaldia/Alcalde
+php artisan make:controller Api/Alcaldia/Superadmin/AlcaldeController --api --model=Alcaldia/Alcalde
+
+# FormRequest (Validaciones)
+php artisan make:request Alcaldia/StoreAlcaldeRequest
+php artisan make:request Alcaldia/UpdateAlcaldeRequest

@@ -25,17 +25,18 @@ class Permiso extends Model
         'is_active' => 'boolean',
     ];
 
-    /** Roles que tienen este permiso */
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class)
-                    ->withTimestamps();
-    }
 
-    use HasFactory;
+
+   
 
     protected static function newFactory()
     {
         return \Database\Factories\PermisoFactory::new();
+    }
+
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'permiso_rols', 'permiso_id', 'role_id');
     }
 }

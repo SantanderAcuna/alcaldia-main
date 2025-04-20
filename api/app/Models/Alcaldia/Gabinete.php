@@ -29,36 +29,33 @@ class Gabinete extends Model
         'actual' => 'boolean',
     ];
 
-    /**
-     * Usuario asignado al gabinete.
-     *
-     * @return BelongsTo
-     */
+  
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Dependencia asociada al gabinete.
-     *
-     * @return BelongsTo
-     */
     public function dependencia()
     {
         return $this->belongsTo(Dependencia::class);
     }
 
-    /**
-     * Perfil relacionado con el gabinete.
-     *
-     * @return BelongsTo
-     */
     public function perfil()
     {
-        return $this->belongsTo(Perfil::class, 'dependencia_id');
+        return $this->belongsTo(Perfil::class);
     }
 
+    // Scopes
+    public function scopeActuales($query)
+    {
+        return $query->where('actual', true);
+    }
+
+    public function scopeConRelaciones($query)
+    {
+        return $query->with(['user', 'dependencia', 'perfil']);
+    }
 
     protected static function newFactory()
     {

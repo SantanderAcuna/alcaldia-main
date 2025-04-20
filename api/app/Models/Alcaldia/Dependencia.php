@@ -2,6 +2,7 @@
 
 namespace App\Models\Alcaldia;
 
+use App\Models\TipoEntidad;
 use App\Models\Usuario\Perfil;
 use App\Models\Usuario\User;
 use Database\Factories\DependenciaFactory;
@@ -43,37 +44,74 @@ class Dependencia extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Perfiles asociados a esta dependencia.
-     *
-     * @return HasMany
-     */
-    public function perfiles()
-    {
-        return $this->hasMany(Perfil::class);
-    }
-
-    /**
-     * Gabinetes relacionados.
-     *
-     * @return HasMany
-     */
-    public function gabinetes()
-    {
-        return $this->hasMany(Gabinete::class);
-    }
 
     /**
      * Macro procesos asociados.
      *
      * @return HasMany
      */
+
+
+    public function responsable()
+    {
+        return $this->belongsTo(User::class, 'user_id')
+            ->withDefault([
+                'nombres' => 'Responsable no asignado',
+                'email' => 'sin-asignar@dominio.com'
+            ]);
+    }
+
+    // 2. Macroprocesos asociados
     public function macroProcesos()
     {
         return $this->hasMany(MacroProceso::class);
     }
 
+    // 3. Gabinetes de trabajo
+    public function gabinetes()
+    {
+        return $this->hasMany(Gabinete::class);
+    }
 
+    // 4. Perfiles profesionales
+    public function perfiles()
+    {
+        return $this->hasMany(Perfil::class);
+    }
+
+    // 5. Directorio distrital a través de TipoEntidad
+    public function directoriosDistritales()
+    {
+        return $this->hasManyThrough(
+            DirectorioDistrital::class,
+            TipoEntidad::class,
+            'dependencia_id', // FK en tipo_entidades
+            'tipo_entidad_id', // FK en directorio_distritals
+            'id', // PK en dependencias
+            'id' // PK en tipo_entidades
+        );
+    }
+
+    // Scope para carga eficiente de relaciones
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with([
+            'responsable',
+            'macroProcesos',
+            'gabinetes.user',
+            'perfiles',
+            'directoriosDistritales.categoria'
+        ]);
+    }
+
+    public function checkForRelationships(array $relations): void
+    {
+        foreach ($relations as $relation) {
+            if ($this->$relation()->exists()) {
+                abort(409, "No se puede eliminar: Existen {$relation} relacionados");
+            }
+        }
+    }
 
     protected static function newFactory()
     {

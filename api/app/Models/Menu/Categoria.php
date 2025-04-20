@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Categoria extends Model
 {
     //
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
 
     protected $table = 'categorias';
@@ -24,13 +24,30 @@ class Categoria extends Model
 
     public function directorios(): HasMany
     {
-        return $this->hasMany(DirectorioDistrital::class);
+        return $this->hasMany(DirectorioDistrital::class)
+            ->with(['tipoEntidad', 'foto'])
+            ->orderBy('nombre');
     }
+
+    public function scopeConRelaciones($query)
+    {
+        return $query->withCount(['directorios as total_activos' => function ($q) {
+            $q->whereNull('deleted_at');
+        }]);
+    }
+
+    public function scopeAdvancedFilter($query)
+{
+    return $query->when(request('estado'), function($q, $estado) {
+            $estado === 'activas' ? $q->whereNull('deleted_at') : $q->onlyTrashed();
+        })
+        ->when(request('sort'), function($q, $sort) {
+            $q->orderBy($sort, request('order', 'asc'));
+        });
+}
 
     protected static function newFactory()
     {
         return \Database\Factories\CategoriaFactory::new();
     }
-
-
 }

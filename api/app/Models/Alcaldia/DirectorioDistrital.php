@@ -2,6 +2,9 @@
 
 namespace App\Models\Alcaldia;
 
+use App\Models\Galeria;
+use App\Models\Menu\Categoria;
+use App\Models\TipoEntidad;
 use Database\Factories\DirectorioDistritalFactory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +31,46 @@ class DirectorioDistrital extends Model
         'contactos' => 'array',
     ];
 
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
 
+    public function tipoEntidad()
+    {
+        return $this->belongsTo(TipoEntidad::class);
+    }
+
+    public function foto()
+    {
+        return $this->belongsTo(Galeria::class, 'foto_id');
+    }
+
+    public function scopeConRelaciones($query)
+    {
+        return $query->with(['categoria', 'tipoEntidad', 'foto']);
+    }
+
+    public function setContactosAttribute($value)
+    {
+        $this->validateContactos($value);
+        $this->attributes['contactos'] = json_encode($value);
+    }
+
+    protected function validateContactos($contactos)
+    {
+        $validator = validator($contactos, [
+            'telefonos' => 'array',
+            'telefonos.*' => 'string|max:20',
+            'redes_sociales' => 'array',
+            'redes_sociales.*.nombre' => 'required|string',
+            'redes_sociales.*.url' => 'required|url'
+        ]);
+
+        if ($validator->fails()) {
+            throw new \InvalidArgumentException($validator->errors()->first());
+        }
+    }
 
     protected static function newFactory()
     {

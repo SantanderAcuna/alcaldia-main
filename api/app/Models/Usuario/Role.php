@@ -26,21 +26,23 @@ class Role extends Model
     ];
 
 
-    /** Usuarios asignados */
+  
+    public function permisos()
+    {
+        return $this->belongsToMany(Permiso::class, 'permiso_rols', 'role_id', 'permiso_id');
+    }
+
     public function users()
     {
-        return $this->belongsToMany(User::class)
-                    ->withTimestamps();
+        return $this->belongsToMany(User::class, 'role_user');
     }
 
-    /** Permisos asignados */
-
-
-    public function permisos() {
-        return $this->belongsToMany(Permiso::class, 'permiso_rols')->withTimestamps();
+    public function scopeActivos($query)
+    {
+        return $query->where('is_active', true);
     }
 
-    
+
 
     use HasFactory;
 

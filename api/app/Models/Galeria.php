@@ -43,4 +43,13 @@ class Galeria extends Model
         return $this->morphTo();
     }
 
+    public function checkRelationships(): self
+{
+    if ($this->galeriaable()->exists()) {
+        abort(409, 'No se puede eliminar: Existen recursos asociados');
+    }
+
+    return $this;
+}
+
 }

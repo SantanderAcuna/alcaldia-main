@@ -31,12 +31,29 @@ class Alcalde extends Model
     /**
      * Al crear un Funcionario, fija automáticamente el campo `role`.
      */
-    
+
 
 
     public function galeria()
     {
         return $this->belongsTo(Galeria::class);
+    }
+    public function planesDesarrollo()
+    {
+        return $this->hasMany(PlanDeDesarrollo::class);
+    }
+
+    // Scopes para consultas comunes
+    public function scopeActual($query)
+    {
+        return $query->where('actual', true);
+    }
+
+    public function scopeConGaleria($query)
+    {
+        return $query->with(['galeria' => function($q) {
+            $q->select('id', 'ruta_archivo', 'disco');
+        }]);
     }
 
 
