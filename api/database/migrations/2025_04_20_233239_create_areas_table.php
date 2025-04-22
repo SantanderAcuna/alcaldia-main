@@ -12,8 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('areas', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->string('nombre', 150)->unique();
+            $table->unsignedBigInteger('area_id')->index();
+            $table->unsignedBigInteger('user_id')->index();
+            $table->boolean('is_lider')->default(false);
             $table->timestamps();
+
+            // Relaciones
+            $table->foreign('area_id')
+                ->references('id')->on('areas')
+                ->onDelete('cascade');
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
         });
     }
 

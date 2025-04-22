@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Usuarios;
+namespace App\Http\Controllers\Api\Usuarios\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Usuario\StorePerfilRequest;
@@ -8,7 +8,7 @@ use App\Http\Requests\Usuario\UpdatePerfilRequest;
 use App\Models\Usuario\Perfil;
 use Illuminate\Http\Request;
 
-class PerfilSuperAdminController extends Controller
+class PerfilSuperAdminController  extends Controller
 {
     public function index()
     {

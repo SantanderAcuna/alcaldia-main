@@ -12,13 +12,16 @@ use App\Models\Alcaldia\DirectorioDistrital;
 use App\Models\Alcaldia\FuncionMacroProceso;
 use App\Models\Alcaldia\MacroProceso;
 use App\Models\Alcaldia\ProcedimientosMacroProceso;
+use App\Models\Alcaldia\TipoProcedimiento;
 use App\Models\Galeria;
 use App\Models\Menu\Categoria;
-use App\Models\TipoEntidad;
+use App\Models\Alcaldia\TipoEntidad;
+
 use App\Models\Usuario\Perfil;
 use App\Models\Usuario\Permiso;
 use App\Models\Usuario\Role;
 use App\Models\Usuario\User;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -52,7 +55,7 @@ class DatabaseSeeder extends Seeder
         // 3) Tipos de procedimiento fijos
         $types = ['Solicitud', 'Inspección', 'Trámite', 'Consulta'];
         foreach ($types as $type) {
-            \App\Models\Alcaldia\TipoProcedimiento::updateOrCreate(
+            TipoProcedimiento::updateOrCreate(
                 ['nombre' => $type],
                 ['descripcion' => null, 'estado' => true]
             );
@@ -96,15 +99,27 @@ class DatabaseSeeder extends Seeder
         PlanDeDesarrollo::factory(5)->create();
 
         // 11) TipoEntidad y DirectorioDistrital
-        $entityTypes = ['Secretaría', 'Instituto', 'Oficina', 'Agencia', 'Departamento', 'Unidad', 'Comisión', 'Dirección', 'Oficina Técnica', 'Oficina Jurídica'];
+        $entityTypes = [
+            'Secretaría',
+            'Instituto',
+            'Oficina',
+            'Agencia',
+            'Departamento',
+            'Unidad',
+            'Comisión',
+            'Dirección',
+            'Oficina Técnica',
+            'Oficina Jurídica'
+        ];
+
         foreach ($entityTypes as $name) {
-            \App\Models\TipoEntidad::updateOrCreate(
+            TipoEntidad::updateOrCreate(
                 ['nombre' => $name],
                 [
-                    'slug'             => \Illuminate\Support\Str::slug($name),
-                    'descripcion'      => null,
-                    'nivel_jerarquico' => rand(1, 5),
-                    'activo'           => true,
+                    'slug' => Str::slug($name),
+                    'descripcion' => null,
+                    'nivel_jerarquico' => 1,
+                    'activo' => true
                 ]
             );
         }

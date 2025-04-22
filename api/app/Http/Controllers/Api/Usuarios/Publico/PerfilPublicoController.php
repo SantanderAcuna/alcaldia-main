@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api\Usuarios;
+
+namespace App\Http\Controllers\Api\Usuarios\Publico;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario\Perfil;

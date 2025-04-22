@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Usuarios;
+namespace App\Http\Controllers\Api\Usuarios\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Usuario\StorePerfilRequest;

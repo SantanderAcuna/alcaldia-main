@@ -2,21 +2,44 @@
 
 namespace App\Models\Usuario;
 
-use App\Models\Area;
-
+use App\Models\Alcaldia\Area;
 use Illuminate\Database\Eloquent\Model;
 
 class Cargo extends Model
 {
-    // Pertenece a un área
+    /** Tabla asociada */
+    protected $table = 'cargos';
+
+    /** Campos asignables masivamente */
+    protected $fillable = [
+        'nombre',    // Nombre del cargo
+        'area_id',   // ID del área asociada
+        'user_id',   // ID del usuario asignado
+        'is_lider',  // Indicador si es líder de área
+    ];
+
+    /** Casteo de atributos */
+    protected $casts = [
+        'is_lider' => 'boolean',
+    ];
+
+    /**
+     * Un cargo pertenece a un área
+     *
+     * @return BelongsTo
+     */
     public function area()
     {
         return $this->belongsTo(Area::class);
     }
 
-    // Usuarios asignados a este puesto
-    public function users()
+    /**
+     * Un cargo pertenece a un usuario
+     *
+     * @return BelongsTo
+     */
+    public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class);
     }
 }

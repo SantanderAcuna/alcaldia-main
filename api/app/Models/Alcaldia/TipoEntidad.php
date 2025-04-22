@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Alcaldia;
 
 use App\Models\Alcaldia\DirectorioDistrital;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,15 +13,23 @@ class TipoEntidad extends Model
     use SoftDeletes;
     use HasFactory;
 
+    use SoftDeletes;
+
     protected $table = 'tipo_entidades';
 
-    protected $fillable = ['nombre', 'slug', 'descripcion', 'nivel_jerarquico', 'activo'];
-
+    protected $fillable = [
+        'nombre',
+        'slug',
+        'descripcion',
+        'nivel_jerarquico',
+        'activo'
+    ];
 
     protected $casts = [
-        'activo' => 'boolean',
-        'nivel_jerarquico' => 'integer',
+        'activo' => 'boolean'
     ];
+
+
     public function directorios()
     {
         return $this->hasMany(DirectorioDistrital::class);

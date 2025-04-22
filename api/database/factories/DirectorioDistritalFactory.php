@@ -3,9 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\Alcaldia\DirectorioDistrital;
+use App\Models\Alcaldia\TipoEntidad;
 use App\Models\Galeria;
 use App\Models\Menu\Categoria;
-use App\Models\TipoEntidad;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

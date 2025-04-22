@@ -216,4 +216,9 @@ redis-cli --scan --pattern "user_*_permisos"
     {
         return in_array($permiso, $this->permisos);
     }
+
+    public function cargos()
+    {
+        return $this->hasMany(Cargo::class);
+    }
 }

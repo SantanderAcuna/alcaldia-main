@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Alcaldia\Superadmin;
+namespace App\Http\Controllers\Api\Alcaldia\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alcaldia\UpdateAlcaldeRequest;
