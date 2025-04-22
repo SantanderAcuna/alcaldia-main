@@ -18,8 +18,8 @@ use App\Http\Controllers\Api\Alcaldia\Publico\PlanDeDesarrolloPublicoController;
 use App\Http\Controllers\Api\Alcaldia\Publico\ProcedimientoMacroProcesoPublicoController;
 use App\Http\Controllers\Api\Alcaldia\Publico\SubdireccionPublicoController;
 use App\Http\Controllers\Api\Alcaldia\Publico\TipoProcedimientoPublicoController;
-use App\Http\Controllers\Api\Alcaldia\Superadmin\AlcaldeSuperAdminController;
-use App\Http\Controllers\Api\Alcaldia\Superadmin\AreaSuperAdminController;
+use App\Http\Controllers\Api\Alcaldia\SuperAdmin\AlcaldeSuperAdminController;
+use App\Http\Controllers\Api\Alcaldia\SuperAdmin\AreaSuperAdminController;
 use App\Http\Controllers\Api\Alcaldia\SuperAdmin\FuncionMacroProcesoSuperAdminController;
 use App\Http\Controllers\Api\Alcaldia\SuperAdmin\GabineteSuperAdminController;
 use App\Http\Controllers\Api\Alcaldia\SuperAdmin\MacroProcesoSuperAdminController;
@@ -33,60 +33,39 @@ use App\Http\Controllers\Api\Categoria\SuperAdmin\CategoriaSuperAdminController;
 use App\Http\Controllers\Api\Galeria\Admin\GaleriaAdminController;
 use App\Http\Controllers\Api\Galeria\Publico\GaleriaPublicoController;
 use App\Http\Controllers\Api\Galeria\SuperAdmin\GaleriaSuperAdminController;
-use App\Http\Controllers\Api\Usuarios\PerfilAdminController;
-use App\Http\Controllers\Api\Usuarios\PerfilPublicoController;
-use App\Http\Controllers\Api\Usuarios\PerfilSuperAdminController;
+use App\Http\Controllers\Api\Usuarios\Admin\PerfilAdminController;
+use App\Http\Controllers\Api\Usuarios\Publico\PerfilPublicoController;
 use App\Http\Controllers\Api\Usuarios\Seguridad\RolesSuperAdminController;
+use App\Http\Controllers\Api\Usuarios\SuperAdmin\PerfilSuperAdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+
+
+
+
 // Rutas públicas (sin autenticación)
-Route::prefix('alcaldia/publico')->group(function () {
-    // Alcaldes
-    Route::apiResource('alcaldes', AlcaldePublicoController::class)->only(['index', 'show']);
 
-    // Categorías
+
+    // Rutas de recursos estándar
+    Route::apiResource('alcalde', AlcaldePublicoController::class)->only(['index', 'show']);
     Route::apiResource('categorias', CategoriaPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('galerias', GaleriaPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('macroprocesos', MacroProcesoPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('tipo-procedimientos', TipoProcedimientoPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('gabinetes', GabinetePublicoController::class)->only(['index', 'show']);
+    Route::apiResource('planes-desarrollo', PlanDeDesarrolloPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('perfiles', PerfilPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('funciones-macroproceso', FuncionMacroProcesoPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('procedimientos-macro', ProcedimientoMacroProcesoPublicoController::class)->only(['index', 'show']);
+    Route::apiResource('subdirecciones', SubdireccionPublicoController::class)->only(['index', 'show']);
 
-    // Galería
-    Route::get('galerias', [GaleriaPublicoController::class, 'index']);
-    Route::get('galerias/{galeria}', [GaleriaPublicoController::class, 'show']);
+    // Rutas anidadas para áreas
+    Route::prefix('subdirecciones/{subdireccion}')->group(function () {
+        Route::apiResource('areas', AreaPublicoController::class)
+            ->only(['index', 'show'])
+            ->names(['index' => 'subdirecciones.areas.index', 'show' => 'subdirecciones.areas.show']);
 
-    // Macroprocesos
-    Route::get('macroprocesos', [MacroProcesoPublicoController::class, 'index']);
-    Route::get('macroprocesos/{macroProceso}', [MacroProcesoPublicoController::class, 'show']);
-
-    // Tipo de procedimientos
-    Route::get('tipo-procedimientos', [TipoProcedimientoPublicoController::class, 'index']);
-    Route::get('tipo-procedimientos/{tipoProcedimiento}', [TipoProcedimientoPublicoController::class, 'show']);
-
-    // Gabinetes
-    Route::get('gabinetes', [GabinetePublicoController::class, 'index']);
-    Route::get('gabinetes/{gabinete}', [GabinetePublicoController::class, 'show']);
-
-    // Planes de desarrollo
-    Route::get('planes-desarrollo', [PlanDeDesarrolloPublicoController::class, 'index']);
-    Route::get('planes-desarrollo/{plan}', [PlanDeDesarrolloPublicoController::class, 'show']);
-
-    // Perfiles
-    Route::get('perfiles', [PerfilPublicoController::class, 'index']);
-    Route::get('perfiles/{perfil}', [PerfilPublicoController::class, 'show']);
-
-    // Funciones macroproceso
-    Route::get('funciones-macroproceso', [FuncionMacroProcesoPublicoController::class, 'index']);
-    Route::get('funciones-macroproceso/{funcionMacroProceso}', [FuncionMacroProcesoPublicoController::class, 'show']);
-
-    // Procedimientos macro
-    Route::get('procedimientos-macro', [ProcedimientoMacroProcesoPublicoController::class, 'index']);
-    Route::get('procedimientos-macro/{procedimiento}', [ProcedimientoMacroProcesoPublicoController::class, 'show']);
-
-    // Subdirecciones
-    Route::get('subdirecciones', [SubdireccionPublicoController::class, 'index']);
-    Route::get('subdirecciones/{subdireccion}', [SubdireccionPublicoController::class, 'show']);
-
-    // Áreas
-    Route::get('subdirecciones/{subdireccion}/areas', [AreaPublicoController::class, 'index']);
-    Route::get('subdirecciones/{subdireccion}/areas/{area}', [AreaPublicoController::class, 'show']);
 });
 
 // Rutas para administradores

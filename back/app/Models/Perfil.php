@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Models\Usuario;
+namespace App\Models;
 
-use App\Models\Alcaldia\Dependencia;
-use App\Models\Alcaldia\Gabinete;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Perfil extends Model
 {
-    /** @use HasFactory<\Database\Factories\Usuario\PerfilFactory> */
     use HasFactory;
     protected $table = 'perfiles';
 
@@ -56,13 +53,6 @@ protected $casts = [
 public function gabinete()
 {
 return $this->hasOne(Gabinete::class);
-}
-
-
-
-protected static function newFactory()
-{
-return \Database\Factories\Usuario\PerfilFactory::new();
 }
 
 }

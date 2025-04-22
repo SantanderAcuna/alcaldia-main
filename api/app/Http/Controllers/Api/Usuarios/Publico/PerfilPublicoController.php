@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario\Perfil;
 use Illuminate\Http\Request;
 
-class PerfilPublicoController extends Controller
+class PerfilPublicoController  extends Controller
 {
     public function index()
     {

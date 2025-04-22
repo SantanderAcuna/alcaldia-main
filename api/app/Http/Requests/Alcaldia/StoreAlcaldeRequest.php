@@ -11,9 +11,7 @@ class StoreAlcaldeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = auth()->user();
-
-        return $user && $user->tieneRol(['admin', 'superadmin']);
+       
     }
 
     /**
