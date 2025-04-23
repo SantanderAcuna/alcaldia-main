@@ -49,5 +49,5 @@ class PlanDeDesarrollo extends Model
         });
     }
 
-   
+
 }

@@ -6,29 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TipoEntidad extends Model
+class Subdireccion extends Model
 {
     use SoftDeletes;
-    use HasFactory;
 
-
-    protected $table = 'tipo_entidads';
-
+    protected $table = 'subdirecciones';
     protected $fillable = [
         'nombre',
-        'slug',
         'descripcion',
-        'nivel_jerarquico',
-        'activo'
+        'dependencia_id',
+        'estado'
     ];
-
     protected $casts = [
-        'activo' => 'boolean'
+        'estado' => 'boolean'
     ];
 
-
-    public function directorios()
+    public function dependencia()
     {
-        return $this->hasMany(DirectorioDistrital::class);
+        return $this->belongsTo(Dependencia::class);
+    }
+
+    public function areas()
+    {
+        return $this->hasMany(Area::class);
     }
 }

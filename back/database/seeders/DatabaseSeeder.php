@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Alcalde;
+use App\Models\Area;
 use App\Models\Categoria;
 use App\Models\Dependencia;
 use App\Models\DirectorioDistrital;
@@ -15,6 +16,7 @@ use App\Models\Permiso;
 use App\Models\PlanDeDesarrollo;
 use App\Models\ProcedimientoMacroProceso;
 use App\Models\Rol;
+use App\Models\Subdireccion;
 use App\Models\TipoEntidad;
 use App\Models\TipoProcedimiento;
 use App\Models\User;
@@ -94,8 +96,9 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         // 10) Alcaldes y Planes de Desarrollo
-        Alcalde::factory(5)->create();
-        PlanDeDesarrollo::factory(5)->create();
+        Alcalde::factory(10)->create();
+        PlanDeDesarrollo::factory(10)->create();
+
 
         // 11) TipoEntidad y DirectorioDistrital
         $entityTypes = [
@@ -123,5 +126,8 @@ class DatabaseSeeder extends Seeder
             );
         }
         DirectorioDistrital::factory(20)->create();
+
+        Area::factory()->count(50)->create();
+        Subdireccion::factory()->count(50)->create();
     }
 }

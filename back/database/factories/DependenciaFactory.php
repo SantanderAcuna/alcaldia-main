@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,12 +18,12 @@ class DependenciaFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre'      => $this->faker->company(),
-            'descripcion' => $this->faker->catchPhrase(),
-            'correo'      => $this->faker->companyEmail(),
-            'telefono'    => $this->faker->phoneNumber(),
-            'direccion'   => $this->faker->address(),
-            'user_id'     => 1,
+            'nombre' => $this->faker->unique()->company, // Añade ->unique()
+            'descripcion' => $this->faker->text(200),
+            'correo' => $this->faker->unique()->companyEmail,
+            'telefono' => $this->faker->unique()->phoneNumber,
+            'direccion' => $this->faker->address,
+            'user_id' => User::factory(),
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Perfil;
+use App\Models\Subdireccion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -11,65 +11,65 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class PerfilController extends Controller
+class SubdireccionController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
         try {
-            $perfiles = Perfil::with(['user', 'dependencia'])
-                ->filter($request->only(['user_id', 'dependencia_id']))
-                ->orderByDesc('id')
+            $subdirecciones = Subdireccion::with('dependencia')
+                ->filter($request->only(['nombre']))
+                ->orderBy('nombre')
                 ->paginate($request->input('per_page', 15))
                 ->withQueryString();
 
-            return response()->json(['data' => $perfiles], Response::HTTP_OK);
+            return response()->json(['data' => $subdirecciones], Response::HTTP_OK);
         } catch (\Exception $e) {
-            Log::error('Error al listar perfiles: ' . $e->getMessage());
-            return $this->errorResponse('Error al obtener los perfiles');
+            Log::error('Error al listar subdirecciones: ' . $e->getMessage());
+            return $this->errorResponse('Error al obtener las subdirecciones');
         }
     }
 
     public function show(int $id): JsonResponse
     {
         try {
-            $perfil = Perfil::with(['user', 'dependencia'])->findOrFail($id);
-            return response()->json(['data' => $perfil], Response::HTTP_OK);
+            $subdireccion = Subdireccion::with('dependencia')->findOrFail($id);
+            return response()->json(['data' => $subdireccion], Response::HTTP_OK);
         } catch (\Exception $e) {
-            return $this->errorResponse('Perfil no encontrado', Response::HTTP_NOT_FOUND);
+            return $this->errorResponse('Subdirección no encontrada', Response::HTTP_NOT_FOUND);
         }
     }
 
     public function store(Request $request): JsonResponse
     {
         try {
-            $perfil = DB::transaction(function () use ($request) {
-                $validated = $this->validatePerfil($request);
-                return Perfil::create($validated);
+            $subdireccion = DB::transaction(function () use ($request) {
+                $validated = $this->validateSubdireccion($request);
+                return Subdireccion::create($validated);
             });
 
-            return response()->json(['data' => $perfil, 'message' => 'Perfil creado exitosamente'], Response::HTTP_CREATED);
+            return response()->json(['data' => $subdireccion, 'message' => 'Subdirección creada'], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
             return $this->validationErrorResponse($e);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al crear el perfil');
+            return $this->errorResponse('Error al crear la subdirección');
         }
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
         try {
-            $perfil = DB::transaction(function () use ($request, $id) {
-                $validated = $this->validatePerfil($request, true);
-                $perfil = Perfil::findOrFail($id);
-                $perfil->update($validated);
-                return $perfil;
+            $subdireccion = DB::transaction(function () use ($request, $id) {
+                $validated = $this->validateSubdireccion($request, true);
+                $subdireccion = Subdireccion::findOrFail($id);
+                $subdireccion->update($validated);
+                return $subdireccion;
             });
 
-            return response()->json(['data' => $perfil, 'message' => 'Perfil actualizado'], Response::HTTP_OK);
+            return response()->json(['data' => $subdireccion, 'message' => 'Subdirección actualizada'], Response::HTTP_OK);
         } catch (ValidationException $e) {
             return $this->validationErrorResponse($e);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al actualizar el perfil');
+            return $this->errorResponse('Error al actualizar la subdirección');
         }
     }
 
@@ -77,13 +77,13 @@ class PerfilController extends Controller
     {
         try {
             DB::transaction(function () use ($id) {
-                $perfil = Perfil::findOrFail($id);
-                $perfil->delete();
+                $subdireccion = Subdireccion::findOrFail($id);
+                $subdireccion->delete();
             });
 
             return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al eliminar el perfil');
+            return $this->errorResponse('Error al eliminar la subdirección');
         }
     }
 
@@ -91,27 +91,23 @@ class PerfilController extends Controller
     {
         try {
             DB::transaction(function () use ($id) {
-                $perfil = Perfil::withTrashed()->findOrFail($id);
-                $perfil->forceDelete();
+                $subdireccion = Subdireccion::withTrashed()->findOrFail($id);
+                $subdireccion->forceDelete();
             });
 
             return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error al eliminar permanentemente el perfil');
+            return $this->errorResponse('Error al eliminar permanentemente la subdirección');
         }
     }
 
-    private function validatePerfil(Request $request, bool $isUpdate = false): array
+    private function validateSubdireccion(Request $request, bool $isUpdate = false): array
     {
         $rules = [
-            'user_id' => 'required|exists:users,id',
-            'dependencia_id' => 'nullable|exists:dependencias,id',
-            'titulo_profesional' => 'nullable|string|max:255',
-            'especializacion' => 'nullable|string|max:255',
-            'doctorado' => 'nullable|string|max:255',
-            'foto_url' => 'nullable|string|max:500',
-            'resumen_biografico' => 'nullable|string',
-            'experiencia_publica' => 'nullable|json',
+            'nombre' => 'required|string|max:150',
+            'descripcion' => 'nullable|string',
+            'dependencia_id' => 'required|exists:dependencias,id',
+            'estado' => 'boolean'
         ];
 
         if ($isUpdate) {

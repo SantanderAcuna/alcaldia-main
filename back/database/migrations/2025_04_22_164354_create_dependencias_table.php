@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dependencias', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre', 150)->unique();
-            $table->string('descripcion')->nullable();
+            $table->text('descripcion')->nullable();
             $table->string('correo', 150)->nullable();
             $table->string('telefono', 50)->nullable();
             $table->string('direccion')->nullable();

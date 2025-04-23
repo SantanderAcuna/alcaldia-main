@@ -10,7 +10,7 @@ class ProcedimientoMacroProceso extends Model
     /** @use HasFactory<\Database\Factories\ProcedimientoMacroProcesoFactory> */
     use HasFactory;
 
-    protected $table = 'procedimientos_macro_procesos';
+    protected $table = 'procedimiento_macro_procesos';
 
 
     protected $fillable = [
@@ -47,5 +47,5 @@ class ProcedimientoMacroProceso extends Model
         return $this->belongsTo(FuncionMacroProceso::class);
     }
 
-    // Scopes       
+    // Scopes
 }
