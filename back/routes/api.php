@@ -36,9 +36,9 @@ Route::apiResource('funciones-macroproceso', FuncionMacroProcesoController::clas
 Route::apiResource('procedimientos-macro', ProcedimientoMacroProcesoController::class)->only(['index', 'show']);
 Route::apiResource('subdirecciones', SubdireccionController::class)->only(['index', 'show']);
 
-Route::get('alcal', [AlcaldeController::class, 'index']);
 
 
+Route::apiResource('alcaldes', AlcaldeController::class);
 
 Route::prefix('admin')->middleware(['auth:sanctum', 'tieneRol:admin'])->group(function () {
     Route::apiResource('alcaldes', AlcaldeController::class)->except(['update', 'destroy']);
@@ -48,7 +48,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'tieneRol:admin'])->group(fu
 
 
 Route::prefix('superadmin')->middleware(['auth:sanctum', 'tieneRol:superadmin'])->group(function () {
-    Route::apiResource('alcaldes', AlcaldeController::class);
+    // Route::apiResource('alcaldes', AlcaldeController::class);
     Route::apiResource('categorias', CategoriaController::class);
     Route::apiResource('galerias', GaleriaController::class);
     Route::apiResource('macroprocesos', MacroProcesoController::class);

@@ -708,3 +708,39 @@ footer {
   width: max-content;
   min-width: 600px;
 }
+<!-- ==========================================================================
+   Estilos para alcalde
+   ========================================================================== -->
+
+   /* src/assets/css/alcalde.css */
+
+.alcalde-form {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.alcalde-form .form-label {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.alcalde-form .btn {
+  min-width: 100px;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  border: 1px solid #f5c6cb;
+}

@@ -4,19 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class PlanDeDesarrollo extends Model
 {
     /** @use HasFactory<\Database\Factories\PlanDeDesarrolloFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'plan_de_desarrollos';
 
     protected $fillable = [
         'titulo',
-        'contenido',
-        'galeria_id',
+        'descripcion',
+        'orden',
         'alcalde_id',
+        'galeria_id'
     ];
 
     public function alcalde()
@@ -24,28 +27,22 @@ class PlanDeDesarrollo extends Model
         return $this->belongsTo(Alcalde::class);
     }
 
-    // Relación con Galería
-    public function galeria()
+
+
+    public function documento()
     {
-        return $this->belongsTo(Galeria::class);
+        return $this->belongsTo(Galeria::class, 'galeria_id');
     }
 
-    // Relación polimórfica opcional (si se usa morph)
-    public function multimedia()
+    public static function crearParaAlcalde($alcaldeId, $archivo, $datos = [])
     {
-        return $this->morphOne(Galeria::class, 'galeriaable');
-    }
+        return DB::transaction(function () use ($alcaldeId, $archivo, $datos) {
+            $documento = Galeria::crearDesdeArchivo($archivo, 'documento');
 
-    // Scopes
-    public function scopeConRelaciones($query)
-    {
-        return $query->with(['alcalde', 'galeria']);
-    }
-
-    public function scopeVigentes($query)
-    {
-        return $query->whereHas('alcalde', function($q) {
-            $q->where('actual', true);
+            return self::create(array_merge($datos, [
+                'alcalde_id' => $alcaldeId,
+                'galeria_id' => $documento->id
+            ]));
         });
     }
 

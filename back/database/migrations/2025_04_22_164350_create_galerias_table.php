@@ -13,20 +13,29 @@ return new class extends Migration
     {
         Schema::create('galerias', function (Blueprint $table) {
             $table->id();
+
+            // Información del archivo
             $table->string('disco', 20)->default('public')->index();
-            $table->string('ruta_archivo')->comment('Ruta relativa en el disco');
-            $table->string('mime_type', 100);
-            $table->unsignedBigInteger('tamano_bytes');
-            $table->json('metadatos')->nullable()->comment('EXIF, dimensiones, etc.');
+            $table->string('ruta_archivo')->comment('Ruta física del archivo en el disco');
+            $table->string('nombre_original')->comment('Nombre original del archivo');
+            $table->string('mime_type', 100)->comment('Tipo MIME del archivo');
+            $table->unsignedBigInteger('tamano_bytes')->comment('Tamaño en bytes');
 
-            // Columna STORED para FullText
-            $table->text('metadatos_busqueda')->nullable()->storedAs('metadatos->>"$.texto"');
-            $table->fullText('metadatos_busqueda');
+            // Relación polimórfica
+            $table->unsignedBigInteger('galeriaable_id')->nullable();
+            $table->string('galeriaable_type')->nullable();
 
-            $table->nullableMorphs('galeriaable');
+            // Metadatos y categorización
+            $table->string('tipo_archivo', 50)->index()->comment('imagen/documento/archivo');
+            $table->json('metadatos')->nullable();
+
+            // Auditoría
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['created_at', 'disco']);
+
+            // Índices
+            $table->index(['galeriaable_id', 'galeriaable_type']);
+            $table->index(['disco', 'tipo_archivo']);
         });
     }
 

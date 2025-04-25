@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
     {
         // 1) Permisos fijos (no factory)
         $resources = ['posts', 'users', 'settings'];
-        $actions   = ['create', 'edit', 'delete', 'view'];
+        $actions = ['create', 'edit', 'delete', 'view'];
 
         foreach ($resources as $res) {
             foreach ($actions as $act) {
@@ -45,11 +45,11 @@ class DatabaseSeeder extends Seeder
         Rol::factory()
             ->count(5)
             ->sequence(
-                ['name' => 'admin',   'slug' => 'admin',   'label' => 'Admin',   'is_active' => true],
-                ['name' => 'editor',  'slug' => 'editor',  'label' => 'Editor',  'is_active' => true],
-                ['name' => 'user',    'slug' => 'user',    'label' => 'User',    'is_active' => true],
+                ['name' => 'admin', 'slug' => 'admin', 'label' => 'Admin', 'is_active' => true],
+                ['name' => 'editor', 'slug' => 'editor', 'label' => 'Editor', 'is_active' => true],
+                ['name' => 'user', 'slug' => 'user', 'label' => 'User', 'is_active' => true],
                 ['name' => 'manager', 'slug' => 'manager', 'label' => 'Manager', 'is_active' => true],
-                ['name' => 'guest',   'slug' => 'guest',   'label' => 'Guest',   'is_active' => true]
+                ['name' => 'guest', 'slug' => 'guest', 'label' => 'Guest', 'is_active' => true]
             )
             ->create();
 
@@ -61,6 +61,9 @@ class DatabaseSeeder extends Seeder
                 ['descripcion' => null, 'estado' => true]
             );
         }
+
+        // Crear 10 galerías aleatorias
+        $galerias = Galeria::factory(10)->create();
 
         // 4) Categorías
         Categoria::factory(10)->create();
@@ -95,10 +98,44 @@ class DatabaseSeeder extends Seeder
             ])
             ->create();
 
-        // 10) Alcaldes y Planes de Desarrollo
-        Alcalde::factory(10)->create();
-        PlanDeDesarrollo::factory(10)->create();
+        // 10) Alcaldes
+        Alcalde::factory(5)
+            ->afterCreating(function (Alcalde $alcalde) use ($galerias) {
+                // Asignar foto aleatoria
+                $alcalde->foto()->associate(
+                    $galerias->where('tipo_archivo', 'imagen')->random()
+                );
+                $alcalde->save();
 
+                // Crear planes de desarrollo (1-3 por alcalde)
+                PlanDeDesarrollo::factory(rand(1, 3))
+                    ->create([
+                        'alcalde_id' => $alcalde->id,
+                        'galeria_id' => Galeria::factory()->documento()->create()->id
+                    ]);
+            })
+            ->create();
+
+        // Alcalde actual especial
+        $alcaldeActual = Alcalde::factory()
+            ->create([
+                'nombre_completo' => 'Juan Pérez',
+                'actual' => true
+            ]);
+
+        // Foto para alcalde actual
+        $alcaldeActual->foto()->associate(
+            Galeria::factory()->imagen()->create()
+        );
+        $alcaldeActual->save();
+
+        // Plan de desarrollo para alcalde actual
+        PlanDeDesarrollo::factory()
+            ->create([
+                'alcalde_id' => $alcaldeActual->id,
+                'galeria_id' => Galeria::factory()->documento()->create()->id,
+                'titulo' => 'Plan de Desarrollo 2023-2026'
+            ]);
 
         // 11) TipoEntidad y DirectorioDistrital
         $entityTypes = [
@@ -125,8 +162,8 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
-        DirectorioDistrital::factory(20)->create();
 
+        DirectorioDistrital::factory(20)->create();
         Area::factory()->count(50)->create();
         Subdireccion::factory()->count(50)->create();
     }

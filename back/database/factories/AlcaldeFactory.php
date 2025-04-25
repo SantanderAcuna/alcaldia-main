@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Alcalde;
+use App\Models\Alcaldia\PlanDeDesarrollo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,26 +16,60 @@ class AlcaldeFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
-        $fecha_inicio = fake()->dateTimeBetween('-5 years', 'now');
-        $fecha_fin = fake()->boolean(70)
-            ? fake()->dateTimeBetween($fecha_inicio, '+2 years')
-            : null;
+    protected $model = Alcalde::class;
 
+    public function definition()
+    {
         return [
-            'galeria_id' => \App\Models\Galeria::factory(), // Asume que existen galerías con IDs 1-100
-            'nombre_completo' => fake()->name(),
-            'cargo' => fake()->randomElement([
-                'Alcalde Distrital',
-                'Alcalde Municipal',
-                'Alcalde Provincial',
-                'Alcalde Distrital y Provincial',
-            ]),
-            'fecha_inicio' => $fecha_inicio,
-            'fecha_fin' => $fecha_fin,
-            'objetivo' => fake()->sentence(8),
-            'actual' => is_null($fecha_fin) // Si no tiene fecha fin, se considera actual
+            'nombre_completo' => $this->faker->name,
+            'cargo' => 'Alcalde Distrital ' . now()->format('Y'),
+            'fecha_inicio' => $this->faker->dateTimeBetween('-5 years', 'now'),
+            'fecha_fin' => $this->faker->optional(0.3)->dateTimeBetween('now', '+5 years'),
+            'objetivo' => $this->faker->paragraph,
+            'actual' => $this->faker->boolean(70), // 70% de probabilidad de ser actual
         ];
+    }
+
+
+
+    // Estados personalizados
+    public function actual()
+    {
+        return $this->state([
+            'actual' => true,
+            'fecha_fin' => null
+        ]);
+    }
+
+    public function pasado()
+    {
+        return $this->state([
+            'actual' => false,
+            'fecha_fin' => $this->faker->dateTimeBetween('-5 years', '-1 day')
+        ]);
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (\App\Models\Alcalde $alcalde) {
+            // Asignar foto solo si no tiene una
+            if (!$alcalde->foto_id) {
+                $alcalde->foto()->associate(
+                    \App\Models\Galeria::factory()->imagen()->create()
+                );
+                $alcalde->save();
+            }
+        });
+    }
+
+    public function conPlanDesarrollo()
+    {
+        return $this->afterCreating(function (\App\Models\Alcalde $alcalde) {
+            PlanDeDesarrollo::factory()
+                ->for($alcalde)
+                ->create([
+                    'galeria_id' => \App\Models\Galeria::factory()->documento()
+                ]);
+        });
     }
 }

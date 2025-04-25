@@ -13,13 +13,17 @@ return [
     |
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
+    env('FRONTEND_URL', 'http://localhost:8080'
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    'allowed_origins' => [
+        'http://localhost:8080',    // ✅ Agrega el puerto del frontend
+        'http://127.0.0.1:8080'     // ✅ Alternativa si accedes por IP
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +33,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];

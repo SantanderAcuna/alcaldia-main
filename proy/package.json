@@ -16,6 +16,7 @@
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "datatables.net-dt": "^2.2.2",
+    "dayjs": "^1.11.13",
     "jquery": "^3.7.1",
     "pinia": "^3.0.2",
     "sweetalert2": "^11.17.2",

@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Factories;
-
+use App\Models\Galeria;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,16 +14,49 @@ class GaleriaFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Galeria::class;
+
+
     public function definition(): array
     {
+        $tipos = ['imagen', 'documento'];
+        $tipo = $this->faker->randomElement($tipos);
+
         return [
-            'disco'            => config('filesystems.default'),
-            'ruta_archivo'     => 'galerias/'.$this->faker->uuid().'.jpg',
-            'mime_type'        => 'image/jpeg',
-            'tamano_bytes'     => $this->faker->numberBetween(50000,5_000_000),
-            'metadatos'        => json_encode(['width'=>640,'height'=>480]),
-            'galeriaable_type' => null,
-            'galeriaable_id'   => null,
+            'disco' => 'public',
+            'ruta_archivo' => $this->faker->filePath(),
+            'nombre_original' => $tipo == 'imagen'
+                ? $this->faker->word().'.jpg'
+                : $this->faker->word().'.pdf',
+            'mime_type' => $tipo == 'imagen'
+                ? 'image/jpeg'
+                : 'application/pdf',
+            'tamano_bytes' => $this->faker->numberBetween(1000, 10000000),
+            'tipo_archivo' => $tipo,
+            'metadatos' => [
+                'autor' => $this->faker->name(),
+                'fecha_subida' => now()->toDateTimeString()
+            ],
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
+
+    public function imagen()
+    {
+        return $this->state([
+            'mime_type' => 'image/jpeg',
+            'tipo_archivo' => 'imagen',
+            'nombre_original' => 'perfil-' . $this->faker->uuid . '.jpg'
+        ]);
+    }
+
+    public function documento()
+    {
+        return $this->state([
+            'mime_type' => 'application/pdf',
+            'tipo_archivo' => 'documento',
+            'nombre_original' => 'plan-desarrollo-' . $this->faker->uuid . '.pdf'
+        ]);
+    }
+
 }

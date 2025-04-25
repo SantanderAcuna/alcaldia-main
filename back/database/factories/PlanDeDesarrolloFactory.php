@@ -19,10 +19,12 @@ class PlanDeDesarrolloFactory extends Factory
     public function definition(): array
     {
         return [
-            'titulo' => fake()->sentence(6),
-            'contenido' => fake()->paragraphs(3, true),
-            'galeria_id' => Galeria::factory(), // Crea una galería automáticamente
-            'alcalde_id' => Alcalde::factory(), // Crea un alcalde automáticamente
+            'titulo' => $this->faker->sentence(3),
+            'descripcion' => $this->faker->paragraph(),
+            'orden' => $this->faker->numberBetween(1, 10),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
+
+
     }
 }
