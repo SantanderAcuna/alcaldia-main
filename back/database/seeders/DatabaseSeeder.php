@@ -89,14 +89,29 @@ class DatabaseSeeder extends Seeder
         $userIds = User::factory(50)->create()->pluck('id')->toArray();
         $perfilIds = Perfil::factory(50)->create()->pluck('id')->toArray();
 
-        // 9) Gabinetes con relaciones válidas
-        Gabinete::factory(20)
-            ->state(fn() => [
-                'user_id' => Arr::random($userIds),
-                'dependencia_id' => Arr::random($depIds),
-                'perfil_id' => Arr::random($perfilIds),
-            ])
-            ->create();
+        // 9) Gabinetes con relaciones válidas sin repetir combinaciones
+        $used = []; // para llevar un registro de las tripletas ya creadas
+
+        for ($i = 0; $i < 20; $i++) {
+            do {
+                $user_id        = Arr::random($userIds);
+                $dependencia_id = Arr::random($depIds);
+                $perfil_id      = Arr::random($perfilIds);
+
+                // clave simple para detectar duplicados
+                $key = "{$user_id}-{$dependencia_id}-{$perfil_id}";
+            } while (in_array($key, $used));
+
+            // marcamos esta combinación como usada
+            $used[] = $key;
+
+            // creamos el gabinete con esa tripleta única
+            Gabinete::factory()->create([
+                'user_id'        => $user_id,
+                'dependencia_id' => $dependencia_id,
+                'perfil_id'      => $perfil_id,
+            ]);
+        }
 
         // 10) Alcaldes
         Alcalde::factory(5)
@@ -164,7 +179,13 @@ class DatabaseSeeder extends Seeder
         }
 
         DirectorioDistrital::factory(20)->create();
-        Area::factory()->count(50)->create();
+        // 12a) Crear 10 áreas “raíz” sin depender de ninguna
+        $roots = Area::factory(10)->create();
+
+        // 12b) Crear 40 áreas “hijas” apuntando a un padre aleatorio
+        Area::factory(40)
+            ->state(fn() => ['area_id' => Arr::random($roots->pluck('id')->toArray())])
+            ->create();
         Subdireccion::factory()->count(50)->create();
     }
 }

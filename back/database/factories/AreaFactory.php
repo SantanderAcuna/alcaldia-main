@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Arr;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Area>
@@ -19,10 +20,13 @@ class AreaFactory extends Factory
     public function definition()
     {
         return [
-            'nombre' => $this->faker->jobTitle . ' ' . $this->faker->randomNumber(3),// Nombre único de hasta 150 caracteres
-            'area_id' => Area::factory(), // Relación con Area
-            'user_id' => User::factory(), // Relación con User
-            'is_lider' => $this->faker->boolean(10), // 30% de probabilidad de ser líder
+            'nombre'   => $this->faker->jobTitle . ' ' . $this->faker->randomNumber(3),
+            // Tomamos un área ya existente al azar; si no hay ninguna, usamos 1 (o el que prefieras)
+            'area_id'  => Area::pluck('id')->isNotEmpty()
+                            ? Arr::random(Area::pluck('id')->toArray())
+                            : 1,
+            'user_id'  => User::factory(),
+            'is_lider' => $this->faker->boolean(10),
         ];
     }
 
