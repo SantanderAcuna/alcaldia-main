@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('descripcion')->nullable(); // Esta línea debe existir
-            $table->integer('orden')->default(0);
+            $table->string('document_path');
             $table->foreignId('alcalde_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('galeria_id')->constrained('galerias')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

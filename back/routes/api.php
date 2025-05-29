@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\RolController;
 use App\Http\Controllers\Api\SubdireccionController;
 use App\Http\Controllers\Api\TipoEntidadController;
 use App\Http\Controllers\Api\TipoProcedimientoController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+/*
 Route::apiResource('alcaldes', AlcaldeController::class)->only(['index', 'show']);
 Route::apiResource('categorias', CategoriaController::class)->only(['index', 'show']);
 Route::apiResource('galerias', GaleriaController::class)->only(['index', 'show']);
@@ -35,11 +36,20 @@ Route::apiResource('perfiles', PerfilController::class)->only(['index', 'show'])
 Route::apiResource('funciones-macroproceso', FuncionMacroProcesoController::class)->only(['index', 'show']);
 Route::apiResource('procedimientos-macro', ProcedimientoMacroProcesoController::class)->only(['index', 'show']);
 Route::apiResource('subdirecciones', SubdireccionController::class)->only(['index', 'show']);
+*/
+//Route::get('/users', [UserController::class, 'index']);
+Route::apiResource('users', UserController::class);
 
 
 
-Route::apiResource('alcaldes', AlcaldeController::class);
+Route::apiResource('alcaldes', AlcaldeController::class)->parameters([
+    'alcaldes' => 'alcalde'
+]);
 
+// Ruta adicional para cambiar estado
+Route::patch('alcaldes/{alcalde}/status', [AlcaldeController::class, 'toggleStatus'])
+    ->name('alcaldes.status');
+/*
 Route::prefix('admin')->middleware(['auth:sanctum', 'tieneRol:admin'])->group(function () {
     Route::apiResource('alcaldes', AlcaldeController::class)->except(['update', 'destroy']);
     Route::apiResource('categorias', CategoriaController::class)->except(['update', 'destroy']);
@@ -117,3 +127,4 @@ Route::prefix('superadmin')->middleware(['auth:sanctum', 'tieneRol:superadmin'])
     Route::apiResource('subdireccions', SubdireccionController::class);
     Route::apiResource('areas', AreaController::class);
 });
+*/

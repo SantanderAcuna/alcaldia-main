@@ -1,0 +1,201 @@
+/* ==========================================================================
+      2. Variables semánticas de tema
+      ========================================================================== */
+:root {
+  /* Tipografía */
+  --font-body: "Gotahm", Gotahm Medium;
+  --font-heading: "Gotahm Black", Gotahm Medium;
+  --letter-spacing: 0.5px; /* tracking ligero en párrafos */
+  --letter-spacing-h: 1px; /* tracking mayor en headings */
+
+  /* Colores generales */
+  --bg: #f7f9fc;
+  --fg: #1f2937;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --text: #2d3748;
+  --muted: #6b7280;
+  --border: #ffffff;
+  --accent: #2563eb;
+  --accent-hover: #1e4fba;
+  --danger: #dc2626;
+
+  /* Paleta extendida */
+  --primary: #00568d;
+  --secondary: #00ade7;
+
+  /* Sombras y esquinas */
+  --radius: 0.5rem;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-dark: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+      7. Tablas
+      ========================================================================== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table thead {
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.table tbody tr:nth-child(odd) {
+  background: rgba(0, 0, 0, 0.03);
+}
+.table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.08);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+      8. Botones
+      ========================================================================== */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-primary {
+  background: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+.btn-secondary {
+  background: var(--muted);
+}
+.btn-secondary:hover {
+  background: #4b5563;
+}
+.btn-danger {
+  background: var(--danger);
+}
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* ==========================================================================
+      9. Modales
+      ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  animation: fade 0.25s ease;
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.modal-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  width: clamp(320px, 90vw, 480px);
+}
+
+/* ==========================================================================
+      10. Errores y formularios
+      ========================================================================== */
+.err {
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+      11. Entity & Service Cards
+      ========================================================================== */
+.entity-card,
+.service-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  background: var(--card);
+}
+.entity-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+.entity-card.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.entity-icon {
+  font-size: 3rem;
+  color: inherit;
+}
+.service-card {
+  padding: 0.5rem;
+}
+.service-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+/* ==========================================================================
+      12. Acordeón
+      ========================================================================== */
+.accordion-button {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.accordion-collapse {
+  transition: height 0.35s ease;
+}
+
+/* ==========================================================================
+      13. Iconos SVG
+      ========================================================================== */
+.icon-svg {
+  font-size: 2rem;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: middle;
+}
+.icon-svg path {
+  fill: currentColor;
+  transition: fill 0.2s ease;
+}
+.icon-svg:hover path {
+  fill: var(--accent);
+}
+
+.foto-miniatura {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 9999px; /* redonda */
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ccc;
+}
+
+
+
+td, th {
+  vertical-align: middle;
+}
+
+

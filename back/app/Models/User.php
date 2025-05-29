@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -124,6 +125,23 @@ redis-cli --scan --pattern "user_*_permisos"
         return $this->role === 'funcionario';
     }
 
+    // Modelo: app/Models/User.php
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when(
+                $filters['name'] ?? false,
+                fn($q) =>
+                $q->where('nombres', 'like', '%' . $filters['name'] . '%')
+                    ->orWhere('apellidos', 'like', '%' . $filters['name'] . '%')
+            )
+            ->when(
+                $filters['email'] ?? false,
+                fn($q) =>
+                $q->where('email', 'like', '%' . $filters['email'] . '%')
+            );
+    }
 
 
 
@@ -163,12 +181,12 @@ redis-cli --scan --pattern "user_*_permisos"
     // Relación con rol principal
     public function mainRole()
     {
-        return $this->belongsTo(Role::class, 'main_role_id');
+        return $this->belongsTo(Rol::class, 'main_role_id');
     }
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class)->withTimestamps();
+        return $this->belongsToMany(Rol::class)->withTimestamps();
     }
 
 
@@ -215,10 +233,5 @@ redis-cli --scan --pattern "user_*_permisos"
     public function tienePermiso($permiso): bool
     {
         return in_array($permiso, $this->permisos);
-    }
-
-    public function cargos()
-    {
-        return $this->hasMany(cargos::class);
     }
 }

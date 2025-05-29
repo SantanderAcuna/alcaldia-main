@@ -3,143 +3,301 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Alcalde;
-use Illuminate\Http\JsonResponse;
+use App\Models\PlanDesarrollo;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class AlcaldeController extends Controller
 {
-    public function index(): JsonResponse
+    /* ========== MÉTODOS PRINCIPALES ========== */
+
+    /**
+     * Listar alcaldes (GET /api/alcaldes)
+     */
+    public function index()
     {
         try {
-            $alcaldes = Alcalde::with(['foto', 'planDesarrollo'])
+            $alcaldes = Alcalde::with('planDesarrollo')
                 ->orderByDesc('actual')
                 ->orderByDesc('fecha_inicio')
                 ->get();
 
             return response()->json([
-                'data' => $alcaldes,
-                'total_actuales' => Alcalde::where('actual', true)->count()
-            ], Response::HTTP_OK);
+                'status' => true,
+                'data' => $alcaldes
+            ]);
         } catch (\Throwable $e) {
-            return $this->errorResponse('Error al obtener la lista de alcaldes', $e);
+            Log::error("Error listing alcaldes: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al listar alcaldes'
+            ], 500);
         }
     }
 
-    public function show(Alcalde $alcalde): JsonResponse
+    /**
+     * Mostrar alcalde específico (GET /api/alcaldes/{id})
+     */
+    public function show(Alcalde $alcalde)
     {
         try {
-            $alcalde->load(['foto', 'planDesarrollo']);
+            // Carga eficiente de relaciones necesarias
+            $alcalde->load(['planDesarrollo']);
+
             return response()->json([
-                'success' => true,
+                'status' => true,
                 'data' => $alcalde,
-                'message' => 'Detalle del alcalde obtenido correctamente'
-            ], Response::HTTP_OK);
+                'meta' => [
+                    'last_updated' => $alcalde->updated_at->toIso8601String(),
+                    'version' => $alcalde->updated_at->timestamp
+                ]
+            ]);
         } catch (\Throwable $e) {
-            return $this->errorResponse('Error al obtener el detalle del alcalde', $e);
+            Log::error("Error fetching alcalde #{$alcalde->id}: " . $e->getMessage(), [
+                'exception' => $e,
+                'request' => request()->all()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'error' => config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ] : 'Error al recuperar el alcalde'
+            ], 500);
         }
     }
 
-    public function store(Request $request): JsonResponse
+
+    /**
+     * Crear alcalde (POST /api/alcaldes)
+     */
+    public function store(Request $request)
     {
         DB::beginTransaction();
         try {
+            $validated = $request->validate($this->validationRules());
+            $filePaths = $this->processFiles($request);
+
+            $alcalde = Alcalde::create([
+                'nombre_completo' => $validated['nombre_completo'],
+                'fecha_inicio' => $validated['fecha_inicio'],
+                'fecha_fin' => $validated['fecha_fin'] ?? null,
+                'presentacion' => $validated['presentacion'] ?? null,
+                'foto_path' => $filePaths['foto_path'],
+                'actual' => $validated['actual']
+            ]);
+
+            $alcalde->planDesarrollo()->create([
+                'titulo' => $validated['titulo'],
+                'descripcion' => $validated['descripcion'] ?? null,
+                'document_path' => $filePaths['document_path']
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'data' => $alcalde->load('planDesarrollo')
+            ], Response::HTTP_CREATED);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("Error creating alcalde: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al crear alcalde'
+            ], 500);
+        }
+    }
+
+    /**
+     * Actualizar alcalde (PUT /api/alcaldes/{id})
+     */
+    public function update(Request $request, Alcalde $alcalde)
+    {
+        DB::beginTransaction();
+        try {
+            // 1. Validación estricta
             $validated = $request->validate([
                 'nombre_completo' => 'required|string|max:150',
-                'cargo' => 'required|string|max:200',
                 'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'nullable|date|after:fecha_inicio',
+                'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+                'presentacion' => 'nullable|string|max:15000',
                 'actual' => 'required|boolean',
-                'foto_id' => 'nullable|exists:galerias,id',
-                'plan_desarrollo_id' => 'nullable|exists:galerias,id',
-                'objetivo' => 'nullable|string'
+                'titulo' => 'required|string|max:255', // Campo de plan_desarrollo
+                'foto_path' => 'sometimes|image|mimes:jpeg,png,webp|max:2048',
+                'document_path' => 'sometimes|file|mimes:pdf,doc,docx|max:5120'
             ]);
 
-            if ($validated['actual'] && Alcalde::where('actual', true)->exists()) {
-                throw new \Exception('Ya existe un alcalde actual activo');
+            // 2. Procesamiento de archivos
+            $filePaths = [];
+            if ($request->hasFile('foto_path')) {
+                $filePaths['foto_path'] = $request->file('foto_path')
+                    ->store('alcaldes/fotos', 'public');
+                if ($alcalde->foto_path) {
+                    Storage::disk('public')->delete($alcalde->foto_path);
+                }
             }
 
-            $alcalde = Alcalde::create($validated);
+            if ($request->hasFile('document_path')) {
+                $filePaths['document_path'] = $request->file('document_path')
+                    ->store('planes/documentos', 'public');
+                if ($alcalde->planDesarrollo?->document_path) {
+                    Storage::disk('public')->delete($alcalde->planDesarrollo->document_path);
+                }
+            }
+
+            // 3. Actualización atómica
+            $alcalde->update([
+                'nombre_completo' => $validated['nombre_completo'],
+                'fecha_inicio' => $validated['fecha_inicio'],
+                'fecha_fin' => $validated['fecha_fin'],
+                'presentacion' => $validated['presentacion'],
+                'foto_path' => $filePaths['foto_path'] ?? $alcalde->foto_path,
+                'actual' => $validated['actual']
+            ]);
+
+            // 4. Actualizar relación
+            $alcalde->planDesarrollo()->updateOrCreate(
+                ['alcalde_id' => $alcalde->id],
+                [
+                    'titulo' => $validated['titulo'],
+                    'document_path' => $filePaths['document_path'] ?? $alcalde->planDesarrollo?->document_path
+                ]
+            );
 
             DB::commit();
+
             return response()->json([
-                'success' => true,
-                'data' => $alcalde->load('foto'),
-                'message' => 'Alcalde creado exitosamente'
-            ], Response::HTTP_CREATED);
+                'status' => true,
+                'data' => $alcalde->fresh('planDesarrollo')
+            ]);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->errorResponse('Error al crear el alcalde', $e);
+            Log::error("Update error: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al actualizar'
+            ], 500);
         }
     }
 
-    public function update(Request $request, Alcalde $alcalde): JsonResponse
+    /**
+     * Eliminar alcalde (DELETE /api/alcaldes/{id})
+     */
+    public function destroy(Alcalde $alcalde)
     {
         DB::beginTransaction();
         try {
-            $validated = $request->validate([
-                'nombre_completo' => 'sometimes|required|string|max:150',
-                'cargo' => 'sometimes|required|string|max:200',
-                'fecha_inicio' => 'sometimes|required|date',
-                'fecha_fin' => 'nullable|date|after:fecha_inicio',
-                'actual' => 'sometimes|required|boolean',
-                'foto_id' => 'nullable|exists:galerias,id',
-                'plan_desarrollo_id' => 'nullable|exists:galerias,id',
-                'objetivo' => 'nullable|string'
-            ]);
-
-            if (isset($validated['actual']) && $validated['actual']) {
-                Alcalde::where('actual', true)->where('id', '!=', $alcalde->id)->update(['actual' => false]);
+            if ($alcalde->foto_path) {
+                Storage::disk('public')->delete($alcalde->foto_path);
             }
 
-            $alcalde->update($validated);
+            if ($alcalde->planDesarrollo?->document_path) {
+                Storage::disk('public')->delete($alcalde->planDesarrollo->document_path);
+            }
 
-            DB::commit();
-            return response()->json([
-                'data' => $alcalde->fresh(['foto']),
-                'message' => 'Alcalde actualizado exitosamente'
-            ], Response::HTTP_OK);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return $this->errorResponse('Error al actualizar el alcalde', $e);
-        }
-    }
-
-    public function destroy(Alcalde $alcalde): JsonResponse
-    {
-        DB::beginTransaction();
-        try {
             $alcalde->delete();
             DB::commit();
-            return response()->json(['message' => 'Alcalde eliminado correctamente']);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Alcalde eliminado correctamente'
+            ]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->errorResponse('Error al eliminar el alcalde', $e);
+            Log::error("Error deleting alcalde: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al eliminar alcalde'
+            ], 500);
         }
     }
 
-    public function forceDestroy(int $id): JsonResponse
+    /* ========== MÉTODOS AUXILIARES ========== */
+
+    /**
+     * Reglas de validación centralizadas
+     */
+
+    public function toArray($request)
     {
-        try {
-            $alcalde = Alcalde::withTrashed()->findOrFail($id);
-            $alcalde->forceDelete();
-            return response()->json(['message' => 'Alcalde eliminado permanentemente']);
-        } catch (\Throwable $e) {
-            return $this->errorResponse('Error al eliminar definitivamente el alcalde', $e);
-        }
+        return [
+            'fecha_inicio' => $request->fecha_inicio->format('Y-m-d'),
+            'fecha_fin' => $request->fecha_fin?->format('Y-m-d'),
+
+        ];
     }
 
-    private function errorResponse(string $message, \Throwable $e): JsonResponse
-    {
-        Log::error("$message: {$e->getMessage()}");
 
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-            'error' => config('app.debug') ? $e->getMessage() : null
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    protected function validationRules(bool $isUpdate = false): array
+    {
+        return [
+            // Campos de tabla 'alcaldes'
+            'nombre_completo' => 'required|string|max:150',
+            'fecha_inicio' => 'required|date|before_or_equal:today',
+            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+            'presentacion' => 'nullable|string|max:15000',
+            'actual' => 'required|boolean',
+
+            // Campos de tabla 'plan_de_desarrollos'
+            'titulo' => 'nullable|string|max:255',
+            'descripcion' => 'nullable|string|max:5000',
+
+            // Archivos
+            'foto_path' => $isUpdate ?
+                'sometimes|image|mimes:jpeg,png,webp|max:2048' :
+                'required|image|mimes:jpeg,png,webp|max:2048',
+            'document_path' => $isUpdate ?
+                'sometimes|file|mimes:pdf,doc,docx|max:5120' :
+                'required|file|mimes:pdf,doc,docx|max:5120'
+        ];
+    }
+
+    /**
+     * Procesamiento seguro de archivos
+     */
+    private function processFiles(Request $request, ?Alcalde $alcalde = null): array
+    {
+        $paths = [];
+
+        // Procesar foto
+        if ($request->hasFile('foto_path')) {
+            $paths['foto_path'] = $request->file('foto_path')
+                ->store('alcaldes/fotos', 'public');
+
+            if ($alcalde?->foto_path) {
+                Storage::disk('public')->delete($alcalde->foto_path);
+            }
+        }
+
+        // Procesar documento
+        if ($request->hasFile('document_path')) {
+            $paths['document_path'] = $request->file('document_path')
+                ->store('planes/documentos', 'public');
+
+            if ($alcalde?->planDesarrollo?->document_path) {
+                Storage::disk('public')->delete($alcalde->planDesarrollo->document_path);
+            }
+        }
+
+        return $paths;
     }
 }

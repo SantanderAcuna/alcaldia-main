@@ -2,49 +2,41 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PlanDeDesarrollo extends Model
 {
-    /** @use HasFactory<\Database\Factories\PlanDeDesarrolloFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory,SoftDeletes;
 
     protected $table = 'plan_de_desarrollos';
 
-    protected $fillable = [
+   protected $fillable = [
         'titulo',
         'descripcion',
-        'orden',
-        'alcalde_id',
-        'galeria_id'
+        'document_path',
+        'alcalde_id'
     ];
+
+ 
+
+    protected $appends = ['document_url'];
 
     public function alcalde()
     {
         return $this->belongsTo(Alcalde::class);
     }
 
-
-
-    public function documento()
+    public function getDocumentUrlAttribute()
     {
-        return $this->belongsTo(Galeria::class, 'galeria_id');
+        return $this->document_path ? Storage::url($this->document_path) : null;
     }
 
-    public static function crearParaAlcalde($alcaldeId, $archivo, $datos = [])
-    {
-        return DB::transaction(function () use ($alcaldeId, $archivo, $datos) {
-            $documento = Galeria::crearDesdeArchivo($archivo, 'documento');
 
-            return self::create(array_merge($datos, [
-                'alcalde_id' => $alcaldeId,
-                'galeria_id' => $documento->id
-            ]));
-        });
-    }
 
 
 }

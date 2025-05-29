@@ -1,0 +1,390 @@
+<template>
+  <div class="container-fluid my-xl-5 my-md-4 my-sm-3 my-2">
+    <!-- Encabezado -->
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Trámites y Servicios</h1>
+      </div>
+    </div>
+
+    <!-- Pestañas principales -->
+    <div class="row justify-content-center my-4">
+      <div class="col-sm-6 col-md-9 col-xl-9">
+        <ul class="nav nav-tabs" id="servicesTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link active" 
+              id="catastro-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#catastro" 
+              type="button" 
+              role="tab" 
+              aria-controls="catastro" 
+              aria-selected="true"
+            >
+              <i class="fas fa-map-location-dot me-2"></i> Catastro
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="impuestos-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#impuestos" 
+              type="button" 
+              role="tab" 
+              aria-controls="impuestos" 
+              aria-selected="false"
+            >
+              <i class="fas fa-file-invoice-dollar me-2"></i> Impuestos
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="transito-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#transito" 
+              type="button" 
+              role="tab" 
+              aria-controls="transito" 
+              aria-selected="false"
+            >
+              <i class="fas fa-traffic-light me-2"></i> Tránsito
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="poblacion-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#poblacion" 
+              type="button" 
+              role="tab" 
+              aria-controls="poblacion" 
+              aria-selected="false"
+            >
+              <i class="fas fa-users me-2"></i> Población
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="salud-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#salud" 
+              type="button" 
+              role="tab" 
+              aria-controls="salud" 
+              aria-selected="false"
+            >
+              <i class="fas fa-heartbeat me-2"></i> Salud
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="economico-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#economico" 
+              type="button" 
+              role="tab" 
+              aria-controls="economico" 
+              aria-selected="false"
+            >
+              <i class="fas fa-chart-line me-2"></i> Desarrollo Económico
+            </button>
+          </li>
+        </ul>
+
+        <!-- Contenido de las pestañas -->
+        <div class="tab-content border border-top-0 rounded-bottom p-4" id="servicesTabsContent">
+          <!-- Pestaña Catastro -->
+          <div class="tab-pane fade show active" id="catastro" role="tabpanel" aria-labelledby="catastro-tab">
+            <div class="row justify-content-center text-center gap-3">
+              <div class="col-auto">
+                <a
+                  href="http://"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-map-location-dot fa-3x mb-2"></i>
+                  <span class="fw-bold">Catastro</span>
+                </a>
+              </div>
+
+              <div class="col-auto">
+                <a
+                  href="https://observatorioinmobiliario.santamarta.gov.co/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-earth-americas fa-spin-pulse fa-3x mb-2"></i>
+                  <span class="fw-bold">Observatorio Inmobiliario Catastral</span>
+                </a>
+              </div>
+
+              <div class="col-auto">
+                <a
+                  href="https://micrositios.avalpaycenter.com/recaudo-productos-catastrales-ma"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-credit-card fa-3x mb-3"></i>
+                  <span class="fw-bold">Realiza tus Pagos de Productos Catastrales con Avalpay</span>
+                </a>
+              </div>
+              
+              <div class="col-auto">
+                <a
+                  href="https://uaecm.santamarta.gov.co/consultas/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-map-pin fa-3x mb-2"></i>
+                  <span class="fw-bold">Geoportal</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pestaña Impuestos -->
+          <div class="tab-pane fade" id="impuestos" role="tabpanel" aria-labelledby="impuestos-tab">
+            <div class="row justify-content-center text-center gap-3">
+              <div class="col-auto">
+                <a
+                  href="http://"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-building-columns fa-3x mb-2"></i>
+                  <span class="fw-bold">Pago de impuestos</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pestaña Tránsito -->
+          <div class="tab-pane fade" id="transito" role="tabpanel" aria-labelledby="transito-tab">
+            <div class="row g-4 justify-content-center">
+              <!-- Aviso de comparendo -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://siettsantamarta.com/NotiComparendo.php"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-circle-exclamation fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Aviso de comparendo</span>
+                </a>
+              </div>
+
+              <!-- Fotomultas -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://avisos.fotomultasmr.com/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-camera fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Fotomultas</span>
+                </a>
+              </div>
+
+              <!-- Comparendo de tránsito -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://siettsantamarta.com/NotiComparendosTransito.php"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-file-lines fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Comparendo de tránsito</span>
+                </a>
+              </div>
+
+              <!-- Impuesto coactivo -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://siettsantamarta.com/NotImpuestosCoactivo.php"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-credit-card fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Impuesto coactivo</span>
+                </a>
+              </div>
+
+              <!-- Más servicios de tránsito... -->
+            </div>
+          </div>
+
+          <!-- Pestaña Población -->
+          <div class="tab-pane fade" id="poblacion" role="tabpanel" aria-labelledby="poblacion-tab">
+            <div class="row justify-content-center text-center gap-3">
+              <!-- Consulta de Estado Programa Colombia Mayor -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="http://adultomayor.santamarta.gov.co/adultomayor/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-person-cane fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Consulta de Estado Programa Colombia Mayor</span>
+                </a>
+              </div>
+
+              <!-- Inscripción al Gabinete Infantil -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="http://adultomayor.santamarta.gov.co/adultomayor/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-children fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Inscripción al Gabinete Infantil</span>
+                </a>
+              </div>
+
+              <!-- Actualización Escolar -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://www.santamarta.gov.co/familias%20en%20accion/"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark"
+                >
+                  <i class="fa-solid fa-laptop fa-3x mb-2"></i>
+                  <span class="fw-bold icon-label text-center">Actualización Escolar</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pestaña Salud -->
+          <div class="tab-pane fade" id="salud" role="tabpanel" aria-labelledby="salud-tab">
+            <div class="row g-4 justify-content-center text-center">
+              <!-- Prestadores de Servicios de Salud - Inscripción -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <a
+                  href="https://prestadores.minsalud.gov.co/habilitacion/ingreso.aspx?ets_codigo=47001"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-primary"
+                >
+                  <i class="fa-solid fa-file-lines fa-3x mb-3"></i>
+                  <span class="fw-semibold icon-label">Prestadores de Servicios<br>de Salud</span>
+                  <span class="small text-dark">Inscripción</span>
+                  <a
+                    href="https://www.santamarta.gov.co/requisitos-para-inscripcion-de-prestadores-de-servicios-de-salud"
+                    class="small text-decoration-underline d-block mt-1"
+                  >Ver requisitos</a>
+                </a>
+              </div>
+
+              <!-- Más servicios de salud... -->
+            </div>
+          </div>
+
+          <!-- Pestaña Desarrollo Económico -->
+          <div class="tab-pane fade" id="economico" role="tabpanel" aria-labelledby="economico-tab">
+            <div class="row justify-content-center text-center gap-3">
+              <!-- Emprendimiento -->
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                <a
+                  href="https://www.santamarta.gov.co/registro-de-emprendedores"
+                  class="icon-link d-flex flex-column align-items-center text-decoration-none text-dark text-center"
+                >
+                  <i class="fa-solid fa-rocket fa-3x mb-3"></i>
+                  <span class="fw-bold icon-label">Emprendimiento</span>
+                </a>
+              </div>
+
+              <!-- Más servicios de desarrollo económico... -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+// No se requiere lógica adicional para el funcionamiento básico
+</script>
+
+<style scoped>
+:root {
+  --color-alcaldia: #00ade7;
+  --color-secundario: #00568d;
+  --color-fondo: #ffffff;
+  --color-texto: #333333;
+}
+
+/* Estilos para las pestañas */
+.nav-tabs {
+  border-bottom: 2px solid var(--color-secundario);
+}
+
+.nav-tabs .nav-link {
+  color: var(--color-secundario);
+  font-weight: 500;
+  border: none;
+  padding: 1rem 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--color-alcaldia);
+  background-color: rgba(0, 173, 231, 0.1);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--color-alcaldia);
+  background-color: transparent;
+  border-bottom: 3px solid var(--color-alcaldia);
+}
+
+/* Contenido de las pestañas */
+.tab-content {
+  background-color: var(--color-fondo);
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Estilos para los iconos y enlaces */
+.icon-link {
+  color: var(--color-secundario);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.icon-link:hover {
+  background-color: rgba(0, 86, 141, 0.05);
+  transform: translateY(-3px);
+}
+
+.icon-link i {
+  font-size: 2.5rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: var(--color-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.icon-link:hover i {
+  transform: scale(1.1);
+  color: var(--color-alcaldia);
+}
+
+.icon-link .fw-bold {
+  transition: color 0.3s ease;
+}
+
+.icon-link:hover .fw-bold {
+  color: var(--color-alcaldia);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .nav-tabs .nav-link {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .icon-link {
+    padding: 0.5rem;
+  }
+  
+  .icon-link i {
+    font-size: 2rem;
+  }
+}
+</style>

@@ -21,8 +21,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:8080',    // ✅ Agrega el puerto del frontend
-        'http://127.0.0.1:8080'     // ✅ Alternativa si accedes por IP
+        'http://localhost:5173'
+
     ],
 
     'allowed_origins_patterns' => [],

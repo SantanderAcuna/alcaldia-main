@@ -2,51 +2,40 @@
 
 namespace App\Models;
 
+use App\Models\PlanDeDesarrollo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Alcalde extends Model
 {
-    /** @use HasFactory<\Database\Factories\AlcaldeFactory> */
-    use HasFactory;
+
+    use HasFactory, SoftDeletes;
 
 
     protected $table = 'alcaldes';
 
-
-    protected $fillable = [
+ protected $fillable = [
         'nombre_completo',
-        'cargo',
         'fecha_inicio',
         'fecha_fin',
-        'objetivo',
-        'actual',
-        'foto_id',
-        'plan_desarrollo_id'
+        'presentacion',
+        'foto_path',
+        'actual'
     ];
 
     protected $casts = [
-        'actual' => 'boolean',
         'fecha_inicio' => 'date',
-        'fecha_fin' => 'date'
+        'fecha_fin' => 'date',
+        'actual' => 'boolean'
     ];
 
-   /**
-     * Relación con la foto de perfil (imagen)
-     */
-    public function foto()
-    {
-        return $this->belongsTo(Galeria::class, 'foto_id');
-    }
-
-    /**
-     * Relación con el documento del plan de desarrollo
-     */
     public function planDesarrollo()
     {
-        return $this->belongsTo(Galeria::class, 'plan_desarrollo_id');
+        return $this->hasOne(PlanDeDesarrollo::class);
     }
+
 
     /**
      * Scope para alcaldes actuales
@@ -58,18 +47,17 @@ class Alcalde extends Model
 
 
 
-protected function fechaInicio()
-{
-    return Attribute::make(
-        get: fn ($value) => \Carbon\Carbon::parse($value)->format('Y-m-d')
-    );
-}
+    protected function fechaInicio()
+    {
+        return Attribute::make(
+            get: fn($value) => \Carbon\Carbon::parse($value)->format('Y-m-d')
+        );
+    }
 
-protected function fechaFin()
-{
-    return Attribute::make(
-        get: fn ($value) => $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : null
-    );
-}
-
+    protected function fechaFin()
+    {
+        return Attribute::make(
+            get: fn($value) => $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : null
+        );
+    }
 }
