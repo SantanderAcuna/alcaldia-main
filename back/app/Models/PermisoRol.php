@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PermisoRol extends Pivot
 {
+    use HasFactory;
+
     protected $table = 'permiso_rol';
     public $timestamps = false;
     protected $primaryKey = null;

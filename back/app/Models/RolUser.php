@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class RolUser extends Pivot
 {
+    use HasFactory;
     protected $table = 'rol_user';
     public $timestamps = false;
     protected $primaryKey = null;

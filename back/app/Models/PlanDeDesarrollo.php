@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\Auditable;
 
 class PlanDeDesarrollo extends Model
 {
     use HasFactory,SoftDeletes;
+
 
     protected $table = 'plan_de_desarrollos';
 
@@ -22,7 +24,7 @@ class PlanDeDesarrollo extends Model
         'alcalde_id'
     ];
 
- 
+
 
     protected $appends = ['document_url'];
 

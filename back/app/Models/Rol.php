@@ -5,19 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Auditable;
 
 class Rol extends Model
 {
-    use HasFactory, SoftDeletes;
 
     use HasFactory, SoftDeletes;
+
+
 
 
     protected $table = 'rols';
 
 
     protected $fillable = [
-        'name', 'slug', 'label', 'is_active',
+        'name',
+        'slug',
+        'label',
+        'is_active',
     ];
 
     protected $casts = [
@@ -40,8 +45,4 @@ class Rol extends Model
     {
         return $query->where('is_active', true);
     }
-
-
-
-
 }

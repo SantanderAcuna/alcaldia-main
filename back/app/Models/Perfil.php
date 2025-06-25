@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Auditable;
 
 class Perfil extends Model
 {
-    use HasFactory;
+use HasFactory;
+
     protected $table = 'perfiles';
 
 

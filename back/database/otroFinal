@@ -1,0 +1,151 @@
+USE alcaldia;
+
+DROP TABLE IF EXISTS auditoria;
+
+CREATE TABLE auditoria (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  tabla VARCHAR(100) NOT NULL COMMENT 'Tabla auditada',
+  operacion ENUM('INSERT','UPDATE','DELETE') NOT NULL COMMENT 'Tipo de operación',
+  usuario_bd VARCHAR(100) NOT NULL COMMENT 'Usuario de BD que ejecutó la acción',
+  datos_anteriores JSON NULL COMMENT 'Estado anterior del registro',
+  datos_nuevos JSON NULL COMMENT 'Estado posterior del registro',
+  fecha_evento TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora del cambio'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS obtener_campos_para $$
+
+CREATE FUNCTION obtener_campos_para(prefijo VARCHAR(3), tabla VARCHAR(64)) RETURNS TEXT
+DETERMINISTIC
+BEGIN
+  DECLARE campos TEXT DEFAULT '';
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE col_nombre VARCHAR(64);
+
+  DECLARE cur_col CURSOR FOR
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = tabla;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur_col;
+
+  loop_campos: LOOP
+    FETCH cur_col INTO col_nombre;
+    IF done THEN
+      LEAVE loop_campos;
+    END IF;
+
+    IF campos = '' THEN
+      SET campos = CONCAT("'", col_nombre, "', ", prefijo, ".", col_nombre);
+    ELSE
+      SET campos = CONCAT(campos, ", '", col_nombre, "', ", prefijo, ".", col_nombre);
+    END IF;
+  END LOOP;
+
+  CLOSE cur_col;
+
+  RETURN campos;
+END $$
+
+DELIMITER ;
+
+
+SELECT obtener_campos_para('NEW', 'usuarios');
+
+
+
+DELIMITER $$
+
+-- 🔄 INSERT
+DROP TRIGGER IF EXISTS trg_users_insert $$
+CREATE TRIGGER trg_users_insert
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+  DECLARE user_session VARCHAR(100);
+  SET user_session = CURRENT_USER();
+
+  INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_nuevos)
+  VALUES (
+    'users',
+    'INSERT',
+    user_session,
+    JSON_OBJECT(
+      'id', NEW.id,
+      'name', NEW.name,
+      'email', NEW.email,
+      'email_verified_at', NEW.email_verified_at,
+      'created_at', NEW.created_at,
+      'updated_at', NEW.updated_at
+    )
+  );
+END $$
+
+-- 🔁 UPDATE
+DROP TRIGGER IF EXISTS trg_users_update $$
+CREATE TRIGGER trg_users_update
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+  DECLARE user_session VARCHAR(100);
+  SET user_session = CURRENT_USER();
+
+  INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_anteriores, datos_nuevos)
+  VALUES (
+    'users',
+    'UPDATE',
+    user_session,
+    JSON_OBJECT(
+      'id', OLD.id,
+      'name', OLD.name,
+      'email', OLD.email,
+      'email_verified_at', OLD.email_verified_at,
+      'created_at', OLD.created_at,
+      'updated_at', OLD.updated_at
+    ),
+    JSON_OBJECT(
+      'id', NEW.id,
+      'name', NEW.name,
+      'email', NEW.email,
+      'email_verified_at', NEW.email_verified_at,
+      'created_at', NEW.created_at,
+      'updated_at', NEW.updated_at
+    )
+  );
+END $$
+
+-- ❌ DELETE
+DROP TRIGGER IF EXISTS trg_users_delete $$
+CREATE TRIGGER trg_users_delete
+AFTER DELETE ON users
+FOR EACH ROW
+BEGIN
+  DECLARE user_session VARCHAR(100);
+  SET user_session = CURRENT_USER();
+
+  INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_anteriores)
+  VALUES (
+    'users',
+    'DELETE',
+    user_session,
+    JSON_OBJECT(
+      'id', OLD.id,
+      'name', OLD.name,
+      'email', OLD.email,
+      'email_verified_at', OLD.email_verified_at,
+      'created_at', OLD.created_at,
+      'updated_at', OLD.updated_at
+    )
+  );
+END $$
+
+DELIMITER ;
+
+
+SELECT * FROM auditoria ORDER BY fecha_evento DESC;
+

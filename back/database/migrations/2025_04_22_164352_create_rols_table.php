@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rols', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 50)->unique()->comment('Clave interna del rol, p.ej. admin');
             $table->string('slug', 60)->unique()->comment('URL-friendly');
-            $table->string('label', 100)->comment('Nombre legible, p.ej. Administrador');
             $table->boolean('is_active')->default(true)->index()->comment('Rol habilitado');
             $table->softDeletes();
             $table->timestamps();

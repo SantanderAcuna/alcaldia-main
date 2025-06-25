@@ -1,130 +1,97 @@
 <?php
 
-use App\Http\Controllers\Api\AlcaldeController;
-use App\Http\Controllers\Api\AreaController;
-use App\Http\Controllers\Api\CategoriaController;
-use App\Http\Controllers\Api\DirectorioDistritalController;
-use App\Http\Controllers\Api\FuncionMacroProcesoController;
-use App\Http\Controllers\Api\GabineteController;
-use App\Http\Controllers\Api\GaleriaController;
-use App\Http\Controllers\Api\MacroProcesoController;
-use App\Http\Controllers\Api\PerfilController;
-use App\Http\Controllers\Api\PermisoController;
-use App\Http\Controllers\Api\PlanDeDesarrolloController;
-use App\Http\Controllers\Api\ProcedimientoMacroProcesoController;
-use App\Http\Controllers\Api\RolController;
-use App\Http\Controllers\Api\SubdireccionController;
-use App\Http\Controllers\Api\TipoEntidadController;
-use App\Http\Controllers\Api\TipoProcedimientoController;
-use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\api\admin\AlcaldeAdminController;
+use App\Http\Controllers\api\admin\DependenciaAdminController;
+use App\Http\Controllers\api\admin\DocumentoAdminController;
+use App\Http\Controllers\api\admin\FotoAdminController;
+use App\Http\Controllers\api\admin\FuncionarioAdminController;
+use App\Http\Controllers\api\admin\FuncioneSecAdminController;
+use App\Http\Controllers\api\admin\PerfilAdminController;
+use App\Http\Controllers\api\admin\PlanDesarrolloAdminController;
+use App\Http\Controllers\api\admin\PublicacionAdminController;
+use App\Http\Controllers\api\admin\SecretariaAdminController;
+use App\Http\Controllers\api\admin\TagAdminController;
+use App\Http\Controllers\api\admin\TipoAdminController;
+use App\Http\Controllers\api\admin\TramiteAdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\publico\AlcaldeController;
+use App\Http\Controllers\api\publico\DependenciaController;
+use App\Http\Controllers\api\publico\DirectorioController;
+use App\Http\Controllers\api\publico\DocumentoController;
+use App\Http\Controllers\api\publico\FotoController;
+use App\Http\Controllers\api\publico\FuncionarioController;
+use App\Http\Controllers\api\publico\Funciones_secController;
+use App\Http\Controllers\api\publico\PerfilController;
+use App\Http\Controllers\api\publico\PlanDeDesarrolloController;
+use App\Http\Controllers\api\publico\PublicacionController;
+use App\Http\Controllers\api\publico\SecretariaController;
+use App\Http\Controllers\api\publico\TagController;
+use App\Http\Controllers\api\publico\TipoController;
+use App\Http\Controllers\api\publico\TramiteController;
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-/*
-Route::apiResource('alcaldes', AlcaldeController::class)->only(['index', 'show']);
-Route::apiResource('categorias', CategoriaController::class)->only(['index', 'show']);
-Route::apiResource('galerias', GaleriaController::class)->only(['index', 'show']);
-Route::apiResource('macroprocesos', MacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('tipo-procedimientos', TipoProcedimientoController::class)->only(['index', 'show']);
-Route::apiResource('gabinetes', GabineteController::class)->only(['index', 'show']);
-Route::apiResource('planes-desarrollo', PlanDeDesarrolloController::class)->only(['index', 'show']);
-Route::apiResource('perfiles', PerfilController::class)->only(['index', 'show']);
-Route::apiResource('funciones-macroproceso', FuncionMacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('procedimientos-macro', ProcedimientoMacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('subdirecciones', SubdireccionController::class)->only(['index', 'show']);
-*/
-//Route::get('/users', [UserController::class, 'index']);
-Route::apiResource('users', UserController::class);
+// CRUD de Plan de Desarrollo
 
 
 
-Route::apiResource('alcaldes', AlcaldeController::class)->parameters([
-    'alcaldes' => 'alcalde'
-]);
+Route::prefix('publico')->group(function () {
 
-// Ruta adicional para cambiar estado
-Route::patch('alcaldes/{alcalde}/status', [AlcaldeController::class, 'toggleStatus'])
-    ->name('alcaldes.status');
-/*
-Route::prefix('admin')->middleware(['auth:sanctum', 'tieneRol:admin'])->group(function () {
-    Route::apiResource('alcaldes', AlcaldeController::class)->except(['update', 'destroy']);
-    Route::apiResource('categorias', CategoriaController::class)->except(['update', 'destroy']);
-    Route::apiResource('galerias', GaleriaController::class)->except(['update', 'destroy']);
-});
-
-
-Route::prefix('superadmin')->middleware(['auth:sanctum', 'tieneRol:superadmin'])->group(function () {
-    // Route::apiResource('alcaldes', AlcaldeController::class);
-    Route::apiResource('categorias', CategoriaController::class);
-    Route::apiResource('galerias', GaleriaController::class);
-    Route::apiResource('macroprocesos', MacroProcesoController::class);
-    Route::apiResource('tipo-procedimientos', TipoProcedimientoController::class);
-    Route::apiResource('gabinetes', GabineteController::class);
-    Route::apiResource('planes-desarrollo', PlanDeDesarrolloController::class);
-    Route::apiResource('perfiles', PerfilController::class);
-    Route::apiResource('funciones-macroproceso', FuncionMacroProcesoController::class);
-    Route::apiResource('procedimientos-macro', ProcedimientoMacroProcesoController::class);
-    Route::apiResource('subdirecciones', SubdireccionController::class);
-    Route::apiResource('roles', RolController::class);
-    Route::apiResource('permisos', PermisoController::class);
-});
-
-
-
-
-
-// Rutas públicas
-Route::apiResource('categorias', CategoriaController::class)->only(['index', 'show']);
-Route::apiResource('galerias', GaleriaController::class)->only(['index', 'show']);
-Route::apiResource('tipo-entidads', TipoEntidadController::class)->only(['index', 'show']);
-Route::apiResource('tipo-procedimientos', TipoProcedimientoController::class)->only(['index', 'show']);
-Route::apiResource('directorio-distritals', DirectorioDistritalController::class)->only(['index', 'show']);
-Route::apiResource('macro-procesos', MacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('alcaldes', AlcaldeController::class)->only(['index', 'show']);
-Route::apiResource('funcion-macro-procesos', FuncionMacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('procedimiento-macro-procesos', ProcedimientoMacroProcesoController::class)->only(['index', 'show']);
-Route::apiResource('gabinetes', GabineteController::class)->only(['index', 'show']);
-Route::apiResource('perfils', PerfilController::class)->only(['index', 'show']);
-Route::apiResource('plan-de-desarrollos', PlanDeDesarrolloController::class)->only(['index', 'show']);
-Route::apiResource('subdireccions', SubdireccionController::class)->only(['index', 'show']);
-Route::apiResource('areas', AreaController::class)->only(['index', 'show']);
-
-
-Route::prefix('admin')->middleware(['auth:sanctum', 'tieneRol:admin'])->group(function () {
-    Route::apiResource('categorias', CategoriaController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('galerias', GaleriaController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('tipo-entidads', TipoEntidadController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('tipo-procedimientos', TipoProcedimientoController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('directorio-distritals', DirectorioDistritalController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('macro-procesos', MacroProcesoController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('alcaldes', AlcaldeController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('funcion-macro-procesos', FuncionMacroProcesoController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('procedimiento-macro-procesos', ProcedimientoMacroProcesoController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('gabinetes', GabineteController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('perfils', PerfilController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('plan-de-desarrollos', PlanDeDesarrolloController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('subdireccions', SubdireccionController::class)->only(['index', 'show', 'store']);
-    Route::apiResource('areas', AreaController::class)->only(['index', 'show', 'store']);
-});
-
-Route::prefix('superadmin')->middleware(['auth:sanctum', 'tieneRol:superadmin'])->group(function () {
-    Route::apiResource('categorias', CategoriaController::class);
-    Route::apiResource('galerias', GaleriaController::class);
-    Route::apiResource('tipo-entidads', TipoEntidadController::class);
-    Route::apiResource('tipo-procedimientos', TipoProcedimientoController::class);
-    Route::apiResource('directorio-distritals', DirectorioDistritalController::class);
-    Route::apiResource('macro-procesos', MacroProcesoController::class);
     Route::apiResource('alcaldes', AlcaldeController::class);
-    Route::apiResource('funcion-macro-procesos', FuncionMacroProcesoController::class);
-    Route::apiResource('procedimiento-macro-procesos', ProcedimientoMacroProcesoController::class);
-    Route::apiResource('gabinetes', GabineteController::class);
-    Route::apiResource('perfils', PerfilController::class);
-    Route::apiResource('plan-de-desarrollos', PlanDeDesarrolloController::class);
-    Route::apiResource('subdireccions', SubdireccionController::class);
-    Route::apiResource('areas', AreaController::class);
+    Route::apiResource('plan', PlanDeDesarrolloController::class);
+    // Funcionarios
+
+    Route::apiResource('funcionarios', FuncionarioController::class);
+    Route::apiResource('perfiles', PerfilController::class);
+
+    // Secretaria
+
+    Route::apiResource('secretarias', SecretariaController::class);
+    Route::apiResource('dependencias', DependenciaController::class);
+    Route::apiResource('funciones', Funciones_secController::class);
+    Route::apiResource('tramites', TramiteController::class);
+
+    // Publicaciones
+
+    Route::apiResource('publicaciones', PublicacionController::class);
+    Route::apiResource('documentos', DocumentoController::class);
+    Route::apiResource('fotos', FotoController::class);
+
+
+    // Directorio Distrital
+
+    Route::apiResource('directorio-distrital', DirectorioController::class);
+    Route::apiResource('tipos', TipoController::class);
+    Route::apiResource('tags', TagController::class);
 });
-*/
+
+
+
+
+Route::prefix('admin')->group(function () {
+
+    Route::apiResource('alcaldes-admin', AlcaldeAdminController::class);
+    Route::apiResource('plan-admin', PlanDesarrolloAdminController::class);
+    // Funcionarios
+
+    Route::apiResource('funcionarios-admin', FuncionarioAdminController::class);
+    Route::apiResource('perfiles-admin', PerfilAdminController::class);
+
+    // Secretaria
+
+    Route::apiResource('secretarias-admin', SecretariaAdminController::class);
+    Route::apiResource('dependencias-admin', DependenciaAdminController::class);
+    Route::apiResource('funciones-admin', FuncioneSecAdminController::class);
+    Route::apiResource('tramites-admin', TramiteAdminController::class);
+
+    // Publicaciones
+
+    Route::apiResource('publicaciones-admin', PublicacionAdminController::class);
+    Route::apiResource('documentos-admin', DocumentoAdminController::class);
+    Route::apiResource('fotos-admin', FotoAdminController::class);
+
+
+    // Directorio Distrital
+
+    Route::apiResource('directorio-distrital-admin', DirectorioController::class);
+    Route::apiResource('tipos-admin', TipoAdminController::class);
+    Route::apiResource('tags-admin', TagAdminController::class);
+});

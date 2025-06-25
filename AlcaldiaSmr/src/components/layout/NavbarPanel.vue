@@ -283,24 +283,6 @@
                       >
                     </li>
                     <li>
-                      <router-link class="dropdown-item" to="/virna-johnson"
-                        ><i class="fas fa-user-tie me-2"></i>Virna Johnson
-                        (2020–2023)</router-link
-                      >
-                    </li>
-                    <li>
-                      <router-link class="dropdown-item" to="/rafael-martinez"
-                        ><i class="fas fa-user-tie me-2"></i>Rafael Martínez
-                        (2016–2019)</router-link
-                      >
-                    </li>
-                    <li>
-                      <router-link class="dropdown-item" to="/carlos-caicedo"
-                        ><i class="fas fa-user-tie me-2"></i>Carlos Caicedo
-                        (2012–2015)</router-link
-                      >
-                    </li>
-                    <li>
                       <router-link
                         class="dropdown-item"
                         to="/directorio-distrital"
@@ -309,9 +291,7 @@
                       >
                     </li>
                     <li>
-                      <router-link
-                        class="dropdown-item"
-                        to="/alcaldes-anteriores"
+                      <router-link class="dropdown-item" to="/alcaldes"
                         ><i class="fas fa-history me-2"></i>Alcaldes
                         Anteriores</router-link
                       >

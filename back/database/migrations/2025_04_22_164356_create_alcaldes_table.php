@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('alcaldes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_completo', 150);
+            $table->enum('sexo', ['masculino', 'femenino', 'Otro'])->default('Otro');
+
+
             $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
+
             $table->longText('presentacion')->nullable(); // Cambiado a longText
             $table->string('foto_path')->nullable();
             $table->boolean('actual')->default(false);

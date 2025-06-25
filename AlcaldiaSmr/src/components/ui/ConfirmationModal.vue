@@ -1,5 +1,8 @@
 <template>
-  <BaseModal :model-value="show" @update:modelValue="emit('update:show', $event)">
+  <BaseModal
+    :model-value="show"
+    @update:modelValue="emit('update:show', $event)"
+  >
     <div class="confirmation-modal">
       <h3 class="modal-title">{{ title }}</h3>
       <p class="modal-message">{{ message }}</p>
@@ -12,29 +15,29 @@
 </template>
 
 <script setup>
-import BaseModal from '@/components/alcalde/BaseModal.vue';
+import BaseModal from "@/components/alcaldia/admin/BaseModal.vue";
 
 const props = defineProps({
   show: Boolean,
   title: {
     type: String,
-    default: 'Confirmación'
+    default: "Confirmación",
   },
   message: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
-const emit = defineEmits(['update:show', 'confirm']);
+const emit = defineEmits(["update:show", "confirm"]);
 
 const confirm = () => {
-  emit('confirm');
-  emit('update:show', false);
+  emit("confirm");
+  emit("update:show", false);
 };
 
 const cancel = () => {
-  emit('update:show', false);
+  emit("update:show", false);
 };
 </script>
 

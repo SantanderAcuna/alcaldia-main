@@ -37,27 +37,18 @@ class Alcalde extends Model
     }
 
 
-    /**
-     * Scope para alcaldes actuales
-     */
-    public function scopeActual($query)
+
+    protected static function booted()
     {
-        return $query->where('actual', true);
+        static::deleting(function (Alcalde $alcalde) {
+            if ($alcalde->planDesarrollo) {
+                $alcalde->planDesarrollo()->delete();
+            }
+        });
     }
 
+ 
 
 
-    protected function fechaInicio()
-    {
-        return Attribute::make(
-            get: fn($value) => \Carbon\Carbon::parse($value)->format('Y-m-d')
-        );
-    }
 
-    protected function fechaFin()
-    {
-        return Attribute::make(
-            get: fn($value) => $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : null
-        );
-    }
 }

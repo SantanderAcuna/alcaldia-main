@@ -1,0 +1,120 @@
+USE alcaldia;
+
+DROP TABLE IF EXISTS auditoria;
+CREATE TABLE auditoria (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    tabla VARCHAR(100) NOT NULL COMMENT 'Tabla afectada',
+    operacion ENUM('INSERT','UPDATE','DELETE') NOT NULL COMMENT 'Tipo de operación',
+    usuario_bd VARCHAR(100) NOT NULL COMMENT 'Usuario que ejecutó la operación',
+    datos_anteriores JSON NULL COMMENT 'Datos antes del cambio',
+    datos_nuevos JSON NULL COMMENT 'Datos después del cambio',
+    fecha_evento TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Momento del evento'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS obtener_campos_para $$
+CREATE FUNCTION obtener_campos_para(prefijo VARCHAR(3), tabla VARCHAR(64)) RETURNS TEXT
+DETERMINISTIC
+BEGIN
+  DECLARE campos TEXT DEFAULT '';
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE col_nombre VARCHAR(64);
+  DECLARE cur_col CURSOR FOR
+    SELECT COLUMN_NAME
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = tabla;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur_col;
+  loop_campos: LOOP
+    FETCH cur_col INTO col_nombre;
+    IF done THEN
+      LEAVE loop_campos;
+    END IF;
+    SET campos = CONCAT_WS(', ', campos, QUOTE(col_nombre), ', ', prefijo, '.', col_nombre);
+  END LOOP;
+  CLOSE cur_col;
+
+  RETURN campos;
+END $$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS generar_triggers_auditoria $$
+CREATE PROCEDURE generar_triggers_auditoria()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE tabla_actual VARCHAR(64);
+  DECLARE cur CURSOR FOR
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema = DATABASE()
+      AND table_type = 'BASE TABLE'
+      AND table_name NOT IN ('auditoria'); -- no auditar la tabla de auditoría
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur;
+  bucle: LOOP
+    FETCH cur INTO tabla_actual;
+    IF done THEN
+      LEAVE bucle;
+    END IF;
+
+    -- INSERT
+    SET @insert_trigger = CONCAT('
+      CREATE TRIGGER trg_', tabla_actual, '_insert
+      AFTER INSERT ON ', tabla_actual, '
+      FOR EACH ROW
+      BEGIN
+        DECLARE user_session VARCHAR(100);
+        SET user_session = CURRENT_USER();
+        INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_nuevos)
+        VALUES (''', tabla_actual, ''', ''INSERT'', user_session, JSON_OBJECT(', obtener_campos_para('NEW', tabla_actual), '));
+      END;');
+
+    -- UPDATE
+    SET @update_trigger = CONCAT('
+      CREATE TRIGGER trg_', tabla_actual, '_update
+      AFTER UPDATE ON ', tabla_actual, '
+      FOR EACH ROW
+      BEGIN
+        DECLARE user_session VARCHAR(100);
+        SET user_session = CURRENT_USER();
+        INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_anteriores, datos_nuevos)
+        VALUES (''', tabla_actual, ''', ''UPDATE'', user_session,
+          JSON_OBJECT(', obtener_campos_para('OLD', tabla_actual), '),
+          JSON_OBJECT(', obtener_campos_para('NEW', tabla_actual), ')
+        );
+      END;');
+
+    -- DELETE
+    SET @delete_trigger = CONCAT('
+      CREATE TRIGGER trg_', tabla_actual, '_delete
+      AFTER DELETE ON ', tabla_actual, '
+      FOR EACH ROW
+      BEGIN
+        DECLARE user_session VARCHAR(100);
+        SET user_session = CURRENT_USER();
+        INSERT INTO auditoria (tabla, operacion, usuario_bd, datos_anteriores)
+        VALUES (''', tabla_actual, ''', ''DELETE'', user_session, JSON_OBJECT(', obtener_campos_para('OLD', tabla_actual), '));
+      END;');
+
+    -- Ejecutar los 3 triggers
+    PREPARE stmt FROM @insert_trigger; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+    PREPARE stmt FROM @update_trigger; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+    PREPARE stmt FROM @delete_trigger; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+  END LOOP;
+  CLOSE cur;
+END $$
+
+DELIMITER ;

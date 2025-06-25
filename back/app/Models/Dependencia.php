@@ -2,108 +2,44 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Dependencia extends Model
 {
-    use HasFactory;
+      use HasFactory;
 
-
-
-    // Indica el nombre de la tabla pivot
     protected $table = 'dependencias';
 
-    // Deshabilitamos el autoincremento ya que la clave primaria es compuesta
-    public $incrementing = false;
 
-    // Laravel no soporta claves compuestas en modelos de forma nativa, por lo que dejamos primaryKey en null
-    protected $primaryKey = null;
-
-    // Definimos los campos asignables
     protected $fillable = [
-        'user_id',
-        'dependencia_id',
-        'perfil_id',
+        'nombre',
+        'descripcion',
+        'secretaria_id',
     ];
 
-    /**
-     * Usuario asignado a la dependencia.
-     *
-     * @return BelongsTo
-     */
-    public function usuario()
+
+    protected $casts = [
+        'estado' => 'boolean'
+    ];
+
+
+
+
+    public function Secretaria()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Secretaria::class);
     }
 
-
-    /**
-     * Macro procesos asociados.
-     *
-     * @return HasMany
-     */
-
-
-    public function responsable()
+    public function Tramites()
     {
-        return $this->belongsTo(User::class, 'user_id')
-            ->withDefault([
-                'nombres' => 'Responsable no asignado',
-                'email' => 'sin-asignar@dominio.com'
-            ]);
+
+        return $this->hasMany(Tramite::class);
     }
 
-    // 2. Macroprocesos asociados
-    public function macroProcesos()
+    public function asignaciones()
     {
-        return $this->hasMany(MacroProceso::class);
+        return $this->morphMany(AsignacionOrganizacional::class, 'organizacion');
     }
-
-    // 3. Gabinetes de trabajo
-    public function gabinetes()
-    {
-        return $this->hasMany(Gabinete::class);
-    }
-
-    // 4. Perfiles profesionales
-    public function perfiles()
-    {
-        return $this->hasMany(Perfil::class);
-    }
-
-    // 5. Directorio distrital a través de TipoEntidad
-    public function directoriosDistritales()
-    {
-        return $this->hasManyThrough(
-            DirectorioDistrital::class,
-            TipoEntidad::class,
-            'dependencia_id', // FK en tipo_entidades
-            'tipo_entidad_id', // FK en directorio_distritals
-            'id', // PK en dependencias
-            'id' // PK en tipo_entidades
-        );
-    }
-
-    // Scope para carga eficiente de relaciones
-    public function scopeWithAllRelations($query)
-    {
-        return $query->with([
-            'responsable',
-            'macroProcesos',
-            'gabinetes.user',
-            'perfiles',
-            'directoriosDistritales.categoria'
-        ]);
-    }
-
-    public function checkForRelationships(array $relations): void
-    {
-        foreach ($relations as $relation) {
-            if ($this->$relation()->exists()) {
-                abort(409, "No se puede eliminar: Existen {$relation} relacionados");
-            }
-        }
-    }
-
 }
