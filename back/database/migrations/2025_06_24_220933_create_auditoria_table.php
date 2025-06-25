@@ -50,3 +50,5 @@ DB::statement("ALTER TABLE auditoria CONVERT TO CHARACTER SET utf8mb4 COLLATE ut
         Schema::dropIfExists('auditoria');
     }
 };
+
+
