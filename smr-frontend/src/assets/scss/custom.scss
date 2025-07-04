@@ -1,5 +1,1 @@
-
-$primary: #00568d;
-
-// Importa Bootstrap
-@import 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap' as *;

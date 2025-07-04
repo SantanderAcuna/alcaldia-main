@@ -23,11 +23,13 @@
     "@popperjs/core": "^2.11.8",
     "@tanstack/vue-query": "^5.80.10",
     "@tanstack/vue-query-devtools": "^5.80.10",
+    "@vueuse/core": "^13.5.0",
     "axios": "^1.10.0",
     "bootstrap": "^5.3.7",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",

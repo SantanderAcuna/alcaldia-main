@@ -33,6 +33,7 @@ use App\Models\Tramite;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -488,5 +489,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => '123456789',
         ]);
+
+
+
+
+
+
+          Artisan::call('auditoria:triggers');
     }
 }

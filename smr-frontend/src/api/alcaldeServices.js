@@ -1,4 +1,4 @@
-import api from "@/api/apiConfig";
+import api from '@/api/apiConfig';
 
 export default {
   /**
@@ -6,7 +6,7 @@ export default {
    * @returns {Promise<{data: Alcalde[]}>}
    */
   async getAll() {
-    return api.get("/alcaldes?include=planDesarrollo");
+    return api.get('/publico/alcaldes');
   },
 
   /**
@@ -15,7 +15,7 @@ export default {
    * @returns {Promise<{data: Alcalde}>}
    */
   async getById(id) {
-    return api.get(`/alcaldes/${id}?include=planDesarrollo`);
+    return api.get(`/publico/alcaldes/${id}?include=planDesarrollo`);
   },
 
   /**
@@ -24,10 +24,10 @@ export default {
    * @returns {Promise}
    */
   async create(formData) {
-    return api.post("/alcaldes", formData, {
+    return api.post('/publico/alcaldes', formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
-        "X-Requested-With": "XMLHttpRequest",
+        'Content-Type': 'multipart/form-data',
+        'X-Requested-With': 'XMLHttpRequest',
       },
     });
   },
@@ -39,10 +39,10 @@ export default {
    * @returns {Promise}
    */
   async update(id, formData) {
-    return api.put(`/alcaldes/${id}`, formData, {
+    return api.put(`/publico/alcaldes/${id}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
-        "X-Requested-With": "XMLHttpRequest",
+        'Content-Type': 'multipart/form-data',
+        'X-Requested-With': 'XMLHttpRequest',
       },
     });
   },
@@ -53,6 +53,6 @@ export default {
    * @returns {Promise}
    */
   async delete(id) {
-    return api.delete(`/alcaldes/${id}`);
+    return api.delete(`/publico/alcaldes/${id}`);
   },
 };

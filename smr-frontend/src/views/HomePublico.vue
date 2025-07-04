@@ -21,10 +21,10 @@ const isHomePage = computed(() => router.currentRoute.value.path === '/');
 console.log(isHomePage);
 
 // ✅ Importación de componentes usados en el template
-import CarruselNab from '@/layouts/components/CarruselNab.vue';
-import TramiteServicios from '@/layouts/components/TramiteServicios.vue';
+import CarruselNab from '@/modules/publico/layouts/components/CarruselNab.vue';
+import TramiteServicios from '@/modules/publico/layouts/components/TramiteServicio.vue';
 
-import Documentos from '@/layouts/components/Documentos.vue';
+import Documentos from '@/modules/publico/layouts/components/Documentos.vue';
 
-import Noticias from '@/layouts/components/Noticias.vue';
+import Noticias from '@/modules/publico/layouts/components/Noticias.vue';
 </script>
