@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
   title: String
 });

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplos ARIA con Tooltips Descriptivos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #fabb00;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .aria-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .example-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            position: relative;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .example-card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #fabb00;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .example-card h2 i {
+            color: #fabb00;
+            font-size: 1.8rem;
+        }
+        
+        .example-card p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .example-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .code {
+            background: #2c3e50;
+            color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            font-size: 1rem;
+        }
+        
+        .highlight {
+            color: #fabb00;
+            font-weight: bold;
+        }
+        
+        .interactive-area {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 150px;
+            position: relative;
+        }
+        
+        /* Estilos para tooltips */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            white-space: nowrap;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+        
+        .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Estilos para los componentes interactivos */
+        .accordion {
+            margin-bottom: 15px;
+        }
+        
+        .accordion-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .accordion-content {
+            background: white;
+            padding: 15px;
+            border-radius: 0 0 5px 5px;
+            display: none;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #27ae60;
+            width: 45%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+        }
+        
+        .tab-button[aria-selected="true"] {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            padding: 15px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 25px;
+            margin: 15px 0;
+        }
+        
+        .slider-value {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .action-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .action-button:hover {
+            background: #2980b9;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .contrast-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #fabb00;
+            color: #2c3e50;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .contrast-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .aria-examples {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tooltip {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                bottom: 110%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-universal-access"></i> Ejemplos ARIA con Tooltips Descriptivos</h1>
+            <p class="subtitle">Pasa el mouse sobre los botones para ver qué acción realizan</p>
+        </header>
+        
+        <main>
+            <div class="aria-examples">
+                <!-- Ejemplo 1: Acordeón con ARIA -->
+                <div class="example-card">
+                    <h2><i class="fas fa-chevron-down"></i> Acordeón (aria-expanded)</h2>
+                    <p>El atributo <span class="highlight">aria-expanded</span> indica si un control está expandido o contraído.</p>
+                    
+                    <div class="code">
+                        &lt;button <span class="highlight">aria-expanded="false"</span> 
+                        <span class="highlight">aria-controls="acordeon1"</span>&gt;
+                        Sección 1
+                        &lt;/button&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="accordion">
+                            <button class="accordion-button tooltip-container">
+                                ¿Qué es ARIA? <i class="fas fa-chevron-down"></i>
+                                <span class="tooltip">Haz clic para expandir/contraer esta sección</span>
+                            </button>
+                            <div id="content1" class="accordion-content" aria-hidden="true">
+                                <p>ARIA (Accessible Rich Internet Applications) es un conjunto de atributos HTML que mejoran la accesibilidad del contenido web para personas con discapacidades.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion">
+                            <button class="accordion-button tooltip-container">
+                                ¿Por qué es importante? <i class="fas fa-chevron-down"></i>
+                                <span class="tooltip">Haz clic para expandir/contraer esta sección</span>
+                            </button>
+                            <div id="content2" class="accordion-content" aria-hidden="true">
+                                <p>ARIA ayuda a los lectores de pantalla a interpretar elementos dinámicos y componentes complejos de la interfaz de usuario.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ejemplo 2: Barra de Progreso -->
+                <div class="example-card">
+                    <h2><i class="fas fa-tasks"></i> Barra de Progreso (aria-valuenow)</h2>
+                    <p>Los atributos <span class="highlight">aria-valuemin</span>, <span class="highlight">aria-valuemax</span> y <span class="highlight">aria-valuenow</span> definen el rango y valor actual de elementos como barras de progreso.</p>
+                    
+                    <div class="code">
+                        &lt;div role="progressbar" 
+                        <span class="highlight">aria-valuenow="45"</span>
+                        <span class="highlight">aria-valuemin="0"</span>
+                        <span class="highlight">aria-valuemax="100"</span>&gt;
+                        Progreso: 45%
+                        &lt;/div&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="progress-container">
+                            <p>Carga de archivos</p>
+                            <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-fill">45%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tooltip-container">
+                            <button id="increase-progress" class="action-button">
+                                Aumentar progreso
+                                <span class="tooltip">Aumenta el progreso en un 15% con cada clic</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ejemplo 3: Alertas -->
+                <div class="example-card">
+                    <h2><i class="fas fa-exclamation-circle"></i> Alertas (role="alert")</h2>
+                    <p>El rol <span class="highlight">alert</span> identifica un mensaje importante que debe ser comunicado inmediatamente al usuario.</p>
+                    
+                    <div class="code">
+                        &lt;div <span class="highlight">role="alert"</span>&gt;
+                        ¡Se ha guardado tu información con éxito!
+                        &lt;/div&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="tooltip-container">
+                            <button id="show-alert" class="action-button">
+                                Mostrar alerta
+                                <span class="tooltip">Muestra una alerta de éxito que desaparece en 3 segundos</span>
+                            </button>
+                        </div>
+                        
+                        <div id="success-alert" class="alert alert-success" role="alert">
+                            ¡Se ha guardado tu información con éxito!
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ejemplo 4: Pestañas (Tabs) -->
+                <div class="example-card">
+                    <h2><i class="fas fa-folder"></i> Pestañas (role="tablist")</h2>
+                    <p>Los roles <span class="highlight">tablist</span>, <span class="highlight">tab</span> y <span class="highlight">tabpanel</span> crean un sistema de pestañas accesible.</p>
+                    
+                    <div class="code">
+                        &lt;div <span class="highlight">role="tablist"</span>&gt;<br>
+                        &nbsp;&nbsp;&lt;button <span class="highlight">role="tab"</span> <span class="highlight">aria-selected="true"</span>&gt;Pestaña 1&lt;/button&gt;<br>
+                        &nbsp;&nbsp;&lt;button <span class="highlight">role="tab"</span> <span class="highlight">aria-selected="false"</span>&gt;Pestaña 2&lt;/button&gt;<br>
+                        &lt;/div&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="tabs" role="tablist">
+                            <div class="tooltip-container">
+                                <button class="tab-button" role="tab" aria-selected="true" aria-controls="tab1-content">
+                                    Información
+                                    <span class="tooltip">Ver información general del sistema</span>
+                                </button>
+                            </div>
+                            <div class="tooltip-container">
+                                <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab2-content">
+                                    Configuración
+                                    <span class="tooltip">Configurar preferencias del sistema</span>
+                                </button>
+                            </div>
+                            <div class="tooltip-container">
+                                <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab3-content">
+                                    Soporte
+                                    <span class="tooltip">Obtener ayuda y soporte técnico</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="tab1-content" role="tabpanel" class="tab-content active">
+                            <h3>Información General</h3>
+                            <p>Esta es la sección de información general. Aquí encontrarás detalles sobre el sistema.</p>
+                        </div>
+                        
+                        <div id="tab2-content" role="tabpanel" class="tab-content">
+                            <h3>Configuración del Sistema</h3>
+                            <p>Esta es la sección de configuración. Aquí puedes personalizar tus preferencias.</p>
+                        </div>
+                        
+                        <div id="tab3-content" role="tabpanel" class="tab-content">
+                            <h3>Soporte Técnico</h3>
+                            <p>Esta es la sección de soporte. Encuentra ayuda y contacta con nuestro equipo.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ejemplo 5: Modal Dialog -->
+                <div class="example-card">
+                    <h2><i class="fas fa-window-maximize"></i> Modal Dialog (role="dialog")</h2>
+                    <p>El rol <span class="highlight">dialog</span> crea una ventana modal accesible. Usamos <span class="highlight">aria-modal</span> y <span class="highlight">aria-labelledby</span> para mejorar la accesibilidad.</p>
+                    
+                    <div class="code">
+                        &lt;div <span class="highlight">role="dialog"</span> <span class="highlight">aria-modal="true"</span> 
+                        <span class="highlight">aria-labelledby="modal-title"</span>&gt;<br>
+                        &nbsp;&nbsp;&lt;h2 id="modal-title"&gt;Título del Modal&lt;/h2&gt;<br>
+                        &lt;/div&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="tooltip-container">
+                            <button id="open-modal" class="action-button">
+                                Abrir ventana modal
+                                <span class="tooltip">Abre una ventana modal de confirmación</span>
+                            </button>
+                        </div>
+                        
+                        <div id="example-modal" class="modal" role="dialog" aria-modal="false" aria-labelledby="modal-title">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 id="modal-title">Confirmación</h2>
+                                    <div class="tooltip-container">
+                                        <button class="close-modal" aria-label="Cerrar">
+                                            &times;
+                                            <span class="tooltip">Cerrar esta ventana modal</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p>¿Estás seguro de que deseas continuar con esta acción?</p>
+                                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                                    <div class="tooltip-container">
+                                        <button class="action-button" style="background: #27ae60;">
+                                            Confirmar
+                                            <span class="tooltip">Confirmar la acción</span>
+                                        </button>
+                                    </div>
+                                    <div class="tooltip-container">
+                                        <button class="action-button" style="background: #e74c3c;">
+                                            Cancelar
+                                            <span class="tooltip">Cancelar y cerrar esta ventana</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ejemplo 6: Slider -->
+                <div class="example-card">
+                    <h2><i class="fas fa-sliders-h"></i> Slider (role="slider")</h2>
+                    <p>El rol <span class="highlight">slider</span> crea un control deslizante accesible. Usamos <span class="highlight">aria-valuenow</span> para indicar el valor actual.</p>
+                    
+                    <div class="code">
+                        &lt;div <span class="highlight">role="slider"</span>
+                        <span class="highlight">aria-valuemin="0"</span>
+                        <span class="highlight">aria-valuemax="100"</span>
+                        <span class="highlight">aria-valuenow="50"</span>&gt;
+                        &lt;/div&gt;
+                    </div>
+                    
+                    <div class="interactive-area">
+                        <div class="slider-container">
+                            <label for="volume-slider">Volumen:</label>
+                            <input type="range" id="volume-slider" class="slider" min="0" max="100" value="50" 
+                                   role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+                                   title="Ajusta el volumen deslizando este control">
+                            <div class="slider-value">50%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2023 Accesibilidad Web - Ejemplos con Tooltips Descriptivos</p>
+            <p>Pasa el mouse sobre los botones para descubrir su función</p>
+        </footer>
+    </div>
+    
+    <div class="tooltip-container">
+        <button class="contrast-toggle" aria-label="Alternar modo de alto contraste">
+            <i class="fas fa-adjust"></i>
+            <span class="tooltip">Alternar entre modo claro y oscuro</span>
+        </button>
+    </div>
+    
+    <script>
+        // Acordeones interactivos
+        const accordionButtons = document.querySelectorAll('.accordion-button');
+        accordionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const expanded = button.getAttribute('aria-expanded') === 'true';
+                button.setAttribute('aria-expanded', !expanded);
+                
+                const contentId = button.getAttribute('aria-controls');
+                const content = document.getElementById(contentId);
+                content.setAttribute('aria-hidden', expanded);
+                content.style.display = expanded ? 'none' : 'block';
+                
+                // Cambiar icono
+                const icon = button.querySelector('i');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+        
+        // Barra de progreso
+        const progressBar = document.querySelector('.progress-fill');
+        const increaseBtn = document.getElementById('increase-progress');
+        let progress = 45;
+        
+        increaseBtn.addEventListener('click', () => {
+            progress = Math.min(progress + 15, 100);
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${progress}%`;
+            progressBar.parentElement.setAttribute('aria-valuenow', progress);
+        });
+        
+        // Alertas
+        const showAlertBtn = document.getElementById('show-alert');
+        const alertBox = document.getElementById('success-alert');
+        
+        showAlertBtn.addEventListener('click', () => {
+            alertBox.style.display = 'block';
+            
+            // Ocultar después de 3 segundos
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        });
+        
+        // Sistema de pestañas
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Actualizar estado de botones
+                tabButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+                button.setAttribute('aria-selected', 'true');
+                
+                // Ocultar todos los contenidos
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Mostrar contenido seleccionado
+                const contentId = button.getAttribute('aria-controls');
+                document.getElementById(contentId).classList.add('active');
+            });
+        });
+        
+        // Modal Dialog
+        const openModalBtn = document.getElementById('open-modal');
+        const modal = document.getElementById('example-modal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-modal', 'true');
+        });
+        
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            modal.setAttribute('aria-modal', 'false');
+        });
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-modal', 'false');
+            }
+        });
+        
+        // Slider
+        const slider = document.getElementById('volume-slider');
+        const sliderValue = document.querySelector('.slider-value');
+        
+        slider.addEventListener('input', () => {
+            const value = slider.value;
+            sliderValue.textContent = `${value}%`;
+            slider.setAttribute('aria-valuenow', value);
+        });
+        
+        // Botón de alto contraste
+        const contrastToggle = document.querySelector('.contrast-toggle');
+        contrastToggle.addEventListener('click', () => {
+            document.body.classList.toggle('high-contrast');
+            
+            // Cambiar el ícono según el estado
+            const icon = contrastToggle.querySelector('i');
+            if (document.body.classList.contains('high-contrast')) {
+                icon.classList.remove('fa-adjust');
+                icon.classList.add('fa-sun');
+                contrastToggle.setAttribute('aria-label', 'Desactivar modo de alto contraste');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-adjust');
+                contrastToggle.setAttribute('aria-label', 'Activar modo de alto contraste');
+            }
+        });
+    </script>
+</body>
+</html>
