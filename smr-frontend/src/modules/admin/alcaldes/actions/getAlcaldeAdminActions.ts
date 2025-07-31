@@ -2,8 +2,8 @@ import { apiConfig } from '@/api/apiConfig';
 
 // import type { Alcaldes } from '../interfaces/alcaldesInterfaces';
 import type { Alcaldes } from '@/modules/interfaces/alcaldesInterfaces';
-import { getImageAction } from './getImageAction';
-import { getDocumentUrlAction } from './getDocumentActions';
+import { getImageAction } from './getImageAdminAction';
+import { getDocumentUrlAction } from './getDocumenAdmintActions';
 
 // Define la interfaz de la respuesta completa
 interface ApiResponse {
@@ -34,6 +34,3 @@ export const getAlcaldeActions = async (page: number = 1, limit: number = 1) => 
     throw new Error(`${error}`);
   }
 };
-
-
-

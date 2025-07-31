@@ -22,7 +22,7 @@ class AlcaldeController extends Controller
     public function index()
     {
         try {
-            $alcaldes =   $alcaldes = Alcalde::with('planDesarrollo')
+            $alcaldes = Alcalde::with(['planDesarrollo.documentos'])
                 ->orderBy('actual', 'Asc')
                 ->orderByDesc('fecha_inicio')
                 ->get();
@@ -47,7 +47,7 @@ class AlcaldeController extends Controller
     {
         try {
             // Carga eficiente de relaciones necesarias
-            $alcalde->load(['planDesarrollo']);
+            $alcalde->load(['planDesarrollo.documentos']);
 
             return response()->json([
                 'status' => true,

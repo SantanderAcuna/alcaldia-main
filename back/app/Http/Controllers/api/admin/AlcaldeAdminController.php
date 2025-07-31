@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\admin;
 
 use App\Models\Alcalde;
+use App\Models\PlanDeDesarrollo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class AlcaldeAdminController
     public function index()
     {
         try {
-            $alcaldes = Alcalde::with('planDesarrollo')
+            $alcaldes = Alcalde::with(['planDesarrollo.documentos'])
                 ->orderBy('actual', 'Asc')
                 ->orderByDesc('fecha_inicio')
                 ->get();
@@ -42,7 +43,7 @@ class AlcaldeAdminController
     {
         try {
             // Carga eficiente de relaciones necesarias
-            $alcalde->load(['planDesarrollo']);
+            $alcalde->load(['planDesarrollo.documentos']);
 
             return response()->json([
                 'status' => true,
@@ -69,130 +70,149 @@ class AlcaldeAdminController
     }
 
 
-    /**
-     * Crear alcalde (POST /api/alcaldes)
-     */
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $validated = $request->validate($this->validationRules());
-            $filePaths = $this->processFiles($request);
+        $rules = $this->validationRules();
+        $validated = $request->validate($rules);
 
+        try {
+            DB::beginTransaction();
+
+            // 1. Crear Alcalde
             $alcalde = Alcalde::create([
                 'nombre_completo' => $validated['nombre_completo'],
-                'fecha_inicio' => $validated['fecha_inicio'],
-                'fecha_fin' => $validated['fecha_fin'] ?? null,
-                'presentacion' => $validated['presentacion'] ?? null,
-                'foto_path' => $filePaths['foto_path'],
-                'actual' => $validated['actual']
+                'sexo'            => $validated['sexo'],
+                'fecha_inicio'    => $validated['fecha_inicio'],
+                'fecha_fin'       => $validated['fecha_fin'] ?? null,
+                'presentacion'    => $validated['presentacion'] ?? null,
+                'foto_path'       => $validated['foto_path'] ?? null,
+                'actual'          => $validated['actual'],
             ]);
 
-            $alcalde->planDesarrollo()->create([
-                'titulo' => $validated['titulo'],
-                'descripcion' => $validated['descripcion'] ?? null,
-                'document_path' => $filePaths['document_path']
-            ]);
+            // 2. Crear Plan de Desarrollo
+            $plan = $this->createOrUpdatePlan($alcalde, $validated['plan']);
 
             DB::commit();
 
             return response()->json([
                 'status' => true,
-                'data' => $alcalde->load('planDesarrollo')
+                'data'   => $alcalde->load('planDesarrollo.documentos'),
             ], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'errors' => $e->errors()
-            ], 422);
+            return response()->json(['status' => false, 'errors' => $e->errors()], 422);
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error("Error creating alcalde: " . $e->getMessage());
+            Log::error('Error creating alcalde: ' . $e->getMessage());
             return response()->json([
                 'status' => false,
-                'message' => 'Error al crear alcalde'
+                'message' => 'Error al crear alcalde',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null
             ], 500);
         }
     }
 
-    /**
-     * Actualizar alcalde (PUT /api/alcaldes/{id})
-     */
     public function update(Request $request, Alcalde $alcalde)
     {
-        DB::beginTransaction();
+        $rules = $this->validationRules(true);
+        $validated = $request->validate($rules);
+
         try {
-            // 1. Validación estricta
-            $validated = $request->validate([
-                'nombre_completo' => 'required|string|max:150',
-                'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-                'presentacion' => 'nullable|string|max:15000',
-                'actual' => 'required|boolean',
-                'titulo' => 'required|string|max:255', // Campo de plan_desarrollo
-                'foto_path' => 'sometimes|image|mimes:jpeg,png,webp|max:2048',
-                'document_path' => 'sometimes|file|mimes:pdf,doc,docx|max:5120'
-            ]);
+            DB::beginTransaction();
 
-            // 2. Procesamiento de archivos
-            $filePaths = [];
-            if ($request->hasFile('foto_path')) {
-                $filePaths['foto_path'] = $request->file('foto_path')
-                    ->store('alcaldes/fotos', 'public');
-                if ($alcalde->foto_path) {
-                    Storage::disk('public')->delete($alcalde->foto_path);
-                }
-            }
-
-            if ($request->hasFile('document_path')) {
-                $filePaths['document_path'] = $request->file('document_path')
-                    ->store('planes/documentos', 'public');
-                if ($alcalde->planDesarrollo?->document_path) {
-                    Storage::disk('public')->delete($alcalde->planDesarrollo->document_path);
-                }
-            }
-
-            // 3. Actualización atómica
+            // Actualizar Alcalde
             $alcalde->update([
                 'nombre_completo' => $validated['nombre_completo'],
-                'fecha_inicio' => $validated['fecha_inicio'],
-                'fecha_fin' => $validated['fecha_fin'],
-                'presentacion' => $validated['presentacion'],
-                'foto_path' => $filePaths['foto_path'] ?? $alcalde->foto_path,
-                'actual' => $validated['actual']
+                'sexo'            => $validated['sexo'],
+                'fecha_inicio'    => $validated['fecha_inicio'],
+                'fecha_fin'       => $validated['fecha_fin'] ?? null,
+                'presentacion'    => $validated['presentacion'] ?? null,
+                'foto_path'       => $validated['foto_path'] ?? $alcalde->foto_path,
+                'actual'          => $validated['actual'],
             ]);
 
-            // 4. Actualizar relación
-            $alcalde->planDesarrollo()->updateOrCreate(
-                ['alcalde_id' => $alcalde->id],
-                [
-                    'titulo' => $validated['titulo'],
-                    'document_path' => $filePaths['document_path'] ?? $alcalde->planDesarrollo?->document_path
-                ]
-            );
+            // Actualizar o crear Plan de Desarrollo
+            $this->createOrUpdatePlan($alcalde, $validated['plan']);
 
             DB::commit();
 
             return response()->json([
                 'status' => true,
-                'data' => $alcalde->fresh('planDesarrollo')
+                'data'   => $alcalde->fresh('planDesarrollo.documentos')
             ]);
         } catch (ValidationException $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'errors' => $e->errors()
-            ], 422);
+            return response()->json(['status' => false, 'errors' => $e->errors()], 422);
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error("Update error: " . $e->getMessage());
+            Log::error("Update error: {$e->getMessage()}");
             return response()->json([
                 'status' => false,
-                'message' => 'Error al actualizar'
+                'message' => 'Error al actualizar',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null
             ], 500);
         }
     }
+
+    /**
+     * Método para crear o actualizar el plan de desarrollo
+     */
+    private function createOrUpdatePlan(Alcalde $alcalde, array $planData): PlanDeDesarrollo
+    {
+        $plan = $alcalde->planDesarrollo()->firstOrNew();
+
+        $plan->fill([
+            'titulo' => $planData['titulo'],
+            'descripcion' => $planData['descripcion']
+        ])->save();
+
+        // Sincronizar documentos
+        if (isset($planData['documentos'])) {
+            $plan->documentos()->delete();
+
+            foreach ($planData['documentos'] as $doc) {
+                $plan->documentos()->create([
+                    'path' => $doc['path'],
+                    'nombre' => $doc['nombre']
+                ]);
+            }
+        }
+
+        return $plan;
+    }
+
+    /**
+     * Reglas de validación unificadas
+     */
+    protected function validationRules(bool $isUpdate = false): array
+    {
+        $rules = [
+            // Campos del alcalde
+            'nombre_completo' => 'required|string|max:150',
+            'fecha_inicio'    => 'required|date|before_or_equal:today',
+            'fecha_fin'       => 'nullable|date|after_or_equal:fecha_inicio',
+            'presentacion'    => 'nullable|string',
+            'sexo'            => 'required|in:masculino,femenino,otro',
+            'actual'          => 'required|boolean',
+            'foto_path'       => 'nullable|string|max:255',
+
+            // Campos del plan de desarrollo
+            'plan.titulo'      => 'required|string|max:255',
+            'plan.descripcion' => 'required|string',
+            'plan.documentos'  => 'required|array|min:1',
+            'plan.documentos.*.path' => 'required|string|max:255',
+            'plan.documentos.*.nombre' => 'required|string|max:255',
+        ];
+
+        // Hacer campos opcionales para actualización
+        if ($isUpdate) {
+            $rules['plan.documentos'] = 'sometimes|array|min:1';
+            $rules['foto_path'] = 'sometimes|nullable|string|max:255';
+        }
+
+        return $rules;
+    }
+
 
     /**
      * Eliminar alcalde (DELETE /api/alcaldes/{id})
@@ -201,17 +221,7 @@ class AlcaldeAdminController
     {
         DB::beginTransaction();
         try {
-            if ($alcalde->foto_path) {
-                Storage::disk('public')->delete($alcalde->foto_path);
-            }
 
-            if ($plan = $alcalde->planDesarrollo) {
-
-                if ($plan->document_path) {
-                    Storage::disk('public')->delete($plan->document_path);
-                }
-                $plan->delete();
-            }
             $alcalde->delete();
             DB::commit();
 
@@ -227,75 +237,5 @@ class AlcaldeAdminController
                 'message' => 'Error al eliminar alcalde'
             ], 500);
         }
-    }
-
-    /* ========== MÉTODOS AUXILIARES ========== */
-
-    /**
-     * Reglas de validación centralizadas
-     */
-
-    public function toArray($request)
-    {
-        return [
-            'fecha_inicio' => $request->fecha_inicio->format('Y-m-d'),
-            'fecha_fin' => $request->fecha_fin?->format('Y-m-d'),
-
-        ];
-    }
-
-
-    protected function validationRules(bool $isUpdate = false): array
-    {
-        return [
-            // Campos de tabla 'alcaldes'
-            'nombre_completo' => 'required|string|max:150',
-            'fecha_inicio' => 'required|date|before_or_equal:today',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'presentacion' => 'nullable|string|max:15000',
-            'actual' => 'required|boolean',
-
-            // Campos de tabla 'plan_de_desarrollos'
-            'titulo' => 'nullable|string|max:255',
-            'descripcion' => 'nullable|string|max:5000',
-
-            // Archivos
-            'foto_path' => $isUpdate ?
-                'sometimes|image|mimes:jpeg,png,webp|max:2048' :
-                'required|image|mimes:jpeg,png,webp|max:2048',
-            'document_path' => $isUpdate ?
-                'sometimes|file|mimes:pdf,doc,docx|max:5120' :
-                'required|file|mimes:pdf,doc,docx|max:5120'
-        ];
-    }
-
-    /**
-     * Procesamiento seguro de archivos
-     */
-    private function processFiles(Request $request, ?Alcalde $alcalde = null): array
-    {
-        $paths = [];
-
-        // Procesar foto
-        if ($request->hasFile('foto_path')) {
-            $paths['foto_path'] = $request->file('foto_path')
-                ->store('alcaldes/fotos', 'public');
-
-            if ($alcalde?->foto_path) {
-                Storage::disk('public')->delete($alcalde->foto_path);
-            }
-        }
-
-        // Procesar documento
-        if ($request->hasFile('document_path')) {
-            $paths['document_path'] = $request->file('document_path')
-                ->store('planes/documentos', 'public');
-
-            if ($alcalde?->planDesarrollo?->document_path) {
-                Storage::disk('public')->delete($alcalde->planDesarrollo->document_path);
-            }
-        }
-
-        return $paths;
     }
 }

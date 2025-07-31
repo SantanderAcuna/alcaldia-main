@@ -1,7 +1,7 @@
 <template>
   <!-- Footer -->
   <footer
-    class="mt-xl-5 py-4 mt-8 text-white"
+    class="mt-xl-5 py-4 mt-4 text-white"
     role="contentinfo"
     aria-label="Pie de página del sitio web de la Alcaldía Distrital de Santa Marta"
   >
@@ -318,4 +318,3 @@ onMounted(() => {
   });
 });
 </script>
-              

@@ -2,30 +2,32 @@ import { apiConfig } from '@/api/apiConfig';
 
 import type { PlanDesarrollo } from '@/modules/interfaces/planDesarrollointerfaces';
 import { getDocumentUrlAction } from './getDocumentActions';
-// import getImageAction  from '@/modules/plandesarrollo/actions/index';
 
-// Define la interfaz de la respuesta completa
 interface ApiResponse {
   status: boolean;
   data: PlanDesarrollo[];
 }
 
-export const getPlanDesarrolloActions = async (page: number = 1, limit: number = 10) => {
-  try {
-    const { data: response } = await apiConfig.get<ApiResponse>(
-      `/publico/plan?limit=${limit}&offset=${page * limit}`,
-    );
+/**
+ * Obtiene planes de desarrollo paginados.
+ * @param page  – Página 1-based (frontend friendly)
+ * @param limit – Registros por página
+ */
+export const getPlanDesarrolloActions = async (page = 1, limit = 10): Promise<PlanDesarrollo[]> => {
+  const offset = (page - 1) * limit; // ← cálculo estándar de paginación
 
-    const planesData = response.data;
+  const { data: response } = await apiConfig.get<ApiResponse>(
+    `/publico/plan?limit=${limit}&offset=${offset}`,
+  );
 
-    return planesData.map((plan) => ({
-      ...plan,
-      document_url: getDocumentUrlAction(plan.document_path),
-    }));
+  // Sanidad: si la API fallara silenciosamente
+  if (!response.status || !Array.isArray(response.data)) return [];
 
-    // return planesData;
-  } catch (error) {
-    console.log(error);
-    throw new Error(`${error}`);
-  }
+  /* ----------------------------------------------------------------
+   *  Normalizamos cada registro (inmutable).
+   * ---------------------------------------------------------------- */
+  return response.data.map((plan) => ({
+    ...plan,
+    document_url: getDocumentUrlAction(plan.document_path),
+  }));
 };

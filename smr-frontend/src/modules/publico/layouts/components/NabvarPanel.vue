@@ -272,7 +272,7 @@
                       >
                     </li>
                     <li>
-                      <router-link class="dropdown-item" to="/carlos-pinedo"
+                      <router-link class="dropdown-item" to="/admin/alcaldes/actual/1"
                         ><i class="fas fa-user-tie me-2"></i>Carlos Pinedo (2024-2027)</router-link
                       >
                     </li>

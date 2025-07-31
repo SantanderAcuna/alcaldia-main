@@ -82,7 +82,7 @@ import { useRoute } from 'vue-router';
 import { ref, computed, watch } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { getPlanDesarrolloActions } from '@/modules/publico/plandesarrollo/actions/index.ts';
-import BotonPaginacion from '@/layouts/conmom/BotonPaginacion.vue';
+import BotonPaginacion from '@/modules/publico/layouts/conmom/BotonPaginacion.vue';
 
 const route = useRoute();
 const searchQuery = ref('');
@@ -110,6 +110,11 @@ const { data: planes } = useQuery({
   queryFn: () => getPlanDesarrolloActions(currentPage.value),
   staleTime: 60 * 1000,
 });
+
+
+
+console.log(planes.value);
+
 
 // Determinar si hay más datos
 const hasMoreData = computed(() => {

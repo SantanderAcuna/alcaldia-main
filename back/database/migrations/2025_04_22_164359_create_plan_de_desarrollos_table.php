@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('plan_de_desarrollos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('alcalde_id')
+                ->constrained('alcaldes')
+                ->cascadeOnDelete();
             $table->string('titulo');
-            $table->text('descripcion')->nullable(); // Esta línea debe existir
-            $table->string('document_path');
-            $table->foreignId('alcalde_id')->constrained()->cascadeOnDelete();
-            $table->softDeletes();
+            $table->longText('descripcion');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

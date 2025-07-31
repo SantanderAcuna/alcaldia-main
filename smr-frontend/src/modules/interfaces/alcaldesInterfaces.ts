@@ -1,13 +1,37 @@
-import type { PlanDesarrollo } from './planDesarrollointerfaces';
-
 export interface Alcaldes {
-  id: number;
+  id?: number | null;
   nombre_completo: string;
-  fecha_inicio: Date;
-  fecha_fin: Date;
   presentacion: string;
-  foto_path: string;
+  fecha_inicio: Date | string | null;
+  fecha_fin: Date | string | null;
+  sexo: 'masculino' | 'femenino';
   actual: boolean;
+  foto_path: string | File;
 
-  plan_desarrollo: PlanDesarrollo;
+  plan_desarrollo: {
+    id?: number | null;
+    titulo: string;
+    descripcion: string;
+
+    documentos: Array<{
+      id?: number | null;
+      path: string;
+      nombre: string;
+    }>;
+  };
+}
+
+export interface PlanDesarrollo {
+  id: number;
+  alcalde_id: number;
+  titulo: string;
+  descripcion: string;
+  documentos: Documento[];
+}
+
+export interface Documento {
+  id?: number;
+  plan_de_desarrollo_id?: number;
+  path: string;
+  nombre: string;
 }

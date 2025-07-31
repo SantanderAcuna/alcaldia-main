@@ -1,6 +1,9 @@
 /* ==========================================================================
    Variables Globales
    ========================================================================== */
+
+
+
 :root {
   --color-alcaldia: #00ade7;
   --color-secundario: #00568d;
@@ -221,7 +224,6 @@ footer {
   border-bottom: 1px solid #333 !important;
 }
 
-
 /* ==========================================================================
      Modo Oscuro Completo - Corrección para iconos y elementos visuales
      ========================================================================== */
@@ -270,11 +272,11 @@ footer {
 }
 
 .modo-oscuro .change-positive {
-  color: #4CAF50 !important; /* Verde más visible en modo oscuro */
+  color: #4caf50 !important; /* Verde más visible en modo oscuro */
 }
 
 .modo-oscuro .change-negative {
-  color: #F44336 !important; /* Rojo más visible en modo oscuro */
+  color: #f44336 !important; /* Rojo más visible en modo oscuro */
 }
 
 /* Corrección para los bordes de las tablas */
@@ -289,7 +291,6 @@ footer {
   background-color: #333333 !important;
   color: var(--color-texto) !important;
 }
-
 
 /* ==========================================================================
      Barra de Accesibilidad

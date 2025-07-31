@@ -1,4 +1,4 @@
 <template>
-      <router-view />
-      <VueQueryDevtools />
+  <router-view />
+  <VueQueryDevtools />
 </template>

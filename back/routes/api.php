@@ -28,8 +28,11 @@ use App\Http\Controllers\api\publico\SecretariaController;
 use App\Http\Controllers\api\publico\TagController;
 use App\Http\Controllers\api\publico\TipoController;
 use App\Http\Controllers\api\publico\TramiteController;
+use App\Http\Controllers\api\UploadController;
 
 // CRUD de Plan de Desarrollo
+
+Route::apiResource('uploads', UploadController::class);
 
 
 
@@ -68,7 +71,7 @@ Route::prefix('publico')->group(function () {
 
 Route::prefix('admin')->group(function () {
 
-    Route::apiResource('alcaldes-admin', AlcaldeAdminController::class);
+    Route::apiResource('alcaldes', AlcaldeAdminController::class);
     Route::apiResource('plan-admin', PlanDesarrolloAdminController::class);
     // Funcionarios
 

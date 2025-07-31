@@ -16,8 +16,9 @@ class Alcalde extends Model
 
     protected $table = 'alcaldes';
 
- protected $fillable = [
+    protected $fillable = [
         'nombre_completo',
+        'sexo',
         'fecha_inicio',
         'fecha_fin',
         'presentacion',
@@ -33,7 +34,7 @@ class Alcalde extends Model
 
     public function planDesarrollo()
     {
-        return $this->hasOne(PlanDeDesarrollo::class);
+        return $this->hasMany(PlanDeDesarrollo::class);
     }
 
 
@@ -46,9 +47,4 @@ class Alcalde extends Model
             }
         });
     }
-
- 
-
-
-
 }

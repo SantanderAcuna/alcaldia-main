@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center py-5 gap-3 bg-light">
+  <div class="d-flex justify-content-center py-5 gap-3">
     <!-- Botón Anterior -->
     <button
       :disabled="page === 1"
