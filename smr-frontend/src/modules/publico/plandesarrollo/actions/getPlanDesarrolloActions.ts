@@ -1,9 +1,10 @@
 import { apiConfig } from '@/api/apiConfig';
 
-import type { PlanDesarrollo } from '@/modules/interfaces/planDesarrollointerfaces';
+import type { PlanDesarrollo } from '@/modules/interfaces/index';
+
 import { getDocumentUrlAction } from './getDocumentActions';
 
-interface ApiResponse {
+interface ApiResponse<> {
   status: boolean;
   data: PlanDesarrollo[];
 }
@@ -28,6 +29,7 @@ export const getPlanDesarrolloActions = async (page = 1, limit = 10): Promise<Pl
    * ---------------------------------------------------------------- */
   return response.data.map((plan) => ({
     ...plan,
-    document_url: getDocumentUrlAction(plan.document_path),
+
+    document_url: getDocumentUrlAction(plan?.documentos?.[0]?.path ?? ''),
   }));
 };

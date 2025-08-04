@@ -1,28 +1,36 @@
-// getDocumenAdmintActions.ts
-export const getDocumentUrlAction = (
-  documentPath: string | string[] | { path: string }[],
-): string | string[] => {
-  if (!documentPath) return '';
-
-  const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '';
-
-  // 2️⃣ ───────── Si viene un **array** ─────────
-  if (Array.isArray(documentPath)) {
-    return documentPath.map((item) => {
-      const raw = typeof item === 'string' ? item : item.path;
-      return buildUrl(raw, baseUrl);
-    });
+/**
+ * Genera la URL completa para acceder a un documento
+ * @param documentPath - Ruta relativa del documento
+ * @returns URL completa como string
+ * @throws Error si no se puede generar la URL
+ */
+export const getDocumentUrlAction = (documentPath: string): string => {
+  if (!documentPath) {
+    console.warn('Document path is empty');
+    return '';
   }
 
-  // 3️⃣ ───────── Si viene una **cadena** ─────────
-  return buildUrl(documentPath, baseUrl);
-};
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!baseUrl) {
+    console.error('VITE_API_BASE_URL no está definido');
+    return '';
+  }
 
-//  helper interno (no exportado) para evitar repetir código
-const buildUrl = (rawPath: string, baseUrl: string): string => {
-  if (rawPath.startsWith('http')) return rawPath;
+  // Si ya es una URL completa, retornar directamente
+  if (documentPath.startsWith('http')) {
+    return documentPath;
+  }
 
-  const cleanPath = rawPath.replace(/^planes\/documentos\//, '').replace(/^storage\//, '');
+  try {
+    // Limpiar la ruta y construir URL completa
+    const cleanPath = documentPath
+      .replace(/^planes\/documentos\//, '')
+      .replace(/^storage\//, '')
+      .trim();
 
-  return `${baseUrl}/storage/planes/documentos/${cleanPath}`;
+    return `${baseUrl}/storage/planes/documentos/${cleanPath}`;
+  } catch (error) {
+    console.error('Error generating document URL:', error);
+    return '';
+  }
 };

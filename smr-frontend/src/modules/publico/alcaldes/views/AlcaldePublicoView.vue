@@ -1,4 +1,3 @@
-<!-- Alcalde.vue -->
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -42,8 +41,8 @@
 
             <tbody>
               <tr
-                v-for="alcalde in orderedAlcaldes"
-                :key="alcalde.id"
+                v-for="(alcalde, index) in orderedAlcaldes"
+                :key="index"
                 class="text-center align-middle"
               >
                 <td class="text-center align-middle">
@@ -60,10 +59,12 @@
                   {{ alcalde.nombre_completo }}
                 </td>
 
-                <td class="text-center align-middle">
-                  {{ new Date(alcalde.fecha_inicio).getFullYear() }} -
-                  {{ new Date(alcalde.fecha_fin).getFullYear() }}
-                </td>
+                <div class="periodo-container">
+                  <p>
+                    {{ alcalde.fecha_inicio ? formatDate(alcalde.fecha_inicio) : 'Actual' }} -
+                    {{ alcalde.fecha_fin ? formatDate(alcalde.fecha_fin) : 'Presente' }}
+                  </p>
+                </div>
 
                 <td class="text-center align-middle">
                   <span class="badge bg-primary text-capitalize">
@@ -80,17 +81,20 @@
                 </td>
 
                 <td class="text-center align-middle">
-                  <div class="btn-group btn-group-sm">
-                    <a
-                      :aria-label="'Descargar ' + alcalde.plan_desarrollo.titulo"
-                      :href="alcalde.plan_desarrollo.document_url"
-                      target="_blank"
-                      download
-                      class="btn btn-outline-primary d-inline-flex align-items-center gap-2 px-3 py-1"
-                    >
-                      <i class="fas fa-eye"></i>
-                      <span>Descargar</span>
-                    </a>
+                  <div class="documentos-container">
+                    <h3>Documentos Relacionados</h3>
+                    <div v-if="alcalde.plan_desarrollo?.documentos?.length">
+                      <div
+                        v-for="(doc, index) in alcalde.plan_desarrollo.documentos"
+                        :key="doc.id || index"
+                        class="documento-item"
+                      >
+                        <a :href="getDocumentos(doc.path)" target="_blank" class="documento-link">
+                          <i class="fas fa-file-pdf"></i> {{ doc.nombre || 'Documento sin nombre' }}
+                        </a>
+                      </div>
+                    </div>
+                    <div v-else class="no-documents">No hay documentos disponibles</div>
                   </div>
                 </td>
               </tr>
@@ -113,6 +117,8 @@ import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { ref, computed, watch, watchEffect } from 'vue';
 import { usePagination } from '@/modules/composables/usePagination';
 import BotonPaginacion from '@/modules/publico/layouts/conmom/BotonPaginacion.vue';
+import { getDocumentUrlAction } from '../actions';
+// import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 
 const route = useRoute();
 const searchQuery = ref('');
@@ -176,9 +182,45 @@ const orderedAlcaldes = computed(() => {
     if (!a.actual && b.actual) return 1;
 
     // 2️⃣  Si empatan, el más reciente primero
-    const fechaA = new Date(a.fecha_inicio ?? a.fecha_fin);
-    const fechaB = new Date(b.fecha_inicio ?? b.fecha_fin);
+    const fechaA = safeDateConstructor(a.fecha_inicio ?? a.fecha_fin);
+    const fechaB = safeDateConstructor(b.fecha_inicio ?? b.fecha_fin);
     return fechaB.getTime() - fechaA.getTime();
   });
 });
+
+// // Props
+// const props = defineProps<{
+//   alcalde: Alcalde;
+// }>();
+
+// Métodos
+const formatDate = (dateString: string | Date) => {
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  return date.toLocaleDateString('es-CO', options);
+};
+
+const getDocumentos = (path: string) => {
+  return getDocumentUrlAction(path);
+};
+
+// Computed
+
+// const hasDocuments = computed(() => {
+//   return (props.alcalde.plan_desarrollo?.documentos?.length ?? 0) > 0;
+// });
+
+const safeDateConstructor = (dateStr: string | null | undefined): Date => {
+  // Fecha por defecto (1/1/1970) si no hay valor válido
+  const defaultDate = new Date(0);
+
+  if (!dateStr) return defaultDate;
+
+  try {
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? defaultDate : date;
+  } catch {
+    return defaultDate;
+  }
+};
 </script>

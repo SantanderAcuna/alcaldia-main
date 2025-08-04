@@ -25,7 +25,7 @@
       <p class="small text-muted mb-0">o</p>
 
       <!-- Input de archivo oculto -->
-    
+
       <input
         type="file"
         ref="fileInput"
@@ -93,6 +93,13 @@ import type { AxiosError } from 'axios';
 interface ImageUploadResponse {
   path: string;
   url?: string;
+}
+
+interface ApiErrorResponse {
+  errors?: {
+    [key: string]: string[];
+  };
+  message?: string;
 }
 
 const props = defineProps({
@@ -248,6 +255,9 @@ const uploadFile = async (file: File) => {
 const handleUploadError = (error: AxiosError) => {
   let errorMessage = 'Error al subir la imagen';
 
+  // Cast seguro a nuestro tipo definido
+  const errorData = error.response?.data as ApiErrorResponse;
+
   if (error.response) {
     switch (error.response.status) {
       case 404:
@@ -257,19 +267,17 @@ const handleUploadError = (error: AxiosError) => {
         errorMessage = 'El archivo es demasiado grande';
         break;
       case 422:
-        // Manejo específico para errores de validación de Laravel
-        if (error.response.data?.errors?.foto_path) {
-          errorMessage = error.response.data.errors.foto_path.join(', ');
+        if (errorData.errors?.foto_path) {
+          errorMessage = errorData.errors.foto_path.join(', ');
         } else {
-          errorMessage = error.response.data?.message || 'Datos de formulario inválidos';
+          errorMessage = errorData.message || 'Datos de formulario inválidos';
         }
         break;
       case 401:
         errorMessage = 'No autorizado. Por favor inicie sesión.';
         break;
       default:
-        errorMessage =
-          error.response.data?.message || `Error del servidor (${error.response.status})`;
+        errorMessage = errorData.message || `Error del servidor (${error.response.status})`;
     }
   } else if (error.request) {
     errorMessage = 'No se recibió respuesta del servidor';

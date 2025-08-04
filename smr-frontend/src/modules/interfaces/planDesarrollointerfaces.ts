@@ -1,26 +1,17 @@
-import type { Alcaldes } from './alcaldesInterfaces';
-
-export interface PlanDesarrollo {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  documentos: Documento[]; // ← calculado en frontend
-  alcalde_id: number;
-
-  alcalde?: Alcaldes;
-}
+import type { Alcalde } from './alcaldesInterfaces';
+import type { Documento } from './documentoInterfaces';
 
 export interface PlanDesarrollo {
   id: number;
   alcalde_id: number;
   titulo: string;
   descripcion: string;
-  documentos: Documento[]; // Array de documentos
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
+
+  documentos?: Documento[] | null;
+  alcalde?: Alcalde | null;
 }
 
-export interface Documento {
-  id?: number;
-  plan_de_desarrollo_id?: number;
-  path: string;
-  nombre: string;
-}
+

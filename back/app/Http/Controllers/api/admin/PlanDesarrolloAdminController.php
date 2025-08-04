@@ -18,22 +18,24 @@ class PlanDesarrolloAdminController
     public function index(Request $request): JsonResponse
     {
         try {
+            $perPage = $request->input('per_page', 10);
+            $page = $request->input('page', 1);
 
+            $query = PlanDeDesarrollo::with(['alcalde', 'documentos'])
+                ->orderBy('created_at', 'asc')
+                ->orderByDesc('created_at');
 
-            $data = PlanDeDesarrollo::with('alcalde')
-                ->orderByDesc('id')
-                ->orderBy('actual', 'Asc')
-                ->get();
+            $data = $query->paginate($perPage, ['*'], 'page', $page);
+
             return response()->json([
                 'status' => true,
                 'data'   => $data,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al listar: ' . $e->getMessage());
-
+            Log::error('Error al listar planes: ' . $e->getMessage());
             return response()->json([
                 'status'  => false,
-                'message' => 'Error al listar',
+                'message' => 'Error al listar planes: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -206,7 +208,7 @@ class PlanDesarrolloAdminController
             'documentos'   => $isUpdate ? 'sometimes|array|min:1' : 'required|array|min:1',
             'documentos.*' => 'file|max:220480',
 
-            
+
         ];
 
         if ($isUpdate) {

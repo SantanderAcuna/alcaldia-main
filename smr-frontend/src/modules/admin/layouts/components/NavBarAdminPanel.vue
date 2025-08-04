@@ -926,6 +926,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import * as bootstrap from 'bootstrap';
 
 // ✅ Acceso al router
 const router = useRouter();

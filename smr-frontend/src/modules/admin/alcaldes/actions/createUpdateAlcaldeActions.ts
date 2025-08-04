@@ -1,13 +1,17 @@
 import axios, { AxiosError } from 'axios';
 import { apiConfig } from '@/api/apiConfig';
-import type { Alcaldes } from '@/modules/interfaces/alcaldesInterfaces';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 import { useToast } from 'vue-toast-notification';
 
 const $toast = useToast();
 
 const ADMIN_BASE = '/admin/alcaldes';
 
-export const createUpdateAlcalde = async (formData: FormData): Promise<Alcaldes> => {
+interface ErrorResponse {
+  errors?: Record<string, string[]>;
+}
+
+export const createUpdateAlcalde = async (formData: FormData): Promise<Alcalde> => {
   try {
     const id = formData.get('id');
     const isUpdate = id && id !== 'undefined';
@@ -28,8 +32,9 @@ export const createUpdateAlcalde = async (formData: FormData): Promise<Alcaldes>
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
-      if (axiosError.response?.status === 422) {
-        const errors = axiosError.response.data?.errors || {};
+      if (axios.isAxiosError(axiosError) && axiosError.response?.data) {
+        const errors = (axiosError.response.data as ErrorResponse).errors || {};
+
         const errorMessages = Object.values(errors).flat().join(', ');
         throw new Error(`Error de validación: ${errorMessages}`);
       }

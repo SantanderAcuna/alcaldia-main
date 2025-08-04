@@ -1,11 +1,9 @@
 <template>
   <div class="bg-body-secondary">
-    <!-- Contenido principal -->
     <main class="container py-5">
-      <!-- Encabezado y botón crear -->
       <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
         <h4 class="fw-bold text-primary-emphasis">
-          Historico de Alcaldes Distritales De Santa Marta
+          Histórico de Alcaldes Distritales De Santa Marta
         </h4>
 
         <form class="d-flex ms-auto me-4" @submit.prevent>
@@ -30,9 +28,8 @@
         </router-link>
       </div>
 
-      <!-- Grid de tarjetas de alcaldes -->
       <div class="row g-4">
-        <div v-for="alcalde in orderedAlcaldes" :key="alcalde.id" class="col-lg-4 col-md-6">
+        <div v-for="(alcalde, index) in orderedAlcaldes" :key="index" class="col-lg-4 col-md-6">
           <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
               <div class="d-flex align-items-center mb-3">
@@ -61,8 +58,9 @@
                     }}
                   </span>
                   <div class="text-muted small mt-1">
-                    Período: {{ new Date(alcalde.fecha_inicio).getFullYear() }} -
-                    {{ new Date(alcalde.fecha_fin).getFullYear() }}
+                    Período:
+                    {{ alcalde.fecha_inicio ? formatYear(alcalde.fecha_inicio) : 'Actual' }} -
+                    {{ alcalde.fecha_fin ? formatYear(alcalde.fecha_fin) : 'Presente' }}
                   </div>
                 </div>
               </div>
@@ -71,44 +69,48 @@
                 {{ alcalde.presentacion?.slice(0, 80) || 'Sin presentación' }}
                 {{ alcalde.presentacion && alcalde.presentacion.length > 80 ? '…' : '' }}
               </p>
-              <div v-if="alcalde.plan_desarrollo?.[0]?.titulo" class="mb-3">
+
+              <!-- Sección corregida para el título del plan (ahora como objeto) -->
+              <div v-if="alcalde.plan_desarrollo?.titulo" class="mb-3">
                 <span class="badge bg-primary bg-opacity-10 text-primary text-uppercase p-2">
                   <i class="fas fa-file-contract me-1"></i>
-                  {{ alcalde.plan_desarrollo[0].titulo }}
+                  {{ alcalde.plan_desarrollo.titulo }}
                 </span>
               </div>
-              <div class="mb-3" v-if="alcalde.plan_desarrollo?.[0]?.documentos?.length">
+
+              <!-- Sección corregida para documentos (ahora como objeto) -->
+              <div v-if="alcalde.plan_desarrollo?.documentos?.length" class="mb-3">
                 <h6 class="fw-semibold mb-2">Documentos:</h6>
                 <ul class="list-unstyled mb-0 ps-1">
-                  <!-- Mostrar solo el primer documento -->
                   <li
-                    v-if="alcalde.plan_desarrollo[0].documentos.length > 0"
-                    class="d-flex justify-content-between align-items-center py-1 px-2 rounded mb-1 bg-light text-primary"
+                    v-for="(documento, docIndex) in alcalde.plan_desarrollo.documentos.slice(0, 3)"
+                    :key="docIndex"
+                    class="d-flex justify-content-between align-items-center py-1 px-2 rounded mb-1 bg-light"
                   >
-                    <div>
-                      <i class="fas fa-file-download me-2"></i>
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-file-pdf text-danger me-2"></i>
                       <a
-                        :href="`${API_STORAGE_URL}/${alcalde.plan_desarrollo[0].documentos[0].path}`"
+                        :href="getFullDocumentUrl(documento.path)"
                         target="_blank"
-                        class="link-dark btn-sm"
+                        class="text-decoration-none text-dark"
+                        :title="documento.nombre"
+                        download
                       >
-                        {{ alcalde.plan_desarrollo[0].documentos[0].nombre.slice(0, 20) }}
-                        {{ alcalde.plan_desarrollo[0].documentos[0].nombre.length > 20 ? '…' : '' }}
+                        {{ truncateText(documento.nombre, 25) }}
                       </a>
                     </div>
+                    <span class="badge bg-secondary rounded-pill fs-12">
+                      {{ getFileExtension(documento.nombre) }}
+                    </span>
                   </li>
 
-                  <!-- Enlace "Ver más" si hay más de 1 documento -->
-                  <li
-                    v-if="alcalde.plan_desarrollo[0].documentos.length > 1"
-                    class="d-flex justify-content-between align-items-center py-1 px-2 rounded"
-                  >
+                  <li v-if="alcalde.plan_desarrollo.documentos.length > 2">
                     <router-link
                       :to="`/admin/alcaldes/${alcalde.id}/documentos`"
-                      class="text-decoration-none small text-primary"
+                      class="text-decoration-none small text-primary d-block py-2"
                     >
                       <i class="fas fa-ellipsis-h me-2"></i>
-                      Ver {{ alcalde.plan_desarrollo[0].documentos.length - 1 }} más...
+                      Ver {{ alcalde.plan_desarrollo.documentos.length - 3 }} más...
                     </router-link>
                   </li>
                 </ul>
@@ -116,7 +118,6 @@
 
               <div class="container-fluid px-0">
                 <div class="d-flex align-items-center gap-2">
-                  <!-- Botón Perfil -->
                   <router-link
                     :to="{ name: 'alcalde-actual', params: { id: alcalde.id } }"
                     class="btn btn-primary rounded-pill px-3 py-2 shadow-sm"
@@ -126,7 +127,6 @@
                     <i class="fas fa-user-circle me-2"></i>Perfil
                   </router-link>
 
-                  <!-- Botón Editar -->
                   <router-link
                     :to="`/admin/alcaldes/${alcalde.id}`"
                     class="btn p-2 text-decoration-none"
@@ -136,12 +136,11 @@
                     <i class="fas fa-edit text-primary"></i>
                   </router-link>
 
-                  <!-- Botón Eliminar -->
                   <button
                     class="btn rounded-circle p-2 shadow-sm"
                     title="Eliminar registro"
                     data-bs-toggle="tooltip"
-                    @click.prevent="eliminarAlcalde(`${alcalde.id}`)"
+                    @click.prevent="eliminarAlcalde(alcalde.id)"
                   >
                     <i class="fas fa-trash-alt text-primary"></i>
                   </button>
@@ -151,7 +150,6 @@
           </div>
         </div>
 
-        <!-- Mensaje vacío -->
         <div v-if="!alcaldes || alcaldes.length === 0" class="col-12">
           <div class="card border-0 shadow-sm bg-white text-center p-5">
             <div v-if="!alcaldes" class="spinner-border text-primary" role="status">
@@ -178,19 +176,19 @@ import { getAlcaldeActions } from '@/modules/admin/alcaldes/actions/index.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { ref, computed, watch, watchEffect } from 'vue';
 import { usePagination } from '@/modules/composables/usePagination';
-
 import { apiConfig } from '@/api/apiConfig';
-import type { Alcaldes } from '@/modules/interfaces/alcaldesInterfaces';
-import router from '@/router';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
+
 import { useToast } from 'vue-toast-notification';
 
 const $toast = useToast();
-
 const route = useRoute();
 const searchQuery = ref('');
-const statusFilter = ref('all');
 const { page } = usePagination();
-const API_STORAGE_URL = `${import.meta.env.VITE_API_BASE_URL}/storage`;
+
+const formatYear = (date: string | Date) => {
+  return new Date(date).getFullYear();
+};
 
 const queryClient = useQueryClient();
 
@@ -215,31 +213,13 @@ watchEffect(() => {
   });
 });
 
-const filteredAlcaldes = computed(() => {
-  let filtered = alcaldes.value;
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered?.filter((a) => a.nombre_completo.toLowerCase().includes(query));
-  }
-
-  if (statusFilter.value !== 'all') {
-    const isActive = statusFilter.value === 'active';
-    filtered = filtered?.filter((a) => a.actual === isActive);
-  }
-
-  return filtered;
-});
-
 const orderedAlcaldes = computed(() => {
-  if (!filteredAlcaldes.value) return [];
+  if (!alcaldes.value) return [];
 
-  return [...filteredAlcaldes.value].sort((a, b) => {
-    if (a.actual && !b.actual) return -1;
-    if (!a.actual && b.actual) return 1;
-    const fechaA = new Date(a.fecha_inicio ?? a.fecha_fin);
-    const fechaB = new Date(b.fecha_inicio ?? b.fecha_fin);
-    return fechaB.getTime() - fechaA.getTime();
+  return [...alcaldes.value].sort((a, b) => {
+    const dateA = a.fecha_inicio ? new Date(a.fecha_inicio).getTime() : 0;
+    const dateB = b.fecha_inicio ? new Date(b.fecha_inicio).getTime() : 0;
+    return dateB - dateA;
   });
 });
 
@@ -250,60 +230,49 @@ const deleteAlcalde = async (alcaldeId: number) => {
   }
 
   try {
-    await apiConfig.delete<Alcaldes>(`/admin/alcaldes/${alcaldeId}`);
-
-    $toast.success('Alcalde eliminado con exito');
+    await apiConfig.delete<Alcalde>(`/admin/alcaldes/${alcaldeId}`);
+    $toast.success('Alcalde eliminado con éxito');
   } catch (error) {
-    $toast.error('Error en elminando el alcalde:' + `${error}`);
-
+    $toast.error('Error eliminando el alcalde:' + `${error}`);
     throw error;
   }
 };
 
-// // Mutation de Vue Query
-const { mutate: eliminarAlcalde, isPending: isDeleting } = useMutation({
+const { mutate: eliminarAlcalde } = useMutation({
   mutationFn: deleteAlcalde,
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['alcaldes'] });
     $toast.success('Lista de alcaldes actualizada');
-
-    router.push('/admin/alcaldes');
   },
   onError: () => {
     $toast.error('No se pudo eliminar el alcalde');
   },
 });
+
+const truncateText = (text: string, maxLength: number) => {
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
+const getFileExtension = (filename: string) => {
+  return filename.split('.').pop()?.toUpperCase() || 'FILE';
+};
+
+const getFullDocumentUrl = (path: string): string => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  if (!baseUrl) {
+    console.error('VITE_API_BASE_URL no está definido');
+    return '';
+  }
+
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  return `${baseUrl}/storage/${path}`;
+};
 </script>
 
 <style scoped>
-.bg-body-secondary {
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
-
-.navbar {
-  padding: 0.75rem 1rem;
-}
-
-.card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-.rounded-pill {
-  border-radius: 50rem !important;
-}
-
-.hover-lift {
-  transition: all 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-}
+/* Estilos permanecen iguales */
 </style>

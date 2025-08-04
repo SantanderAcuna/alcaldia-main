@@ -28,6 +28,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 // import * as bootstrap from 'bootstrap';
+// En los archivos .vue
+import * as bootstrap from 'bootstrap';
 
 import NavbarSuperior from '@/modules/publico/layouts/components/NabvarSuperior.vue';
 
@@ -37,7 +39,6 @@ import BarraAccesibilidad from '@/modules/publico/layouts/components/BarraAccesi
 import NavBarAdminPanel from './components/NavBarAdminPanel.vue';
 import FooterPanel from '@/modules/publico/layouts/components/FooterPanel.vue';
 import BreadCrumb from './components/BreadCrumb.vue';
-import AsideLayout from './components/AsideLayout.vue';
 
 // Estados para controlar la UI
 const sidebarVisible = ref(false);

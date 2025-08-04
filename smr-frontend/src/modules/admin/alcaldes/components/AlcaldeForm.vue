@@ -70,14 +70,14 @@
               v-model="titulo"
               v-bind="tituloAttrs"
               label="Título del Plan"
-              :error="errors['plan_desarrollo.titulo']"
+              :error="errors['plan.titulo']"
             />
 
             <CustomTextArea
               v-model="descripcion"
               v-bind="descripcionAttrs"
               label="Descripción del Plan"
-              :error="errors['plan_desarrollo.descripcion']"
+              :error="errors['plan.descripcion']"
             />
 
             <CustomDocument
@@ -87,11 +87,10 @@
               folder="planes/documentos"
               label="Documentos del Plan"
               :max-size="10"
-              @update:modelValue="handleDocumentUpdate"
               @remove-existing-doc="removeExistingDocument"
             />
-            <div v-if="errors['plan_desarrollo.documentos']" class="text-danger small mt-1">
-              {{ errors['plan_desarrollo.documentos'] }}
+            <div v-if="errors['plan.documentos']" class="text-danger small mt-1">
+              {{ errors['plan.documentos'] }}
             </div>
 
             <div class="form-check form-switch mb-3">

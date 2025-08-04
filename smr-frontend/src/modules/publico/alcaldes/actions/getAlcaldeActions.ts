@@ -1,14 +1,14 @@
 import { apiConfig } from '@/api/apiConfig';
 
 // import type { Alcaldes } from '../interfaces/alcaldesInterfaces';
-import type { Alcaldes } from '@/modules/interfaces/alcaldesInterfaces';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 import { getImageAction } from './getImageAction';
 import { getDocumentUrlAction } from './getDocumentActions';
 
 // Define la interfaz de la respuesta completa
 interface ApiResponse {
   status: boolean;
-  data: Alcaldes[];
+  data: Alcalde[];
 }
 
 export const getAlcaldeActions = async (page: number = 1, limit: number = 1) => {
@@ -26,7 +26,7 @@ export const getAlcaldeActions = async (page: number = 1, limit: number = 1) => 
       foto_path: getImageAction(alcalde.foto_path),
       plan_desarrollo: {
         ...alcalde.plan_desarrollo,
-        document_url: getDocumentUrlAction(alcalde.plan_desarrollo.document_path),
+        document_url: getDocumentUrlAction(alcalde.plan_desarrollo?.documentos?.[0]?.path ?? ''),
       },
     }));
   } catch (error) {
@@ -34,6 +34,3 @@ export const getAlcaldeActions = async (page: number = 1, limit: number = 1) => 
     throw new Error(`${error}`);
   }
 };
-
-
-

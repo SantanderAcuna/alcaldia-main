@@ -272,7 +272,9 @@
                       >
                     </li>
                     <li>
-                      <router-link class="dropdown-item" to="/admin/alcaldes/actual/1"
+                      <router-link
+                        class="dropdown-item"
+                        :to="{ name: 'publico-alcalde-actual', params: { id: 1 } }"
                         ><i class="fas fa-user-tie me-2"></i>Carlos Pinedo (2024-2027)</router-link
                       >
                     </li>

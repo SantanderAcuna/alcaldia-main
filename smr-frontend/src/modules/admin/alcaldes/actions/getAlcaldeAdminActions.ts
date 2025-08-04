@@ -1,36 +1,71 @@
 import { apiConfig } from '@/api/apiConfig';
-
-// import type { Alcaldes } from '../interfaces/alcaldesInterfaces';
-import type { Alcaldes } from '@/modules/interfaces/alcaldesInterfaces';
-import { getImageAction } from './getImageAdminAction';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 import { getDocumentUrlAction } from './getDocumenAdmintActions';
+import { getImageAction } from './getImageAdminAction';
 
-// Define la interfaz de la respuesta completa
-interface ApiResponse {
+interface ApiResponse<T> {
   status: boolean;
-  data: Alcaldes[];
+  data: T;
 }
 
-export const getAlcaldeActions = async (page: number = 1, limit: number = 1) => {
+export interface Documento {
+  id?: number | null;
+  plan_de_desarrollo_id?: number;
+  path: string;
+  nombre: string;
+  url?: string;
+}
+
+/**
+ * Obtiene la lista de alcaldes con sus planes de desarrollo y documentos
+ * @param page - Página actual (1-based)
+ * @param limit - Cantidad de registros por página
+ * @returns Promise con array de Alcaldes procesados
+ */
+export const getAlcaldeActions = async (
+  page: number = 1,
+  limit: number = 10,
+): Promise<Alcalde[]> => {
   try {
-    // 1. Usa la interfaz ApiResponse
-    const { data: response } = await apiConfig.get<ApiResponse>(
-      `/publico/alcaldes?limit=${limit}&offset=${page * limit}`,
+    // 1. Hacer la petición a la API con tipado fuerte
+    const { data: response } = await apiConfig.get<ApiResponse<Alcalde[]>>(
+      `/publico/alcaldes?limit=${limit}&offset=${(page - 1) * limit}`,
     );
 
-    // 2. Accede al array correcto (response.data)
-    const alcaldesData = response.data;
+    // 2. Validar respuesta básica
+    if (!response.status || !Array.isArray(response.data)) {
+      console.warn('Respuesta API inválida:', response);
+      return [];
+    }
 
-    return alcaldesData.map((alcalde) => ({
-      ...alcalde,
-      foto_path: getImageAction(alcalde.foto_path),
-      plan_desarrollo: {
-        ...alcalde.plan_desarrollo,
-        document_url: getDocumentUrlAction(alcalde.plan_desarrollo.document_path),
-      },
-    }));
+    // 3. Procesar cada alcalde
+    return response.data.map((alcalde) => {
+      // Convertir array plan_desarrollo a objeto único (tomamos el primer elemento si existe)
+      const planDesarrollo =
+        Array.isArray(alcalde.plan_desarrollo) && alcalde.plan_desarrollo.length > 0
+          ? alcalde.plan_desarrollo[0]
+          : undefined;
+
+      // Procesar documentos si existen
+      const planConDocumentos = planDesarrollo
+        ? {
+            ...planDesarrollo,
+            documentos:
+              planDesarrollo.documentos?.map((doc: Documento) => ({
+                ...doc,
+                url: getDocumentUrlAction(doc.path), // Asegurar URL válida
+              })) || [], // Fallback a array vacío si no hay documentos
+          }
+        : undefined;
+
+      return {
+        ...alcalde,
+        foto_path: getImageAction(alcalde.foto_path),
+        plan_desarrollo: planConDocumentos,
+      };
+    });
   } catch (error) {
-    console.log(error);
-    throw new Error(`${error}`);
+    console.error('Error fetching alcaldes:', error);
+    throw new Error('Failed to fetch alcaldes data');
   }
 };

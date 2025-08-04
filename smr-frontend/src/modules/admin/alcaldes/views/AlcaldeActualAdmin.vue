@@ -162,8 +162,7 @@
                   @click="showAllDocuments = true"
                 >
                   <i class="fas fa-chevron-down me-1"></i>
-
-                  Ver {{ alcalde.plan_desarrollo?.documentos?.length - 3 || 0 }} documentos más
+                  Ver {{ documentosCount > 0 ? documentosCount : 0 }} documentos más
                 </button>
               </div>
               <div v-else class="alert alert-warning rounded-3 py-2">
@@ -190,9 +189,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getAlcaldeById } from '@/api/alcaldes';
+import { usePagination } from '@/modules/composables/usePagination';
 
 /**
  * Interfaz para documentos adjuntos
@@ -287,6 +287,10 @@ const hasDevelopmentPlan = computed(() => {
 
 const hasDocuments = computed(() => {
   return !!alcalde.value.plan_desarrollo?.documentos?.length;
+});
+
+const documentosCount = computed(() => {
+  return (alcalde.value.plan_desarrollo?.documentos?.length || 0) - 3;
 });
 
 const visibleDocuments = computed(() => {
@@ -425,6 +429,16 @@ const retryLoading = async () => {
   loading.value = true;
   await loadAlcaldeData();
 };
+
+const { page } = usePagination();
+
+watch(
+  () => route.query.page,
+  (newPage) => {
+    page.value = Number(newPage || 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+);
 
 /**
  * Carga datos del alcalde desde API

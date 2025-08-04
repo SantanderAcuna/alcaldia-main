@@ -26,11 +26,12 @@ export const publicoRoutes: RouteRecordRaw = {
     },
     {
       // /alcalde/:id → detalle público
-      path: 'alcalde/:id',
-      name: 'perfil-alcalde',
+      path: '/publico/alcaldes/actual/:id',
+      name: 'publico-alcalde-actual',
       component: () => import('@/modules/publico/alcaldes/views/AlcaldeActual.vue'),
       props: true,
     },
+
     {
       // /plan → planes de desarrollo público
       path: 'plan',

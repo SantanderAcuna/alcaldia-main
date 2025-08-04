@@ -4,47 +4,95 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { createUpdateAlcalde, getAlcaldeById } from '../actions';
-import CustomInput from '@/modules/helpers/CustomInput.vue';
-import CustomTextArea from '@/modules/helpers/CustomTextArea.vue';
-import CustomInputDate from '@/modules/helpers/CustomInputDate.vue';
-import CustomDocument from '@/modules/helpers/CustomDocument.vue';
-import CustomImagen from '@/modules/helpers/CustomImagen.vue';
-
-import type { Documento } from '@/modules/interfaces/alcaldesInterfaces';
+import CustomInput from '@/modules/admin/components/CustomInput.vue';
+import CustomTextArea from '@/modules/admin/components/CustomTextArea.vue';
+import CustomInputDate from '@/modules/admin/components/CustomInputDate.vue';
+import CustomDocument from '@/modules/admin/components/CustomDocument.vue';
+import CustomImagen from '@/modules/admin/components/CustomImagen.vue';
 
 import { useToast } from 'vue-toast-notification';
+import type { Documento } from '@/modules/interfaces/documentoInterfaces';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
+
+interface ApiError {
+  response?: {
+    data?: {
+      errors?: Record<string, string[]>;
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
+// type PlanErrors = {
+//   titulo?: string;
+//   descripcion?: string;
+//   documentos?: string;
+//   documentos_array?: Array<{ index: number; error: string }>;
+// };
+
+// interface FormErrors {
+//   plan?: string | PlanErrors;
+// }
+
+interface FormValues {
+  id?: number | null;
+  nombre_completo: string;
+  presentacion: string;
+  fecha_inicio?: string | null;
+  fecha_fin?: string | null;
+  sexo: 'masculino' | 'femenino';
+  actual: boolean;
+  foto_path: string;
+  plan?: {
+    titulo?: string;
+    descripcion?: string;
+    documentos?: Array<{
+      id?: number;
+      nombre: string;
+      path: string;
+    }>;
+  };
+}
 
 const $toast = useToast();
-
+const toSafeDate = (value: unknown): Date | null => {
+  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+  if (typeof value === 'string' || typeof value === 'number') {
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  return null;
+};
 // Esquema de validación
 const validationSchema = yup.object({
   nombre_completo: yup.string().required('Nombre completo es obligatorio'),
   presentacion: yup.string().required('Presentación es obligatoria'),
+  // Función utilitaria para manejo seguro de fechas
+
+  // Esquema de validación actualizado
   fecha_inicio: yup
     .mixed()
     .required('Fecha de inicio es obligatoria')
     .test('is-valid-date', 'Debe ser una fecha válida', (value) => {
-      if (!value) return false;
-      if (value instanceof Date) return !isNaN(value.getTime());
-      if (typeof value === 'string') return !isNaN(new Date(value).getTime());
-      return false;
+      return toSafeDate(value) !== null;
     }),
   fecha_fin: yup
     .mixed()
     .required('Fecha de fin es obligatoria')
     .test('is-valid-date', 'Debe ser una fecha válida', (value) => {
-      if (!value) return false;
-      if (value instanceof Date) return !isNaN(value.getTime());
-      if (typeof value === 'string') return !isNaN(new Date(value).getTime());
-      return false;
+      return toSafeDate(value) !== null;
     })
     .test('is-after-start', 'La fecha de fin debe ser posterior a la de inicio', function (value) {
       const { fecha_inicio } = this.parent;
-      if (!fecha_inicio || !value) return true;
 
-      const startDate = fecha_inicio instanceof Date ? fecha_inicio : new Date(fecha_inicio);
-      const endDate = value instanceof Date ? value : new Date(value);
+      const startDate = toSafeDate(fecha_inicio);
+      const endDate = toSafeDate(value);
 
+      // Caso 1: Fechas inválidas
+      if (startDate === null || endDate === null) return false;
+
+      // Caso 2: Fecha fin debe ser posterior
       return endDate > startDate;
     }),
   sexo: yup.string().required('Sexo es obligatorio').oneOf(['masculino', 'femenino']),
@@ -83,23 +131,25 @@ export default defineComponent({
     const resetKey = ref(0);
 
     // Configuración del formulario
-    const { values, defineField, errors, handleSubmit, resetForm, setFieldValue } = useForm({
-      validationSchema,
-      initialValues: {
-        nombre_completo: '',
-        presentacion: '',
-        fecha_inicio: null,
-        fecha_fin: null,
-        sexo: 'masculino',
-        actual: false,
-        foto_path: '',
-        plan: {
-          titulo: '',
-          descripcion: '',
-          documentos: [],
+    const { values, defineField, errors, setErrors, handleSubmit, resetForm, setFieldValue } =
+      useForm<FormValues>({
+        validationSchema,
+        initialValues: {
+          id: null,
+          nombre_completo: '',
+          presentacion: '',
+          fecha_inicio: '',
+          fecha_fin: '',
+          sexo: 'masculino',
+          actual: false,
+          foto_path: '',
+          plan: {
+            titulo: '',
+            descripcion: '',
+            documentos: [],
+          },
         },
-      },
-    });
+      });
 
     // Definición de campos
     const [nombre_completo, nombre_completoAttrs] = defineField('nombre_completo');
@@ -128,7 +178,7 @@ export default defineComponent({
         router.push('/admin/alcaldes');
         $toast.success('Alcalde guardado exitosamente');
       },
-      onError: (error: any) => {
+      onError: (error: ApiError) => {
         if (error.response?.data?.errors) {
           setErrors(error.response.data.errors);
         }
@@ -138,24 +188,27 @@ export default defineComponent({
 
     // Cargar datos en el formulario
     watch(
-      alcaldeData,
-      (response) => {
-        if (!response?.data) return;
+      () => alcaldeData.value,
+      (response: Alcalde | undefined) => {
+        if (!response) return;
 
-        const alcalde = response.data;
-        const plan = alcalde.plan_desarrollo?.[0] || null;
+        const plan = response.plan_desarrollo || null;
+
+        // Mantener fechas como strings o null
+        const fechaFin = response.fecha_fin || null;
+        const fechaInicio = response.fecha_inicio || null;
 
         resetForm({
           values: {
-            ...alcalde,
-            fecha_inicio: alcalde.fecha_inicio ? new Date(alcalde.fecha_inicio) : null,
-            fecha_fin: alcalde.fecha_fin ? new Date(alcalde.fecha_fin) : null,
+            ...response,
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin,
             plan: {
               titulo: plan?.titulo || '',
               descripcion: plan?.descripcion || '',
               documentos:
                 plan?.documentos?.map((doc: Documento) => ({
-                  id: doc.id,
+                  id: doc.id ?? undefined,
                   path: doc.path,
                   nombre: doc.nombre,
                 })) || [],
@@ -186,15 +239,16 @@ export default defineComponent({
       resetKey.value++;
     };
 
-    // Función para manejar el formato de fecha
-    const formatDateForSubmit = (date: Date | string | null): string => {
+    // Actualizar la firma de la función
+    const formatDateForSubmit = (date: string | null | undefined): string => {
       if (!date) return '';
-      if (date instanceof Date) return date.toISOString().split('T')[0];
-      if (typeof date === 'string') {
+
+      try {
         const parsedDate = new Date(date);
         return isNaN(parsedDate.getTime()) ? '' : parsedDate.toISOString().split('T')[0];
+      } catch {
+        return '';
       }
-      return '';
     };
 
     // Envío del formulario
@@ -217,15 +271,32 @@ export default defineComponent({
       formData.append('sexo', formValues.sexo);
       formData.append('actual', formValues.actual ? '1' : '0');
 
-      // Plan de desarrollo (usando 'plan' en lugar de 'plan_desarrollo')
+      if (!formValues.plan?.titulo) {
+        throw new Error('Plan de desarrollo es requerido');
+      }
       formData.append('plan[titulo]', formValues.plan.titulo);
+
+      if (!formValues.plan?.descripcion) {
+        throw new Error('Plan de desarrollo es requerido');
+      }
+
       formData.append('plan[descripcion]', formValues.plan.descripcion);
 
-      // Documentos (también usando 'plan')
-      formValues.plan.documentos.forEach((doc: any, index: number) => {
+      if (!formValues.plan?.documentos) {
+        throw new Error('Plan de desarrollo es requerido');
+      }
+
+      // Verificar y usar optional chaining con array vacío como fallback
+      const documentos = formValues.plan.documentos ?? [];
+
+      documentos.forEach((doc, index) => {
+        // Verificar documento válido
+        if (!doc || !doc.path || !doc.nombre) return;
+
         if (doc.id) {
           formData.append(`plan[documentos][${index}][id]`, doc.id.toString());
         }
+
         formData.append(`plan[documentos][${index}][path]`, doc.path);
         formData.append(`plan[documentos][${index}][nombre]`, doc.nombre);
       });
@@ -236,24 +307,34 @@ export default defineComponent({
         formData.append('_method', 'PATCH');
       }
 
-      // Foto
-      if (formValues.foto_path instanceof File) {
+      // Foto - verificación segura de tipos
+      if (isFile(formValues.foto_path)) {
         formData.append('foto', formValues.foto_path);
-      } else if (formValues.foto_path) {
+      } else if (isFilePath(formValues.foto_path)) {
         formData.append('foto_path', formValues.foto_path);
       }
 
       mutate(formData);
     });
 
+    // Función de tipo guarda para verificar si es File
+    const isFile = (value: unknown): value is File => {
+      return typeof value === 'object' && value !== null && value instanceof File;
+    };
+
+    // Función para verificar si es string de ruta válida
+    const isFilePath = (value: unknown): value is string => {
+      return typeof value === 'string' && value.trim() !== '';
+    };
+
+    // URLs para visualización
     // URLs para visualización
     const filePaths = computed(() => ({
-      photo:
-        values.foto_path instanceof File
-          ? URL.createObjectURL(values.foto_path)
-          : values.foto_path
-            ? `${API_STORAGE_URL}/${values.foto_path}`
-            : null,
+      photo: isFile(values.foto_path)
+        ? URL.createObjectURL(values.foto_path)
+        : isFilePath(values.foto_path)
+          ? `${API_STORAGE_URL}/${values.foto_path}`
+          : null,
     }));
 
     return {
