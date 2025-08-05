@@ -4,9 +4,6 @@
       <h1 class="h2 fw-bold text-primary">
         <i class="fas fa-file-contract me-2"></i>Planes de Desarrollo
       </h1>
-      <button class="btn btn-primary shadow-sm" @click="navigateToNew">
-        <i class="fas fa-plus me-2"></i>Nuevo Plan
-      </button>
     </div>
 
     <!-- Barra de búsqueda -->

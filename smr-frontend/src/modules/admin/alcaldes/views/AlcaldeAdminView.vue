@@ -15,7 +15,7 @@
               v-model="searchQuery"
               type="text"
               class="form-control border-start-0"
-              placeholder="Buscar por nombre..."
+              placeholder="Buscar"
             />
           </div>
         </form>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="row g-4">
-        <div v-for="(alcalde, index) in orderedAlcaldes" :key="index" class="col-lg-4 col-md-6">
+        <div v-for="(alcalde, index) in filteredAlcaldes" :key="index" class="col-lg-4 col-md-6">
           <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
               <div class="d-flex align-items-center mb-3">
@@ -106,7 +106,7 @@
 
                   <li v-if="alcalde.plan_desarrollo.documentos.length > 2">
                     <router-link
-                      :to="`/admin/alcaldes/${alcalde.id}/documentos`"
+                      :to="`/admin/plan`"
                       class="text-decoration-none small text-primary d-block py-2"
                     >
                       <i class="fas fa-ellipsis-h me-2"></i>
@@ -150,18 +150,14 @@
           </div>
         </div>
 
-        <div v-if="!alcaldes || alcaldes.length === 0" class="col-12">
-          <div class="card border-0 shadow-sm bg-white text-center p-5">
-            <div v-if="!alcaldes" class="spinner-border text-primary" role="status">
+        <div v-if="!filteredAlcaldes || filteredAlcaldes.length === 0" class="col-12">
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5">
+            <div v-if="!filteredAlcaldes" class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Cargando...</span>
             </div>
             <div v-else>
               <i class="fas fa-users-slash text-muted mb-3" style="font-size: 3rem"></i>
-              <h5>No hay alcaldes registrados</h5>
-              <p class="mb-2 text-muted">No se encontraron resultados para la búsqueda</p>
-              <router-link to="/admin/alcaldes/create" class="btn btn-primary">
-                <i class="fas fa-user-plus me-2"></i> Agregar nuevo alcalde
-              </router-link>
+              <h5>No se encontraron resultados para la búsqueda</h5>
             </div>
           </div>
         </div>
@@ -219,7 +215,42 @@ const orderedAlcaldes = computed(() => {
   return [...alcaldes.value].sort((a, b) => {
     const dateA = a.fecha_inicio ? new Date(a.fecha_inicio).getTime() : 0;
     const dateB = b.fecha_inicio ? new Date(b.fecha_inicio).getTime() : 0;
-    return dateB - dateA;
+    return dateA - dateB;
+  });
+});
+
+const filteredAlcaldes = computed(() => {
+  if (!searchQuery.value.trim()) return orderedAlcaldes.value;
+
+  const query = searchQuery.value.toLowerCase();
+  return orderedAlcaldes.value.filter((alcalde) => {
+    // Buscar en nombre completo
+    if (alcalde.nombre_completo?.toLowerCase().includes(query)) return true;
+
+    // Buscar en presentación
+    if (alcalde.presentacion?.toLowerCase().includes(query)) return true;
+
+    // Buscar por año
+    if (alcalde.fecha_inicio?.toLowerCase().includes(query)) return true;
+
+    // Buscar por año
+    if (alcalde.fecha_fin?.toLowerCase().includes(query)) return true;
+
+    // Buscar por estado actual (booleano convertido a texto)
+    const estadoActual = alcalde.actual ? 'mandatario actual' : 'exalcalde';
+
+    if (estadoActual.toLowerCase().includes(query)) return true;
+
+    // Buscar en título del plan de desarrollo
+    if (alcalde.plan_desarrollo?.titulo?.toLowerCase().includes(query)) return true;
+
+    // Buscar en nombres de documentos
+    if (
+      alcalde.plan_desarrollo?.documentos?.some((doc) => doc.nombre?.toLowerCase().includes(query))
+    )
+      return true;
+
+    return false;
   });
 });
 
@@ -272,7 +303,3 @@ const getFullDocumentUrl = (path: string): string => {
   return `${baseUrl}/storage/${path}`;
 };
 </script>
-
-<style scoped>
-/* Estilos permanecen iguales */
-</style>

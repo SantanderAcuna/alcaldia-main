@@ -17,7 +17,7 @@ class AlcaldeAdminController
     {
         try {
             $alcaldes = Alcalde::with(['planDesarrollo.documentos'])
-                ->orderBy('actual', 'Asc')
+                ->orderBy('actual', 'desc')
                 ->orderByDesc('fecha_inicio')
                 ->get();
 
