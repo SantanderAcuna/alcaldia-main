@@ -3,6 +3,7 @@ import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 import { getImageAction } from './getImageAdminAction';
 import { getDocumentUrlAction } from './getDocumenAdmintActions';
 import type { Documento } from '@/modules/interfaces/documentoInterfaces';
+import type { PlanDesarrollo } from '@/modules/interfaces';
 
 export const getAlcaldeById = async (alcaldeId: number): Promise<Alcalde> => {
   if (Number.isNaN(alcaldeId) || alcaldeId === null) {
@@ -16,12 +17,12 @@ export const getAlcaldeById = async (alcaldeId: number): Promise<Alcalde> => {
       foto_path: '',
       actual: false,
 
-      plan_desarrollo: {} as any,
+      plan_desarrollo: {} as PlanDesarrollo,
     };
   }
 
   try {
-    const { data } = await apiConfig.get<Alcalde>(`/publico/alcaldes/${alcaldeId}`);
+    const { data } = await apiConfig.get<Alcalde>(`/admin/alcaldes/${alcaldeId}`);
 
     // Verificar y asegurar que plan_desarrollo sea un array
     const planesDesarrollo = Array.isArray(data.plan_desarrollo) ? data.plan_desarrollo : [];
@@ -30,7 +31,6 @@ export const getAlcaldeById = async (alcaldeId: number): Promise<Alcalde> => {
     const planesProcesados = planesDesarrollo.map((plan) => {
       return {
         ...plan,
-
         documentos: getDocumentUrlAction(plan.documentos?.map((doc: Documento) => doc.path) ?? []),
       };
     });

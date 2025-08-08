@@ -114,9 +114,6 @@
 
           <!-- Botón de envío -->
           <div class="col-12 text-end">
-            <button v-if="values.id" @click="eliminarAlcalde" class="btn btn-danger me-2">
-              Eliminar
-            </button>
             <button type="submit" :disabled="isPending" class="btn btn-primary">
               <span v-if="isPending" class="spinner-border spinner-border-sm me-2"></span>
               {{ values.id ? 'Actualizar' : 'Guardar' }} Alcalde

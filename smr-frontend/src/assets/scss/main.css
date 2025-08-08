@@ -2,8 +2,6 @@
    Variables Globales
    ========================================================================== */
 
-
-
 :root {
   --color-alcaldia: #00ade7;
   --color-secundario: #00568d;
@@ -292,6 +290,111 @@ footer {
   color: var(--color-texto) !important;
 }
 
+/* ==========================================================================
+   Breadcrumb en Modo Oscuro
+   ========================================================================== */
+.modo-oscuro .breadcrumb-nav {
+  background-color: var(--color-fondo) !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+.modo-oscuro .breadcrumb {
+  background-color: transparent !important;
+}
+
+.modo-oscuro .breadcrumb-item,
+.modo-oscuro .breadcrumb-item a,
+.modo-oscuro .breadcrumb-item .breadcrumb-text,
+.modo-oscuro .breadcrumb-item .home-text,
+.modo-oscuro .breadcrumb-item .ellipsis-icon {
+  background-color: transparent !important;
+  color: var(--color-texto) !important;
+}
+
+.modo-oscuro .breadcrumb-item .bi-house-door-fill {
+  color: var(--color-texto) !important;
+}
+
+.modo-oscuro .breadcrumb-item a:hover .home-text,
+.modo-oscuro .breadcrumb-item a:hover .breadcrumb-text {
+  text-decoration: underline;
+  color: #ffdc2a !important;
+}
+
+.modo-oscuro .breadcrumb-item.active .breadcrumb-text {
+  color: #ffdc2a !important;
+  font-weight: 500;
+}
+
+.modo-oscuro .ellipsis-item .ellipsis-icon {
+  color: #ffdc2a !important;
+}
+
+/* Mantenemos los estilos existentes para el modo claro */
+.breadcrumb-nav {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin-bottom: 0;
+  list-style: none;
+  background-color: transparent;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: '/';
+  padding: 0 0.5rem;
+  color: #6c757d;
+}
+
+.breadcrumb-item.home-item a {
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.breadcrumb-item.home-item a:hover {
+  color: #0d6efd;
+}
+
+.breadcrumb-item.ellipsis-item {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.breadcrumb-link-container {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: #495057;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.breadcrumb-item.active .breadcrumb-text {
+  color: #6c757d;
+}
+
+.ellipsis-icon {
+  font-weight: bold;
+}
 /* ==========================================================================
      Barra de Accesibilidad
      ========================================================================== */

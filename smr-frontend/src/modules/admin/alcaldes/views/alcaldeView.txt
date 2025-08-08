@@ -1,15 +1,9 @@
-// alcaldeView.ts
 import { defineComponent, watch, computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import {
-  createUpdateAlcalde,
-  getAlcaldeById,
-  deleteAlcalde as deleteAlcaldeApi,
-  getAlcaldeActions,
-} from '../actions';
+import { createUpdateAlcalde, getAlcaldeById } from '../actions';
 import CustomInput from '@/modules/admin/components/CustomInput.vue';
 import CustomTextArea from '@/modules/admin/components/CustomTextArea.vue';
 import CustomInputDate from '@/modules/admin/components/CustomInputDate.vue';
@@ -17,9 +11,8 @@ import CustomDocument from '@/modules/admin/components/CustomDocument.vue';
 import CustomImagen from '@/modules/admin/components/CustomImagen.vue';
 
 import { useToast } from 'vue-toast-notification';
-import type { Alcalde, Documento, PlanDesarrollo } from '@/modules/interfaces';
-// import type { Documento } from '@/modules/interfaces/documentoInterfaces';
-// import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
+import type { Documento } from '@/modules/interfaces/documentoInterfaces';
+import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
 
 interface ApiError {
   response?: {
@@ -31,26 +24,16 @@ interface ApiError {
   message?: string;
 }
 
-interface ApiResponse<T> {
-  status: boolean;
-  data: T;
-  meta?: T;
-  foto_path?: string;
-  plan_desarrollo?: PlanDesarrollo;
-}
+// type PlanErrors = {
+//   titulo?: string;
+//   descripcion?: string;
+//   documentos?: string;
+//   documentos_array?: Array<{ index: number; error: string }>;
+// };
 
-// Primero, actualizamos la interfaz Documento para mayor claridad
-interface DocumentoForm {
-  id?: number; // Ahora solo permite number o undefined, no null
-  nombre: string;
-  path: string;
-}
-
-interface PlanForm {
-  titulo?: string;
-  descripcion?: string;
-  documentos?: DocumentoForm[];
-}
+// interface FormErrors {
+//   plan?: string | PlanErrors;
+// }
 
 interface FormValues {
   id?: number | null;
@@ -61,7 +44,15 @@ interface FormValues {
   sexo: 'masculino' | 'femenino';
   actual: boolean;
   foto_path: string;
-  plan?: PlanForm;
+  plan?: {
+    titulo?: string;
+    descripcion?: string;
+    documentos?: Array<{
+      id?: number;
+      nombre: string;
+      path: string;
+    }>;
+  };
 }
 
 const $toast = useToast();
@@ -73,10 +64,13 @@ const toSafeDate = (value: unknown): Date | null => {
   }
   return null;
 };
-
+// Esquema de validación
 const validationSchema = yup.object({
   nombre_completo: yup.string().required('Nombre completo es obligatorio'),
   presentacion: yup.string().required('Presentación es obligatoria'),
+  // Función utilitaria para manejo seguro de fechas
+
+  // Esquema de validación actualizado
   fecha_inicio: yup
     .mixed()
     .required('Fecha de inicio es obligatoria')
@@ -91,9 +85,14 @@ const validationSchema = yup.object({
     })
     .test('is-after-start', 'La fecha de fin debe ser posterior a la de inicio', function (value) {
       const { fecha_inicio } = this.parent;
+
       const startDate = toSafeDate(fecha_inicio);
       const endDate = toSafeDate(value);
+
+      // Caso 1: Fechas inválidas
       if (startDate === null || endDate === null) return false;
+
+      // Caso 2: Fecha fin debe ser posterior
       return endDate > startDate;
     }),
   sexo: yup.string().required('Sexo es obligatorio').oneOf(['masculino', 'femenino']),
@@ -126,7 +125,6 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const queryClient = useQueryClient();
 
     const alcaldeId = computed(() => Number(route.params.id));
     const API_STORAGE_URL = `${import.meta.env.VITE_API_BASE_URL}/storage`;
@@ -166,113 +164,17 @@ export default defineComponent({
     const [documentos, documentPathAttrs] = defineField('plan.documentos');
 
     // Query para obtener datos del alcalde
-    const { data: alcaldeData, error: queryError } = useQuery({
+    const { data: alcaldeData } = useQuery({
       queryKey: ['alcalde', alcaldeId.value],
       queryFn: () => getAlcaldeById(alcaldeId.value),
       enabled: !!alcaldeId.value,
       staleTime: 30000,
     });
 
-    watch(queryError, (error) => {
-      if (error) {
-        $toast.error(error.message || 'Error al cargar los datos del alcalde');
-        console.error('Error loading alcalde:', error);
-      }
-    });
-
-    // Cargar datos en el formulario
-
-    watch(
-      () => alcaldeData.value,
-      (apiResponse: ApiResponse<Alcalde> | Alcalde | undefined) => {
-        // Verificamos primero la estructura real de los datos
-
-        // Extraemos los datos reales del alcalde de manera segura
-        const response = isApiResponse(apiResponse) ? apiResponse.data : apiResponse;
-
-        if (!response) {
-          $toast.info('Cargando informacion');
-          return;
-        }
-
-        try {
-          // Manejo flexible de plan_desarrollo
-          const planDesarrollo = Array.isArray(response.plan_desarrollo)
-            ? response.plan_desarrollo.length > 0
-              ? response.plan_desarrollo[0]
-              : null
-            : response.plan_desarrollo;
-
-          // Procesar documentos del plan con tipo seguro
-          const documentosPlan: DocumentoForm[] = (planDesarrollo?.documentos || []).map(
-            (doc: Documento): DocumentoForm => ({
-              id: doc.id ? Number(doc.id) : undefined,
-              nombre: doc.nombre || '',
-              path: doc.path || '',
-            }),
-          );
-
-          // Formateo seguro de fechas
-          const safeDate = (dateStr: string | null | undefined): string | null => {
-            if (!dateStr) return null;
-            try {
-              const date = new Date(dateStr);
-              return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0];
-            } catch {
-              return null;
-            }
-          };
-
-          const valoresFormulario: FormValues = {
-            id: response.id,
-            nombre_completo: response.nombre_completo || '',
-            presentacion: response.presentacion || '',
-            fecha_inicio: safeDate(response.fecha_inicio),
-            fecha_fin: safeDate(response.fecha_fin),
-            sexo: response.sexo === 'femenino' ? 'femenino' : 'masculino',
-            actual: Boolean(response.actual),
-            foto_path: response.foto_path || '',
-            plan: {
-              titulo: planDesarrollo?.titulo || '',
-              descripcion: planDesarrollo?.descripcion || '',
-              documentos: documentosPlan,
-            },
-          };
-
-          resetForm({
-            values: valoresFormulario,
-          });
-
-          resetKey.value++;
-        } catch (error) {
-          console.error('Error al procesar datos del alcalde:', error);
-          $toast.error('Error al cargar los datos del alcalde');
-        }
-      },
-      { immediate: true, deep: true },
-    );
-
-    // Función helper para verificar el tipo de respuesta
-    function isApiResponse(response: any): response is ApiResponse<Alcalde> {
-      return response && typeof response === 'object' && 'data' in response;
-    }
-
-    // Query para listar alcaldes (para usar en otros componentes)
-    const fetchAlcaldes = (page: number = 1, limit: number = 10) => {
-      return useQuery({
-        queryKey: ['alcaldes', page, limit],
-        queryFn: () => getAlcaldeActions(page, limit),
-        staleTime: 30000,
-      });
-    };
-
     // Mutation para crear/actualizar
     const { mutate, isPending } = useMutation({
       mutationFn: createUpdateAlcalde,
       onSuccess: () => {
-        // Invalidar las queries relacionadas
-        queryClient.invalidateQueries({ queryKey: ['alcalde', alcaldeId.value] });
-        queryClient.invalidateQueries({ queryKey: ['alcaldes'] });
         router.push('/admin/alcaldes');
         $toast.success('Alcalde guardado exitosamente');
       },
@@ -284,26 +186,40 @@ export default defineComponent({
       },
     });
 
-    // Mutation para eliminar alcalde
-    const { mutate: deleteMutation } = useMutation({
-      mutationFn: (id: number) => deleteAlcaldeApi(id),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['alcaldes'] });
-        $toast.success('Alcalde eliminado exitosamente');
-        router.push('/admin/alcaldes');
-      },
-      onError: (error: ApiError) => {
-        $toast.error(error.message || 'Error al eliminar el alcalde');
-      },
-    });
+    // Cargar datos en el formulario
+    watch(
+      () => alcaldeData.value,
+      (response: Alcalde | undefined) => {
+        if (!response) return;
 
-    // Función para eliminar alcalde
-    const eliminarAlcalde = () => {
-      if (!values.id) return;
-      if (confirm('¿Estás seguro de eliminar este alcalde?')) {
-        deleteMutation(values.id);
-      }
-    };
+        const plan = response.plan_desarrollo || null;
+
+        // Mantener fechas como strings o null
+        const fechaFin = response.fecha_fin || null;
+        const fechaInicio = response.fecha_inicio || null;
+
+        resetForm({
+          values: {
+            ...response,
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin,
+            plan: {
+              titulo: plan?.titulo || '',
+              descripcion: plan?.descripcion || '',
+              documentos:
+                plan?.documentos?.map((doc: Documento) => ({
+                  id: doc.id ?? undefined,
+                  path: doc.path,
+                  nombre: doc.nombre,
+                })) || [],
+            },
+          },
+        });
+
+        resetKey.value++;
+      },
+      { immediate: true },
+    );
 
     // Documentos existentes
     const existingDocuments = computed(() => {
@@ -326,6 +242,7 @@ export default defineComponent({
     // Actualizar la firma de la función
     const formatDateForSubmit = (date: string | null | undefined): string => {
       if (!date) return '';
+
       try {
         const parsedDate = new Date(date);
         return isNaN(parsedDate.getTime()) ? '' : parsedDate.toISOString().split('T')[0];
@@ -411,6 +328,7 @@ export default defineComponent({
     };
 
     // URLs para visualización
+    // URLs para visualización
     const filePaths = computed(() => ({
       photo: isFile(values.foto_path)
         ? URL.createObjectURL(values.foto_path)
@@ -446,10 +364,12 @@ export default defineComponent({
       documentos,
       documentPathAttrs,
       existingDocuments,
+
       removeExistingDocument,
+
       onSubmit,
-      eliminarAlcalde,
-      fetchAlcaldes,
+      // eliminarAlcalde,
+      // deleteAlcalde,
     };
   },
 });

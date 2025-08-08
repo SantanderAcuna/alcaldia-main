@@ -19,7 +19,7 @@ class AlcaldeAdminController
             $alcaldes = Alcalde::with(['planDesarrollo.documentos'])
                 ->orderBy('actual', 'desc')
                 ->orderByDesc('fecha_inicio')
-                ->get();
+                ->paginate();
 
             return response()->json([
                 'status' => true,

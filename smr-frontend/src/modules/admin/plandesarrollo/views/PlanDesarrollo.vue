@@ -256,7 +256,7 @@ const getFileType = (fileName: string): string => {
   return types[extension] || extension.toUpperCase();
 };
 
-const navigateToNew = () => router.push('/admin/plandesarrollo/nuevo');
+// const navigateToNew = () => router.push('/admin/plandesarrollo/nuevo');
 
 const handleSearch = () => {
   currentPage.value = 1;

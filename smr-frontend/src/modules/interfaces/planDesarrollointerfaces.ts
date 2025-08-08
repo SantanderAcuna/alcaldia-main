@@ -13,5 +13,3 @@ export interface PlanDesarrollo {
   documentos?: Documento[] | null;
   alcalde?: Alcalde | null;
 }
-
-
