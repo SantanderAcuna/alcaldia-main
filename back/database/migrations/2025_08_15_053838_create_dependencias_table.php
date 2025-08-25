@@ -11,9 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('secretarias', function (Blueprint $table) {
+        Schema::create('dependencias', function (Blueprint $table) {
             $table->id();
-            $table->text('nombre');
+            $table->string('nombre')->unique();
+            $table->string('codigo', 20)->unique()->nullable();
+            $table->text('descripcion');
+            $table->enum('tipo', ['SECRETARIA', 'DEPENDENCIA', 'SUB_DEPENDENCIA'])->default('DEPENDENCIA');
+            $table->foreignId('dependencia_padre_id')
+                ->nullable()
+                ->constrained('dependencias')
+                ->onDelete('cascade');
             $table->text('mision');
             $table->text('vision');
             $table->string('organigrama')->nullable();
@@ -26,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('secretarias');
+        Schema::dropIfExists('dependencias');
     }
 };

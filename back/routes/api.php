@@ -80,8 +80,8 @@ Route::prefix('admin')->group(function () {
 
     // Secretaria
 
-    Route::apiResource('secretarias-admin', SecretariaAdminController::class);
     Route::apiResource('dependencias-admin', DependenciaAdminController::class);
+    // Route::apiResource('dependencias-admin', DependenciaAdminController::class);
     Route::apiResource('funciones-admin', FuncioneSecAdminController::class);
     Route::apiResource('tramites-admin', TramiteAdminController::class);
 

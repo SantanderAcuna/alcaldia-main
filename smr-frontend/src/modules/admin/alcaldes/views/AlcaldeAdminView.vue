@@ -247,7 +247,9 @@ const filteredAlcaldes = computed(() => {
 
     // Buscar en nombres de documentos
     if (
-      alcalde.plan_desarrollo?.documentos?.some((doc:Documento) => doc.nombre?.toLowerCase().includes(query))
+      alcalde.plan_desarrollo?.documentos?.some((doc: Documento) =>
+        doc.nombre?.toLowerCase().includes(query),
+      )
     )
       return true;
 

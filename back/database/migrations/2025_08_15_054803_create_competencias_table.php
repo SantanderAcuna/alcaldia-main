@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dependencias', function (Blueprint $table) {
-
+        Schema::create('competencias', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('descripcion');
-            $table->foreignId('secretaria_id')
-                ->constrained('secretarias')
+            $table->text('competencia');
+            $table->integer('orden');
+            $table->foreignId('dependencia_id')
+                ->constrained('dependencias')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['dependencia_id', 'orden']);
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dependencias');
+        Schema::dropIfExists('competencias');
     }
 };

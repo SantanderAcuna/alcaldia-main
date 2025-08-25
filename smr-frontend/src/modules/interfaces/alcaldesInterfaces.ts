@@ -1,5 +1,16 @@
 import type { PlanDesarrollo } from './planDesarrollointerfaces';
 
+export interface ApiResponse {
+  status: boolean;
+  data?: Alcalde;
+  error?: ApiError;
+}
+
+export interface ApiError {
+  status: boolean;
+  message: string;
+}
+
 export interface Alcalde {
   id: number;
   nombre_completo: string;

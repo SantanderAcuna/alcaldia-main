@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('perfiles', function (Blueprint $table) {
+        Schema::create('cargos', function (Blueprint $table) {
             $table->id();
-
-            $table->string('titulo_profesional')->nullable();
-            $table->string('especializacion')->nullable();
-            $table->text('experiencia')->nullable();
+            $table->string('cargo')->unique();
+            $table->text('descripcion')->nullable();
+            $table->enum('nivel', ['DIRECTIVO', 'JEFATURA', 'OPERATIVO']);
+            $table->enum('grado', ['1', '2', '3','4','5']);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('perfiles');
+        Schema::dropIfExists('cargos');
     }
 };

@@ -8,28 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Tramite extends Model
 {
-use HasFactory;
+    use HasFactory;
     protected $table = 'tramites';
 
     protected $fillable = [
-        'nombre',
+        'tramite',
+        'codigo',
         'descripcion',
-        'subdirecion_id',
-        'secretaria_id'
+        'dependencia_id',
     ];
 
-    public function Secretaria()
-    {
 
-        return $this->belongsTo(Secretaria::class);
-    }
 
-      public function Dependencia()
+    public function Dependencia()
     {
 
         return $this->belongsTo(Dependencia::class);
     }
-
-
-
 }

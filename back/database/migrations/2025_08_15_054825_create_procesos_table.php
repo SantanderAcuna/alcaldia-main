@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tramites', function (Blueprint $table) {
+        Schema::create('procesos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
+            $table->string('proceso');
+            $table->string('codigo', 20)->unique();
             $table->text('descripcion')->nullable();
-            $table->foreignId('dependencia_id')
-                ->constrained('dependencias')
-                ->onDelete('cascade');
-            $table->foreignId('secretaria_id')
-                ->constrained('secretarias')
-                ->onDelete('cascade');
+            $table->foreignId('macroproceso_id')->constrained('macroprocesos')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tramites');
+        Schema::dropIfExists('procesos');
     }
 };

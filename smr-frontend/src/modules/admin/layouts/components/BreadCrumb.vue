@@ -1,6 +1,6 @@
 <template>
   <!-- Breadcrumb con diseño moderno y elegante -->
-  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-4">
+  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-4 bg-body-secondary">
     <div class="breadcrumb mb-0">
       <!-- Ítem fijo de inicio con estilo mejorado -->
       <li class="breadcrumb-item home-item">
@@ -361,7 +361,7 @@ watch(
 }
 
 .breadcrumb {
- 
+
   padding: var(--breadcrumb-padding);
   border-radius: var(--breadcrumb-radius);
   flex-wrap: wrap;

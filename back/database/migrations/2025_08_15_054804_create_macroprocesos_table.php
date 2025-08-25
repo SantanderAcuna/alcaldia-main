@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('funciones_sec', function (Blueprint $table) {
+        Schema::create('macroprocesos', function (Blueprint $table) {
             $table->id();
-            $table->text('nombre');
-            $table->integer('orden');
-            $table->foreignId('secretaria_id')
-                ->constrained('secretarias')
-                ->onDelete('cascade');
+            $table->string('macrop');
+            $table->string('codigo', 20)->unique();
+            $table->text('descripcion')->nullable();
+            $table->foreignId('dependencia_id')->constrained('dependencias')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('funcions');
+        Schema::dropIfExists('macroprocesos');
     }
 };

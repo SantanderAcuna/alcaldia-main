@@ -1,73 +1,52 @@
 <template>
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h2">Gestión de Alcaldes</h1>
-    </div>
+  <div class="bg-body-secondary">
+    <main class="container py-5">
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <h4 class="fw-bold text-primary-emphasis">
+          Histórico de Alcaldes Distritales De Santa Marta
+        </h4>
 
-    <!-- Filtros -->
-    <div class="row mb-4">
-      <div class="col-md-12">
-        <div class="input-group">
-          <input
-            type="text"
-            class="form-control"
-            v-model="searchQuery"
-            placeholder="Buscar por nombre..."
-          />
-          <span class="input-group-text"><i class="fas fa-search"></i></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla -->
-    <div class="card shadow-sm">
-      <div class="card-body p-0">
-        <div v-if="!alcaldes || alcaldes.length === 0" class="m-3 text-center py-5">
-          <div class="spinner-border text-primary" v-if="!alcaldes" role="status">
-            <span class="visually-hidden text-bg-dark">Cargando...</span>
+        <form class="d-flex ms-auto me-4" @submit.prevent>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"
+              ><i class="fas fa-search"></i
+            ></span>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="form-control border-start-0"
+              placeholder="Buscar"
+            />
           </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table-alcalde table table-hover mb-0 text-center align-middle">
-            <thead class="table-light">
-              <tr>
-                <th class="text-center align-middle">Foto</th>
-                <th class="text-center align-middle">Nombre</th>
-                <th class="text-center align-middle">Periodo</th>
-                <th class="text-center align-middle">Alcalde</th>
-                <th class="text-center align-middle">Plan de Desarrollo</th>
-              </tr>
-            </thead>
+        </form>
 
-            <tbody>
-              <tr
-                v-for="(alcalde, index) in orderedAlcaldes"
-                :key="index"
-                class="text-center align-middle"
-              >
-                <td class="text-center align-middle">
-                  <img
-                    :src="alcalde.foto_path"
-                    class="rounded-circle object-fit-cover"
-                    width="50"
-                    height="50"
-                    :alt="alcalde + alcalde.nombre_completo"
-                  />
-                </td>
+        <router-link
+          to="/admin/alcaldes/create"
+          class="btn btn-primary rounded-pill d-inline-flex align-items-center fw-bold shadow-sm"
+        >
+          <i class="fas fa-user-plus me-2"></i> Nuevo Alcalde
+        </router-link>
+      </div>
 
-                <td class="text-center align-middle">
-                  {{ alcalde.nombre_completo }}
-                </td>
-
-                <div class="periodo-container">
-                  <p>
-                    {{ alcalde.fecha_inicio ? formatDate(alcalde.fecha_inicio) : 'Actual' }} -
-                    {{ alcalde.fecha_fin ? formatDate(alcalde.fecha_fin) : 'Presente' }}
-                  </p>
-                </div>
-
-                <td class="text-center align-middle">
-                  <span class="badge bg-primary text-capitalize">
+      <div class="row g-4">
+        <div v-for="(alcalde, index) in filteredAlcaldes" :key="index" class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <img
+                  :src="alcalde.foto_path"
+                  :alt="`Foto de ${alcalde.nombre_completo}`"
+                  class="rounded-circle border border-2 me-3"
+                  style="width: 72px; height: 72px; object-fit: cover"
+                />
+                <div>
+                  <h5 class="card-title mb-1 text-primary text-capitalize">
+                    {{ alcalde.nombre_completo }}
+                  </h5>
+                  <span
+                    class="badge text-capitalize"
+                    :class="alcalde.actual ? 'bg-success' : 'bg-primary'"
+                  >
                     {{
                       alcalde.actual
                         ? alcalde.sexo === 'masculino'
@@ -78,59 +57,120 @@
                           : 'Exalcaldesa'
                     }}
                   </span>
-                </td>
-
-                <td class="text-center align-middle">
-                  <div class="documentos-container">
-                    <h3>Documentos Relacionados</h3>
-                    <div v-if="alcalde.plan_desarrollo?.documentos?.length">
-                      <div
-                        v-for="(doc, index) in alcalde.plan_desarrollo.documentos"
-                        :key="doc.id || index"
-                        class="documento-item"
-                      >
-                        <a :href="getDocumentos(doc.path)" target="_blank" class="documento-link">
-                          <i class="fas fa-file-pdf"></i> {{ doc.nombre || 'Documento sin nombre' }}
-                        </a>
-                      </div>
-                    </div>
-                    <div v-else class="no-documents">No hay documentos disponibles</div>
+                  <div class="text-muted small mt-1">
+                    Período:
+                    {{ alcalde.fecha_inicio ? formatYear(alcalde.fecha_inicio) : 'Actual' }} -
+                    {{ alcalde.fecha_fin ? formatYear(alcalde.fecha_fin) : 'Presente' }}
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="fas fa-quote-left me-1 text-primary"></i>
+                {{ alcalde.presentacion?.slice(0, 80) || 'Sin presentación' }}
+                {{ alcalde.presentacion && alcalde.presentacion.length > 80 ? '…' : '' }}
+              </p>
+
+              <!-- Sección corregida para el título del plan (ahora como objeto) -->
+              <div v-if="alcalde.plan_desarrollo?.titulo" class="mb-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary text-uppercase p-2">
+                  <i class="fas fa-file-contract me-1"></i>
+                  {{ alcalde.plan_desarrollo.titulo }}
+                </span>
+              </div>
+
+              <!-- Sección corregida para documentos (ahora como objeto) -->
+              <div v-if="alcalde.plan_desarrollo?.documentos?.length" class="mb-3">
+                <h6 class="fw-semibold mb-2">Documentos:</h6>
+                <ul class="list-unstyled mb-0 ps-1">
+                  <li
+                    v-for="(documento, docIndex) in alcalde.plan_desarrollo.documentos.slice(0, 3)"
+                    :key="docIndex"
+                    class="d-flex justify-content-between align-items-center py-1 px-2 rounded mb-1 bg-light"
+                  >
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-file-pdf text-danger me-2"></i>
+                      <a
+                        :href="getFullDocumentUrl(documento.path)"
+                        target="_blank"
+                        class="text-decoration-none text-dark"
+                        :title="documento.nombre"
+                        download
+                      >
+                        {{ truncateText(documento.nombre, 25) }}
+                      </a>
+                    </div>
+                    <span class="badge bg-secondary rounded-pill fs-12">
+                      {{ getFileExtension(documento.nombre) }}
+                    </span>
+                  </li>
+
+                  <li v-if="alcalde.plan_desarrollo.documentos.length > 2">
+                    <router-link
+                      :to="`/admin/plan`"
+                      class="text-decoration-none small text-primary d-block py-2"
+                    >
+                      <i class="fas fa-ellipsis-h me-2"></i>
+                      Ver {{ alcalde.plan_desarrollo.documentos.length - 3 }} más...
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="container-fluid px-0">
+                <div class="d-flex align-items-center gap-2">
+                  <router-link
+                    :to="{ name: 'publico-alcalde-actual', params: { id: alcalde.id } }"
+                    class="btn btn-primary rounded-pill px-3 py-2 shadow-sm"
+                    title="Ver perfil completo"
+                    data-bs-toggle="tooltip"
+                  >
+                    <i class="fas fa-user-circle me-2"></i>Perfil
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <BotonPaginacion :page="page" :has-more-data="!!alcaldes && alcaldes.length < 10" />
+
+        <div v-if="!filteredAlcaldes || filteredAlcaldes.length === 0" class="col-12">
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5">
+            <div v-if="!filteredAlcaldes" class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div v-else>
+              <i class="fas fa-users-slash text-muted mb-3" style="font-size: 3rem"></i>
+              <h5>No se encontraron resultados para la búsqueda</h5>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
-// import { useAlcaldeStore } from '@/stores/alcaldeStore';
-
 import { getAlcaldeActions } from '@/modules/admin/alcaldes/actions/index.ts';
-
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { ref, computed, watch, watchEffect } from 'vue';
 import { usePagination } from '@/modules/composables/usePagination';
-import BotonPaginacion from '@/modules/publico/layouts/conmom/BotonPaginacion.vue';
-import { getDocumentUrlAction } from '../actions';
-// import type { Alcalde } from '@/modules/interfaces/alcaldesInterfaces';
+
+import type { Documento } from '@/modules/interfaces';
 
 const route = useRoute();
 const searchQuery = ref('');
-const statusFilter = ref('all');
 const { page } = usePagination();
+
+const formatYear = (date: string | Date) => {
+  return new Date(date).getFullYear();
+};
 
 const queryClient = useQueryClient();
 
 const { data: alcaldes } = useQuery({
   queryKey: ['alcaldes', { page: page }],
   queryFn: () => getAlcaldeActions(page.value),
-  staleTime: 100 * 60, // refrescar backend despues de 1 minuto
+  staleTime: 100 * 60,
 });
 
 watch(
@@ -148,79 +188,73 @@ watchEffect(() => {
   });
 });
 
-watchEffect(() => {
-  queryClient.prefetchQuery({
-    queryKey: ['alcaldes', { page: page.value + 1 }],
-    queryFn: () => getAlcaldeActions(page.value + 1),
+const orderedAlcaldes = computed(() => {
+  if (!alcaldes.value) return [];
+
+  return [...alcaldes.value].sort((a, b) => {
+    const dateA = a.fecha_inicio ? new Date(a.fecha_inicio).getTime() : 0;
+    const dateB = b.fecha_inicio ? new Date(b.fecha_inicio).getTime() : 0;
+    return dateA - dateB;
   });
 });
 
 const filteredAlcaldes = computed(() => {
-  let filtered = alcaldes.value;
+  if (!searchQuery.value.trim()) return orderedAlcaldes.value;
 
-  // Filtro por búsqueda
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered?.filter((a) => a.nombre_completo.toLowerCase().includes(query));
-  }
+  const query = searchQuery.value.toLowerCase();
+  return orderedAlcaldes.value.filter((alcalde) => {
+    // Buscar en nombre completo
+    if (alcalde.nombre_completo?.toLowerCase().includes(query)) return true;
 
-  // Filtro por estado
-  if (statusFilter.value !== 'all') {
-    const isActive = statusFilter.value === 'active';
-    filtered = filtered?.filter((a) => a.actual === isActive);
-  }
+    // Buscar en presentación
+    if (alcalde.presentacion?.toLowerCase().includes(query)) return true;
 
-  return filtered;
-});
+    // Buscar por año
+    if (alcalde.fecha_inicio?.toLowerCase().includes(query)) return true;
 
-const orderedAlcaldes = computed(() => {
-  if (!filteredAlcaldes.value) return [];
+    // Buscar por año
+    if (alcalde.fecha_fin?.toLowerCase().includes(query)) return true;
 
-  return [...filteredAlcaldes.value].sort((a, b) => {
-    // 1️⃣  El actual va primero
-    if (a.actual && !b.actual) return -1;
-    if (!a.actual && b.actual) return 1;
+    // Buscar por estado actual (booleano convertido a texto)
+    const estadoActual = alcalde.actual ? 'mandatario actual' : 'exalcalde';
 
-    // 2️⃣  Si empatan, el más reciente primero
-    const fechaA = safeDateConstructor(a.fecha_inicio ?? a.fecha_fin);
-    const fechaB = safeDateConstructor(b.fecha_inicio ?? b.fecha_fin);
-    return fechaB.getTime() - fechaA.getTime();
+    if (estadoActual.toLowerCase().includes(query)) return true;
+
+    // Buscar en título del plan de desarrollo
+    if (alcalde.plan_desarrollo?.titulo?.toLowerCase().includes(query)) return true;
+
+    // Buscar en nombres de documentos
+    if (
+      alcalde.plan_desarrollo?.documentos?.some((doc: Documento) =>
+        doc.nombre?.toLowerCase().includes(query),
+      )
+    )
+      return true;
+
+    return false;
   });
 });
 
-// // Props
-// const props = defineProps<{
-//   alcalde: Alcalde;
-// }>();
-
-// Métodos
-const formatDate = (dateString: string | Date) => {
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-  return date.toLocaleDateString('es-CO', options);
+const truncateText = (text: string, maxLength: number) => {
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
 
-const getDocumentos = (path: string) => {
-  return getDocumentUrlAction(path);
+const getFileExtension = (filename: string) => {
+  return filename.split('.').pop()?.toUpperCase() || 'FILE';
 };
 
-// Computed
+const getFullDocumentUrl = (path: string): string => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-// const hasDocuments = computed(() => {
-//   return (props.alcalde.plan_desarrollo?.documentos?.length ?? 0) > 0;
-// });
-
-const safeDateConstructor = (dateStr: string | null | undefined): Date => {
-  // Fecha por defecto (1/1/1970) si no hay valor válido
-  const defaultDate = new Date(0);
-
-  if (!dateStr) return defaultDate;
-
-  try {
-    const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? defaultDate : date;
-  } catch {
-    return defaultDate;
+  if (!baseUrl) {
+    console.error('VITE_API_BASE_URL no está definido');
+    return '';
   }
+
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  return `${baseUrl}/storage/${path}`;
 };
 </script>

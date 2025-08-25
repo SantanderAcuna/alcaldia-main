@@ -14,12 +14,12 @@ class GabineteAdminController
     public function index(Request $request)
     {
         try {
-            $data = Gabinete::with(['user', 'dependencia', 'perfil'])
+            $data = Gabinete::with(['funcionario', 'dependencia', 'perfil'])
                 ->orderByDesc('fecha_inicio')
                 ->paginate($request->input('per_page', 15))
                 ->withQueryString();
 
-                return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -38,7 +38,7 @@ class GabineteAdminController
     {
         try {
             $data = Gabinete::with(['user', 'dependencia', 'perfil'])->findOrFail($id);
-                  return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -61,7 +61,7 @@ class GabineteAdminController
                 return Gabinete::create($validated);
             });
 
-               return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -86,7 +86,7 @@ class GabineteAdminController
                 return $item;
             });
 
-              return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -104,12 +104,12 @@ class GabineteAdminController
     public function destroy(int $id): JsonResponse
     {
         try {
-          $data =  DB::transaction(function () use ($id) {
+            $data =  DB::transaction(function () use ($id) {
                 $item = Gabinete::findOrFail($id);
                 $item->delete();
             });
 
-              return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -127,12 +127,12 @@ class GabineteAdminController
     public function forceDestroy(int $id): JsonResponse
     {
         try {
-         $data =   DB::transaction(function () use ($id) {
+            $data =   DB::transaction(function () use ($id) {
                 $item = Gabinete::withTrashed()->findOrFail($id);
                 $item->forceDelete();
             });
 
-              return response()->json([
+            return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
@@ -167,7 +167,4 @@ class GabineteAdminController
 
         return $request->validate($rules);
     }
-
-
-
 }

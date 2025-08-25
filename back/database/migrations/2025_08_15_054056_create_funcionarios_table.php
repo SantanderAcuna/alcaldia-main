@@ -13,24 +13,18 @@ return new class extends Migration
     {
         Schema::create('funcionarios', function (Blueprint $table) {
             $table->id();
-
             $table->string('nombres');
             $table->string('apellidos');
-            $table->string('cargo');
-            $table->enum('genero', ['M', 'F', 'Otro']);
+            $table->enum('genero', ['M', 'F']);
             $table->string('foto')->nullable();
-            $table->string('correo')->nullable();
-            $table->string('linkendin')->nullable();
-            // Datos laborales
-            $table->date('fecha_ingreso');
-            $table->foreignId('secretaria_id')
-                ->nullable()
-                ->constrained('secretarias')
-                ->onDelete('cascade');
-         
-            $table->foreignId('perfil_id')
-                ->constrained('perfiles')
-                ->onDelete('cascade');
+            $table->string('correo')->nullable()->unique();
+            $table->string('linkedin')->nullable();
+            $table->string('departamento');
+            $table->string('municipio');
+            $table->date('fecha_nacimiento');
+            $table->foreignId('dependencia_id')->constrained('dependencias')->onDelete('cascade');
+            $table->foreignId('cargo_id')->constrained('cargos')->onDelete('cascade');
+            $table->foreignId('perfil_id')->constrained('perfiles')->onDelete('cascade');
             $table->enum('estado', ['Activo', 'Inactivo'])->default('Inactivo');
             $table->timestamps();
             $table->softDeletes();

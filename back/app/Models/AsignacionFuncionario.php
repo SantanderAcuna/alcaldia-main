@@ -5,41 +5,37 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Auditable;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AsignacionFuncionario extends Model
 {
-  use HasFactory;
+    use HasFactory;
 
     protected $table = 'asignaciones_funcionarios';
 
 
     protected $fillable = [
         'funcionario_id',
-        'secretaria_id',
         'dependencia_id',
-        'perfil_id',
+        'cargo_id',
         'observacion',
-        'fecha_asignacion',
+        'fecha_inicio',
+        'fecha_fin'
     ];
 
-    public function funcionario()
+
+    public function funcionario(): BelongsTo
     {
         return $this->belongsTo(Funcionarios::class);
     }
 
-    public function secretaria()
-    {
-        return $this->belongsTo(Secretaria::class);
-    }
-
-    public function dependencia()
+    public function dependencia(): BelongsTo
     {
         return $this->belongsTo(Dependencia::class);
     }
 
-    public function perfil()
+    public function cargo(): BelongsTo
     {
-        return $this->belongsTo(Perfil::class);
+        return $this->belongsTo(cargo::class);
     }
 }

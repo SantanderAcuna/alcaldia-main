@@ -6,7 +6,9 @@ use App\Models\Alcalde;
 use App\Models\Area;
 use App\Models\AsignacionFuncionario;
 use App\Models\AsignacionOrganizacional;
+use App\Models\Cargo;
 use App\Models\Categoria;
+use App\Models\Competencia;
 use App\Models\Dependencia;
 use App\Models\DirectorioDistrital;
 use App\Models\Funcion;
@@ -20,6 +22,7 @@ use App\Models\Permiso;
 use App\Models\PlanDeDesarrollo;
 use App\Models\PlanDocumentos;
 use App\Models\ProcedimientoMacroProceso;
+use App\Models\Proceso;
 use App\Models\Publicacion;
 use App\Models\Publicaciones;
 use App\Models\Rol;
@@ -256,408 +259,483 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
-        $secretaria1 =  Secretaria::create([
-            'nombre' => 'Secretaria Tic',
-            'mision' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'vision' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'organigrama' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png',
-        ]);
-
-        $secretaria2 =   Secretaria::create([
-            'nombre' => 'Secretaria Hacienda',
-            'mision' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'vision' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'organigrama' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png',
-        ]);
-
-        Funcion::create([
-            'nombre' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'orden' => 1,
-            'secretaria_id' => 1
-        ]);
-
-        Funcion::create([
-            'nombre' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'orden' => 2,
-            'secretaria_id' => 1
-        ]);
-        Funcion::create([
-            'nombre' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'orden' => 1,
-            'secretaria_id' => 2
-        ]);
-        Funcion::create([
-            'nombre' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'orden' => 2,
-            'secretaria_id' => 2
-        ]);
-
-        $perfil1 =  Perfil::create([
-            'titulo_profesional' => 'Prueba 1',
-            'especializacion' => 'Prueba 1',
-            'experiencia' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-
-        ]);
-        $perfil2 =  Perfil::create([
-            'titulo_profesional' => 'Prueba 2',
-            'especializacion' => 'Prueba 2',
-            'experiencia' => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-
-        ]);
 
 
-        $funcionario1 =  Funcionarios::create([
-            'nombres' => 'Pepita',
-            'apellidos' => 'Peralta',
+
+        // 1. Perfiles (3)
+        $perfil1 = Perfil::create([
+            'titulo_profesional' => 'Ingeniero de Sistemas',
+            'especializacion' => 'Desarrollo Web',
+            'doctorado' => 'PhD en Ciencias Computacionales',
+            'experiencia' => '10 años en desarrollo empresarial'
+        ]);
+
+        $perfil2 = Perfil::create([
+            'titulo_profesional' => 'Economista',
+            'especializacion' => 'Finanzas Públicas',
+            'doctorado' => null,
+            'experiencia' => '8 años en gestión presupuestaria'
+        ]);
+
+        $perfil3 = Perfil::create([
+            'titulo_profesional' => 'Abogado',
+            'especializacion' => 'Derecho Administrativo',
+            'doctorado' => 'PhD en Derecho Público',
+            'experiencia' => '12 años en asesoría gubernamental'
+        ]);
+
+        // 2. Dependencias (3)
+        $secretariaTic = Dependencia::create([
+            'nombre' => 'Secretaría TIC',
+            'codigo' => 'STIC',
+            'descripcion' => 'Gestión de tecnologías de información',
+            'tipo' => 'SECRETARIA',
+            'mision' => 'Impulsar la transformación digital',
+            'vision' => 'Ser referente nacional en gobierno digital',
+            'dependencia_padre_id' => null,
+            'organigrama' => null
+        ]);
+
+        $fotomultas = Dependencia::create([
+            'nombre' => 'División Fotomultas',
+            'codigo' => 'DFM',
+            'descripcion' => 'Gestión de sistema de fotodetección',
+            'tipo' => 'SUB_DEPENDENCIA',
+            'mision' => 'Controlar infracciones de tránsito',
+            'vision' => 'Reducir accidentes viales en 40%',
+            'dependencia_padre_id' => $secretariaTic->id,
+            'organigrama' => null
+        ]);
+
+        $desarrolloApp = Dependencia::create([
+            'nombre' => 'Desarrollo de Aplicaciones',
+            'codigo' => 'DAPP',
+            'descripcion' => 'Creación de software institucional',
+            'tipo' => 'SUB_DEPENDENCIA',
+            'mision' => 'Desarrollar soluciones tecnológicas',
+            'vision' => 'Ser el área líder en innovación',
+            'dependencia_padre_id' => $secretariaTic->id,
+            'organigrama' => null
+        ]);
+
+        // 3. Cargos (3)
+        $secretario = Cargo::create([
             'cargo' => 'Secretario',
+            'descripcion' => 'Máximo responsable de la entidad',
+            'nivel' => 'DIRECTIVO',
+            'grado' => '1'
+        ]);
+
+        $coordinador = Cargo::create([
+            'cargo' => 'Coordinador Técnico',
+            'descripcion' => 'Responsable de área operativa',
+            'nivel' => 'JEFATURA',
+            'grado' => '2'
+        ]);
+
+        $analista = Cargo::create([
+            'cargo' => 'Analista Senior',
+            'descripcion' => 'Especialista en desarrollo',
+            'nivel' => 'OPERATIVO',
+            'grado' => '3',
+        ]);
+
+        // 4. Funcionarios (3)
+        $funcionario1 = Funcionarios::create([
+            'nombres' => 'María',
+            'apellidos' => 'Gómez Pérez',
             'genero' => 'F',
-            'foto' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png',
-            'correo' => 'correo1@gmail.com',
-            'linkendin' => '@linkendin1',
-            'fecha_ingreso' => now(),
-            'secretaria_id' => 1,
-            'perfil_id' => 1,
-            'estado' => 'activo',
-        ]);
-
-        $funcionario2 =   Funcionarios::create([
-            'nombres' => 'Pepe',
-            'apellidos' => 'Perez',
-            'cargo' => 'Secretario',
-            'genero' => 'M',
-            'foto' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png',
-            'correo' => 'correo2@gmail.com',
-            'linkendin' => '@linkendin2',
-            'fecha_ingreso' => now(),
-            'secretaria_id' => 2,
-            'perfil_id' => 2,
-            'estado' => 'activo',
-        ]);
-
-
-        Tag::create([
-            'nombre' => 'Educacion',
-        ]);
-        Tag::create([
-            'nombre' => 'Salud',
-        ]);
-        Tag::create([
-            'nombre' => 'Tecnologia',
-        ]);
-        Tag::create([
-            'nombre' => 'Hacienda',
-        ]);
-        Tag::create([
-            'nombre' => 'Catastro',
-        ]);
-        Tag::create([
-            'nombre' => 'Rentas',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Infografía',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Reseña',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Boletín',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Noticia',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Blog',
-        ]);
-
-        Tipo::create([
-            'nombre' => 'Artículo',
-        ]);
-
-
-
-        $pub = Publicacion::create([
-            'titulo'      => 'Lanzamiento de la nueva app',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 1,
-            'tipo_id' => 1
-        ]);
-        $pub2 = Publicacion::create([
-            'titulo'      => 'Tecnologia',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 2,
-            'tipo_id' => 2
-        ]);
-        $pub3 = Publicacion::create([
-            'titulo'      => 'Alcalde Pinedo',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 3,
-            'tipo_id' => 3
-        ]);
-        $pub4 = Publicacion::create([
-            'titulo'      => 'Mas obras en la ciudad',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 4,
-            'tipo_id' => 4
-        ]);
-        $pub5 = Publicacion::create([
-            'titulo'      => 'Santa marta y sus barrios',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 5,
-            'tipo_id' => 5
-        ]);
-        $pub6 = Publicacion::create([
-            'titulo'      => 'El rodadero en santa marta',
-            'descripcion' => 'Resumen breve de la noticia',
-            'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
-            'tag_id' => 6,
-            'tipo_id' => 6
-        ]);
-
-        // Fotos
-        $pub->fotos()->createMany([
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub->titulo, 'orden' => 1],
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub->documentos()->createMany([
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub->titulo,
-                'descripcion' => $pub->titulo
-            ],
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub->titulo,
-                'descripcion' => $pub->titulo
-            ],
-        ]);
-        // Fotos
-        $pub2->fotos()->createMany([
-
-            ['publicacion_id' => 2, 'ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub2->titulo, 'orden' => 1],
-            ['publicacion_id' => 2, 'ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub2->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub2->documentos()->createMany([
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub2->titulo,
-                'descripcion' => $pub2->titulo
-            ],
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub2->titulo,
-                'descripcion' => $pub2->titulo
-            ],
-        ]);
-
-
-        // Fotos
-        $pub3->fotos()->createMany([
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub3->titulo, 'orden' => 1],
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub3->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub3->documentos()->createMany([
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub3->titulo,
-                'descripcion' => $pub3->titulo
-            ],
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub3->titulo,
-                'descripcion' => $pub3->titulo
-            ],
-        ]);
-        // Fotos
-        $pub4->fotos()->createMany([
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub4->titulo, 'orden' => 1],
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub4->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub4->documentos()->createMany([
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub4->titulo,
-                'descripcion' => $pub4->titulo
-            ],
-            [
-
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub4->titulo,
-                'descripcion' => $pub4->titulo
-            ],
-        ]);
-
-
-        // Fotos
-        $pub5->fotos()->createMany([
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub5->titulo, 'orden' => 1],
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub5->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub5->documentos()->createMany([
-            [
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub5->titulo,
-                'descripcion' => $pub5->titulo
-            ],
-            [
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub5->titulo,
-                'descripcion' => $pub5->titulo
-            ],
-        ]);
-
-        // Fotos
-        $pub6->fotos()->createMany([
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub6->titulo, 'orden' => 1],
-            ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub6->titulo, 'orden' => 2],
-        ]);
-
-        // Documentos
-        $pub6->documentos()->createMany([
-            [
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub6->titulo,
-                'descripcion' => $pub6->titulo
-            ],
-            [
-                'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
-                'titulo' => $pub6->titulo,
-                'descripcion' => $pub6->titulo
-            ],
-        ]);
-
-        $dep1 = Dependencia::create([
-            'nombre' => 'Planeacion',
-            'descripcion' => 'pertenece a secretaria ',
-            'secretaria_id' => 1
-        ]);
-        $dep2 =   Dependencia::create([
-            'nombre' => 'Catastro',
-            'descripcion' => 'pertenece a secretaria ',
-            'secretaria_id' => 2
-        ]);
-        $dep3 =    Dependencia::create([
-            'nombre' => 'Rentas',
-            'descripcion' => 'pertenece a secretaria ',
-            'secretaria_id' => 1
-        ]);
-        $dep4 =  Dependencia::create([
-            'nombre' => 'Movilidad',
-            'descripcion' => 'pertenece a secretaria ',
-            'secretaria_id' => 2
-        ]);
-
-
-        Tramite::create([
-            'nombre' => 'Pagar Ipu',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 1,
-            'dependencia_id' => 1
-        ]);
-        Tramite::create([
-            'nombre' => 'Pagar Estanpilla',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 1,
-            'dependencia_id' => 2
-        ]);
-        Tramite::create([
-            'nombre' => 'Pagar transito',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 2,
-            'dependencia_id' => 1
-        ]);
-        Tramite::create([
-            'nombre' => 'Pagar Planeacionn',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 2,
-            'dependencia_id' => 2
-        ]);
-        Tramite::create([
-            'nombre' => 'Pagar Rentas',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 1,
-            'dependencia_id' => 3
-        ]);
-        Tramite::create([
-            'nombre' => 'Pagar Catastro',
-            'descripcion' => 'Se puede realizar pago del impuesto o servicio que se requiere ',
-            'secretaria_id' => 2,
-            'dependencia_id' => 3
-        ]);
-
-        // Crear Asignaciones Organizacionales (polimórficas)
-        AsignacionOrganizacional::create([
-            'funcionario_id' => $funcionario1->id,
-            'organizacion_id' => $secretaria1->id,
-            'organizacion_type' => Secretaria::class,
-        ]);
-
-        AsignacionOrganizacional::create([
-            'funcionario_id' => $funcionario2->id,
-            'organizacion_id' => $dep2->id,
-            'organizacion_type' => Dependencia::class,
-        ]);
-
-        AsignacionFuncionario::create([
-            'funcionario_id' => $funcionario1->id,
-            'secretaria_id' => $secretaria1->id ?? null,
-            'dependencia_id' => $dep1->id ?? null,
+            'foto' => 'funcionarios/maria-perez.jpg',
+            'correo' => 'maria.gomez@stic.gov.co',
+            'linkedin' => 'linkedin.com/in/mariagomez',
+            'departamento' => 'Antioquia',
+            'municipio' => 'Medellín',
+            'fecha_nacimiento' => '1985-05-15',
+            'dependencia_id' => $secretariaTic->id,
+            'cargo_id' => $secretario->id,
             'perfil_id' => $perfil1->id,
-            'fecha_asignacion' => now(),
-            'observacion' => $funcionario1->nombres,
+            'estado' => 'Activo'
         ]);
+
+        $funcionario2 = Funcionarios::create([
+            'nombres' => 'Carlos',
+            'apellidos' => 'Ruiz López',
+            'genero' => 'M',
+            'foto' => 'funcionarios/carlos-ruiz.jpg',
+            'correo' => 'carlos.ruiz@stic.gov.co',
+            'linkedin' => 'linkedin.com/in/carlosruiz',
+            'departamento' => 'Cundinamarca',
+            'municipio' => 'Bogotá',
+            'fecha_nacimiento' => '1990-11-22',
+            'dependencia_id' => $fotomultas->id,
+            'cargo_id' => $coordinador->id,
+            'perfil_id' => $perfil1->id,
+            'estado' => 'Activo'
+        ]);
+
+        $funcionario3 = Funcionarios::create([
+            'nombres' => 'Ana',
+            'apellidos' => 'Rodríguez Vargas',
+            'genero' => 'F',
+            'foto' => 'funcionarios/ana-rodriguez.jpg',
+            'correo' => 'ana.rodriguez@stic.gov.co',
+            'linkedin' => 'linkedin.com/in/ana-rodriguez',
+            'departamento' => 'Valle del Cauca',
+            'municipio' => 'Cali',
+            'fecha_nacimiento' => '1988-07-30',
+            'dependencia_id' => $desarrolloApp->id,
+            'cargo_id' => $analista->id,
+            'perfil_id' => $perfil1->id,
+            'estado' => 'Activo'
+        ]);
+
+        // 5. Competencias (3)
+        Competencia::create([
+            'competencia' => 'Desarrollo de aplicaciones móviles',
+            'orden' => 1,
+            'dependencia_id' => $secretariaTic->id
+        ]);
+
+        Competencia::create([
+            'competencia' => 'Gestión de infracciones digitales',
+            'orden' => 2,
+            'dependencia_id' => $fotomultas->id
+        ]);
+
+        Competencia::create([
+            'competencia' => 'Desarrollo de APIs REST',
+            'orden' => 3,
+            'dependencia_id' => $desarrolloApp->id
+        ]);
+
+        // 6. Trámites (3)
+        Tramite::create([
+            'tramite' => 'Apelación de fotomulta',
+            'codigo' => 'TRAM-FM01',
+            'descripcion' => 'Proceso para apelar multas por fotodetección',
+            'dependencia_id' => $fotomultas->id
+        ]);
+
+        Tramite::create([
+            'tramite' => 'Solicitud de certificado digital',
+            'codigo' => 'TRAM-CD01',
+            'descripcion' => 'Obtención de certificado de firma digital',
+            'dependencia_id' => $secretariaTic->id
+        ]);
+
+        Tramite::create([
+            'tramite' => 'Reporte de fallas técnicas',
+            'codigo' => 'TRAM-FT01',
+            'descripcion' => 'Reporte de problemas en sistemas institucionales',
+            'dependencia_id' => $desarrolloApp->id
+        ]);
+
+        // 7. Macroprocesos (3)
+        $macroprocesoTic = Macroproceso::create([
+            'macrop' => 'Gestión Tecnológica',
+            'codigo' => 'MP-TIC01',
+            'descripcion' => 'Procesos relacionados con TI',
+            'dependencia_id' => $secretariaTic->id
+        ]);
+
+        $macroprocesoFotomultas = Macroproceso::create([
+            'macrop' => 'Control de Infracciones',
+            'codigo' => 'MP-FM01',
+            'descripcion' => 'Procesamiento de fotomultas',
+            'dependencia_id' => $fotomultas->id
+        ]);
+
+        $macroprocesoDesarrollo = Macroproceso::create([
+            'macrop' => 'Desarrollo de Software',
+            'codigo' => 'MP-DS01',
+            'descripcion' => 'Ciclo de vida de desarrollo',
+            'dependencia_id' => $desarrolloApp->id
+        ]);
+
+        // 8. Procesos (3)
+        Proceso::create([
+            'proceso' => 'Procesamiento de Infracciones',
+            'codigo' => 'PROC-FM01',
+            'descripcion' => 'Validación y procesamiento de fotomultas',
+            'macroproceso_id' => $macroprocesoFotomultas->id
+        ]);
+
+        Proceso::create([
+            'proceso' => 'Desarrollo Frontend',
+            'codigo' => 'PROC-FE01',
+            'descripcion' => 'Creación de interfaces de usuario',
+            'macroproceso_id' => $macroprocesoDesarrollo->id
+        ]);
+
+        Proceso::create([
+            'proceso' => 'Soporte Técnico',
+            'codigo' => 'PROC-ST01',
+            'descripcion' => 'Atención a usuarios finales',
+            'macroproceso_id' => $macroprocesoTic->id
+        ]);
+
+        // 9. Asignaciones (3)
+        AsignacionFuncionario::create([
+            'funcionario_id' => $funcionario1->id,
+            'dependencia_id' => $secretariaTic->id,
+            'cargo_id' => $secretario->id,
+            'fecha_inicio' => now()->subYear(),
+            'observacion' => 'Titular de la secretaría'
+        ]);
+
         AsignacionFuncionario::create([
             'funcionario_id' => $funcionario2->id,
-            'secretaria_id' => $secretaria2->id ?? null,
-            'dependencia_id' => $dep2->id ?? null,
-            'perfil_id' => $perfil2->id,
-            'fecha_asignacion' => now(),
-            'observacion' => $funcionario2->nombres,
+            'dependencia_id' => $fotomultas->id,
+            'cargo_id' => $coordinador->id,
+            'fecha_inicio' => now()->subMonths(6),
+            'observacion' => 'Responsable técnico del sistema'
         ]);
 
-        $user = User::create([
-            'name' => 'Jose Acuña Polo',
-            'email' => 'santanderjose19@gmail.com',
-            'password' => '85154239',
+        AsignacionFuncionario::create([
+            'funcionario_id' => $funcionario3->id,
+            'dependencia_id' => $desarrolloApp->id,
+            'cargo_id' => $analista->id,
+            'fecha_inicio' => now()->subMonths(3),
+            'observacion' => 'Desarrolladora principal'
         ]);
+    }
+}
 
-        $user = User::create([
-            'name' => 'usuario',
-            'email' => 'usuario@gmail.com',
-            'password' => '123456789',
-        ]);
+Tag::create([
+    'nombre' => 'Educacion',
+]);
+Tag::create([
+    'nombre' => 'Salud',
+]);
+Tag::create([
+    'nombre' => 'Tecnologia',
+]);
+Tag::create([
+    'nombre' => 'Hacienda',
+]);
+Tag::create([
+    'nombre' => 'Catastro',
+]);
+Tag::create([
+    'nombre' => 'Rentas',
+]);
 
-        $user = User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
-            'password' => '123456789',
-        ]);
+Tipo::create([
+    'nombre' => 'Infografía',
+]);
+
+Tipo::create([
+    'nombre' => 'Reseña',
+]);
+
+Tipo::create([
+    'nombre' => 'Boletín',
+]);
+
+Tipo::create([
+    'nombre' => 'Noticia',
+]);
+
+Tipo::create([
+    'nombre' => 'Blog',
+]);
+
+Tipo::create([
+    'nombre' => 'Artículo',
+]);
+
+
+
+$pub = Publicacion::create([
+    'titulo'      => 'Lanzamiento de la nueva app',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 1,
+    'tipo_id' => 1
+]);
+$pub2 = Publicacion::create([
+    'titulo'      => 'Tecnologia',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 2,
+    'tipo_id' => 2
+]);
+$pub3 = Publicacion::create([
+    'titulo'      => 'Alcalde Pinedo',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 3,
+    'tipo_id' => 3
+]);
+$pub4 = Publicacion::create([
+    'titulo'      => 'Mas obras en la ciudad',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 4,
+    'tipo_id' => 4
+]);
+$pub5 = Publicacion::create([
+    'titulo'      => 'Santa marta y sus barrios',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 5,
+    'tipo_id' => 5
+]);
+$pub6 = Publicacion::create([
+    'titulo'      => 'El rodadero en santa marta',
+    'descripcion' => 'Resumen breve de la noticia',
+    'cuerpo'      => 'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.',
+    'tag_id' => 6,
+    'tipo_id' => 6
+]);
+
+// Fotos
+$pub->fotos()->createMany([
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub->titulo, 'orden' => 1],
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub->documentos()->createMany([
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub->titulo,
+        'descripcion' => $pub->titulo
+    ],
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub->titulo,
+        'descripcion' => $pub->titulo
+    ],
+]);
+// Fotos
+$pub2->fotos()->createMany([
+
+    ['publicacion_id' => 2, 'ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub2->titulo, 'orden' => 1],
+    ['publicacion_id' => 2, 'ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub2->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub2->documentos()->createMany([
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub2->titulo,
+        'descripcion' => $pub2->titulo
+    ],
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub2->titulo,
+        'descripcion' => $pub2->titulo
+    ],
+]);
+
+
+// Fotos
+$pub3->fotos()->createMany([
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub3->titulo, 'orden' => 1],
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub3->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub3->documentos()->createMany([
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub3->titulo,
+        'descripcion' => $pub3->titulo
+    ],
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub3->titulo,
+        'descripcion' => $pub3->titulo
+    ],
+]);
+// Fotos
+$pub4->fotos()->createMany([
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub4->titulo, 'orden' => 1],
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub4->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub4->documentos()->createMany([
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub4->titulo,
+        'descripcion' => $pub4->titulo
+    ],
+    [
+
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub4->titulo,
+        'descripcion' => $pub4->titulo
+    ],
+]);
+
+
+// Fotos
+$pub5->fotos()->createMany([
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub5->titulo, 'orden' => 1],
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub5->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub5->documentos()->createMany([
+    [
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub5->titulo,
+        'descripcion' => $pub5->titulo
+    ],
+    [
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub5->titulo,
+        'descripcion' => $pub5->titulo
+    ],
+]);
+
+// Fotos
+$pub6->fotos()->createMany([
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub6->titulo, 'orden' => 1],
+    ['ruta' => 'alcaldes/fotos/R3P7H4Wf3dz2NSIwDdNCahJ6Ra2FNgZ7At0KAvkY.png', 'alt' => $pub6->titulo, 'orden' => 2],
+]);
+
+// Documentos
+$pub6->documentos()->createMany([
+    [
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub6->titulo,
+        'descripcion' => $pub6->titulo
+    ],
+    [
+        'ruta' => 'planes/documentos/l1iq0kOKnoqESEGkGf6OBID3l36H9HouzjILrSeR.pdf',
+        'titulo' => $pub6->titulo,
+        'descripcion' => $pub6->titulo
+    ],
+]);
+
+
+$user = User::create([
+    'name' => 'Jose Acuña Polo',
+    'email' => 'santanderjose19@gmail.com',
+    'password' => '85154239',
+]);
+
+$user = User::create([
+    'name' => 'usuario',
+    'email' => 'usuario@gmail.com',
+    'password' => '123456789',
+]);
+
+$user = User::create([
+    'name' => 'admin',
+    'email' => 'admin@gmail.com',
+    'password' => '123456789',
+]);
 
 
 
@@ -665,5 +743,3 @@ class DatabaseSeeder extends Seeder
 
 
         // Artisan::call('auditoria:triggers');
-    }
-}

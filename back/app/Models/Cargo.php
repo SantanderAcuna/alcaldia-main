@@ -4,21 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Auditable;
 
-class Perfil extends Model
+class Cargo extends Model
 {
+
     use HasFactory;
 
-    protected $table = 'perfiles';
+    protected $table = 'cargos';
 
 
 
     protected $fillable = [
-        'titulo_profesional',
-        'especializacion',
-        'doctorado',
-        'experiencia',
+        'cargo',
+        'descripcion',
+        'nivel',
+
     ];
 
     // Relación con User

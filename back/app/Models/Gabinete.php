@@ -8,12 +8,12 @@ use App\Traits\Auditable;
 
 class Gabinete extends Model
 {
-use HasFactory;
+    use HasFactory;
 
     protected $table = 'gabinetes';
 
     protected $fillable = [
-        'user_id',
+        'funcionario_id',
         'dependencia_id',
         'perfil_id',
         'fecha_inicio',
@@ -30,9 +30,9 @@ use HasFactory;
 
 
 
-    public function user()
+    public function funcionario()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Funcionarios::class);
     }
 
     public function dependencia()
@@ -55,6 +55,4 @@ use HasFactory;
     {
         return $query->with(['user', 'dependencia', 'perfil']);
     }
-
-
 }

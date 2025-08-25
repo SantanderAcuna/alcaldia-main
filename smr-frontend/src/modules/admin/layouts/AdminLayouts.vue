@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid position-relative">
+  <div class="container-fluid position-relative bg-body-secondary">
     <div class="row">
       <!-- Sidebar con submenús colapsables -->
       <NabarSuperior />
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 // import * as bootstrap from 'bootstrap';
 // En los archivos .vue
@@ -42,27 +42,28 @@ import BreadCrumb from './components/BreadCrumb.vue';
 
 // Estados para controlar la UI
 const sidebarVisible = ref(false);
-const isSidebarCollapsed = ref(false);
+// const isSidebarCollapsed = ref(false);
 
-// Estilo dinámico para el contenido principal
-const mainContentStyle = computed(() => {
-  // En dispositivos móviles, el contenido siempre ocupa el 100%
-  if (window.innerWidth < 992) {
-    return {
-      marginLeft: '0',
-      width: '100%',
-      transition: 'all 0.3s ease',
-    };
-  }
+// // Estilo dinámico para el contenido principal
+// const mainContentStyle = computed(() => {
+//   // En dispositivos móviles, el contenido siempre ocupa el 100%
+//   if (window.innerWidth < 992) {
+//     return {
+//       marginLeft: '0',
+//       width: '100%',
+//       transition: 'all 0.3s ease',
+//     };
+//   }
 
-  // En escritorio, ajustamos según el estado del sidebar
-  return {
-    marginLeft: isSidebarCollapsed.value ? '70px' : '280px',
-    width: isSidebarCollapsed.value ? 'calc(100% - 70px)' : 'calc(100% - 280px)',
-    transition: 'all 0.3s ease',
-  };
-});
+//   // En escritorio, ajustamos según el estado del sidebar
+//   return {
+//     marginLeft: isSidebarCollapsed.value ? '70px' : '280px',
+//     width: isSidebarCollapsed.value ? 'calc(100% - 70px)' : 'calc(100% - 280px)',
+//     transition: 'all 0.3s ease',
+//   };
+// });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const route = useRoute();
 
 const breadcrumbItems = [
@@ -70,15 +71,15 @@ const breadcrumbItems = [
   // El breadcrumb añadirá automáticamente las rutas siguientes
 ];
 
-// Alternar visibilidad del sidebar en móviles
-const toggleSidebar = () => {
-  sidebarVisible.value = !sidebarVisible.value;
-};
+// // Alternar visibilidad del sidebar en móviles
+// const toggleSidebar = () => {
+//   sidebarVisible.value = !sidebarVisible.value;
+// };
 
-// Alternar estado colapsado del sidebar en desktop
-const toggleSidebarCollapse = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value;
-};
+// // Alternar estado colapsado del sidebar en desktop
+// const toggleSidebarCollapse = () => {
+//   isSidebarCollapsed.value = !isSidebarCollapsed.value;
+// };
 
 // Inicializar tooltips de Bootstrap al montar el componente
 onMounted(() => {

@@ -162,10 +162,7 @@
                   @click="showAllDocuments = true"
                 >
                   <i class="fas fa-chevron-down me-1"></i>
-
-                  <span v-if="documentosAdicionales > 0">
-                    Ver {{ documentosAdicionales }} documentos más
-                  </span>
+                  Ver {{ documentosCount > 0 ? documentosCount : 0 }} documentos más
                 </button>
               </div>
               <div v-else class="alert alert-warning rounded-3 py-2">
@@ -292,6 +289,10 @@ const hasDocuments = computed(() => {
   return !!alcalde.value.plan_desarrollo?.documentos?.length;
 });
 
+const documentosCount = computed(() => {
+  return (alcalde.value.plan_desarrollo?.documentos?.length || 0) - 3;
+});
+
 const visibleDocuments = computed(() => {
   if (!hasDocuments.value) return [];
 
@@ -305,13 +306,6 @@ const hasMoreDocuments = computed(() => {
     (alcalde.value.plan_desarrollo?.documentos?.length || 0) > 3 &&
     !showAllDocuments.value
   );
-});
-
-// Métodos
-
-const documentosAdicionales = computed(() => {
-  const documentos = alcalde.value.plan_desarrollo?.documentos || [];
-  return Math.max(0, documentos.length - 3);
 });
 
 /**

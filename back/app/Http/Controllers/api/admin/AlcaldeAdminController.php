@@ -181,9 +181,38 @@ class AlcaldeAdminController
         return $plan;
     }
 
+
+
+    /**
+     * Eliminar alcalde (DELETE /api/alcaldes/{id})
+     */
+    public function destroy(Alcalde $alcalde)
+    {
+        DB::beginTransaction();
+        try {
+
+            $alcalde->delete();
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Alcalde eliminado correctamente'
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("Error deleting alcalde: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Error al eliminar alcalde'
+            ], 500);
+        }
+    }
+
+
     /**
      * Reglas de validación unificadas
      */
+    
     protected function validationRules(bool $isUpdate = false): array
     {
         $rules = [
@@ -211,31 +240,5 @@ class AlcaldeAdminController
         }
 
         return $rules;
-    }
-
-
-    /**
-     * Eliminar alcalde (DELETE /api/alcaldes/{id})
-     */
-    public function destroy(Alcalde $alcalde)
-    {
-        DB::beginTransaction();
-        try {
-
-            $alcalde->delete();
-            DB::commit();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Alcalde eliminado correctamente'
-            ]);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            Log::error("Error deleting alcalde: " . $e->getMessage());
-            return response()->json([
-                'status' => false,
-                'message' => 'Error al eliminar alcalde'
-            ], 500);
-        }
     }
 }

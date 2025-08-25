@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('asignaciones_funcionarios', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId('funcionario_id')->constrained('funcionarios')->cascadeOnDelete();
-            $table->foreignId('secretaria_id')->nullable()->constrained('secretarias')->nullOnDelete();
-            $table->foreignId('dependencia_id')->nullable()->constrained('dependencias')->nullOnDelete();
-            $table->foreignId('perfil_id')->nullable()->constrained('perfiles')->nullOnDelete();
-
-            $table->text('observacion')->nullable(); 
-            $table->timestamp('fecha_asignacion')->useCurrent();
+            $table->foreignId('dependencia_id')->constrained('dependencias')->cascadeOnDelete();
+            $table->foreignId('cargo_id')->constrained('cargos')->cascadeOnDelete();
+            $table->text('observacion')->nullable();
+            $table->date('fecha_inicio')->nullable();
+            $table->date('fecha_fin')->nullable();
             $table->timestamps();
+            $table->unique(['funcionario_id', 'dependencia_id']);
         });
     }
 
